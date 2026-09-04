@@ -1,0 +1,444 @@
+assigned_unit_id,state,district,case_count,approved,pending,rejected,approval_rate_pct,pending_rate_pct,rejection_rate_pct,synthetic_center_lat,synthetic_center_lon,allocation_basis
+FRA-AP-001,Andhra Pradesh,Andhra Pradesh FRA Monitoring Unit 01,120,59,37,24,49.2,30.8,20.0,14.217285,80.168032,Synthetic 443-unit demo allocation scaled from June 2025 local FRA-cell state shares
+FRA-AP-002,Andhra Pradesh,Andhra Pradesh FRA Monitoring Unit 02,138,82,40,16,59.4,29.0,11.6,14.795589,80.685141,Synthetic 443-unit demo allocation scaled from June 2025 local FRA-cell state shares
+FRA-AP-003,Andhra Pradesh,Andhra Pradesh FRA Monitoring Unit 03,73,37,23,13,50.7,31.5,17.8,16.028798,79.185002,Synthetic 443-unit demo allocation scaled from June 2025 local FRA-cell state shares
+FRA-AP-004,Andhra Pradesh,Andhra Pradesh FRA Monitoring Unit 04,136,79,34,23,58.1,25.0,16.9,16.768015,78.417138,Synthetic 443-unit demo allocation scaled from June 2025 local FRA-cell state shares
+FRA-AP-005,Andhra Pradesh,Andhra Pradesh FRA Monitoring Unit 05,107,66,19,22,61.7,17.8,20.6,17.655369,78.218217,Synthetic 443-unit demo allocation scaled from June 2025 local FRA-cell state shares
+FRA-AP-006,Andhra Pradesh,Andhra Pradesh FRA Monitoring Unit 06,194,126,42,26,64.9,21.6,13.4,14.886602,78.927339,Synthetic 443-unit demo allocation scaled from June 2025 local FRA-cell state shares
+FRA-AP-007,Andhra Pradesh,Andhra Pradesh FRA Monitoring Unit 07,56,30,15,11,53.6,26.8,19.6,16.312261,83.581267,Synthetic 443-unit demo allocation scaled from June 2025 local FRA-cell state shares
+FRA-AP-008,Andhra Pradesh,Andhra Pradesh FRA Monitoring Unit 08,149,92,34,23,61.7,22.8,15.4,13.731626,82.476288,Synthetic 443-unit demo allocation scaled from June 2025 local FRA-cell state shares
+FRA-AP-009,Andhra Pradesh,Andhra Pradesh FRA Monitoring Unit 09,80,46,19,15,57.5,23.8,18.8,17.321818,82.448291,Synthetic 443-unit demo allocation scaled from June 2025 local FRA-cell state shares
+FRA-AP-010,Andhra Pradesh,Andhra Pradesh FRA Monitoring Unit 10,57,36,14,7,63.2,24.6,12.3,14.93143,83.310244,Synthetic 443-unit demo allocation scaled from June 2025 local FRA-cell state shares
+FRA-AP-011,Andhra Pradesh,Andhra Pradesh FRA Monitoring Unit 11,85,45,21,19,52.9,24.7,22.4,15.216427,80.544931,Synthetic 443-unit demo allocation scaled from June 2025 local FRA-cell state shares
+FRA-AP-012,Andhra Pradesh,Andhra Pradesh FRA Monitoring Unit 12,105,61,32,12,58.1,30.5,11.4,17.943316,80.368873,Synthetic 443-unit demo allocation scaled from June 2025 local FRA-cell state shares
+FRA-AP-013,Andhra Pradesh,Andhra Pradesh FRA Monitoring Unit 13,69,41,15,13,59.4,21.7,18.8,14.578679,81.064488,Synthetic 443-unit demo allocation scaled from June 2025 local FRA-cell state shares
+FRA-AP-014,Andhra Pradesh,Andhra Pradesh FRA Monitoring Unit 14,78,43,20,15,55.1,25.6,19.2,14.006728,79.563662,Synthetic 443-unit demo allocation scaled from June 2025 local FRA-cell state shares
+FRA-AP-015,Andhra Pradesh,Andhra Pradesh FRA Monitoring Unit 15,159,95,37,27,59.7,23.3,17.0,17.932242,81.731553,Synthetic 443-unit demo allocation scaled from June 2025 local FRA-cell state shares
+FRA-AP-016,Andhra Pradesh,Andhra Pradesh FRA Monitoring Unit 16,82,55,18,9,67.1,22.0,11.0,15.969441,82.263822,Synthetic 443-unit demo allocation scaled from June 2025 local FRA-cell state shares
+FRA-AS-001,Assam,Assam FRA Monitoring Unit 01,98,55,26,17,56.1,26.5,17.3,25.512532,94.948273,Synthetic 443-unit demo allocation scaled from June 2025 local FRA-cell state shares
+FRA-AS-002,Assam,Assam FRA Monitoring Unit 02,75,44,18,13,58.7,24.0,17.3,27.146185,91.424602,Synthetic 443-unit demo allocation scaled from June 2025 local FRA-cell state shares
+FRA-AS-003,Assam,Assam FRA Monitoring Unit 03,73,38,17,18,52.1,23.3,24.7,27.060122,91.32802,Synthetic 443-unit demo allocation scaled from June 2025 local FRA-cell state shares
+FRA-AS-004,Assam,Assam FRA Monitoring Unit 04,40,25,8,7,62.5,20.0,17.5,24.65656,93.928354,Synthetic 443-unit demo allocation scaled from June 2025 local FRA-cell state shares
+FRA-AS-005,Assam,Assam FRA Monitoring Unit 05,133,76,34,23,57.1,25.6,17.3,26.0799,91.86677,Synthetic 443-unit demo allocation scaled from June 2025 local FRA-cell state shares
+FRA-AS-006,Assam,Assam FRA Monitoring Unit 06,59,28,17,14,47.5,28.8,23.7,25.224591,94.548723,Synthetic 443-unit demo allocation scaled from June 2025 local FRA-cell state shares
+FRA-AS-007,Assam,Assam FRA Monitoring Unit 07,145,86,35,24,59.3,24.1,16.6,26.630113,92.902,Synthetic 443-unit demo allocation scaled from June 2025 local FRA-cell state shares
+FRA-AS-008,Assam,Assam FRA Monitoring Unit 08,225,128,65,32,56.9,28.9,14.2,27.378948,92.086337,Synthetic 443-unit demo allocation scaled from June 2025 local FRA-cell state shares
+FRA-AS-009,Assam,Assam FRA Monitoring Unit 09,144,79,36,29,54.9,25.0,20.1,26.67836,91.706143,Synthetic 443-unit demo allocation scaled from June 2025 local FRA-cell state shares
+FRA-AS-010,Assam,Assam FRA Monitoring Unit 10,37,18,8,11,48.6,21.6,29.7,27.317971,91.112215,Synthetic 443-unit demo allocation scaled from June 2025 local FRA-cell state shares
+FRA-AS-011,Assam,Assam FRA Monitoring Unit 11,40,18,11,11,45.0,27.5,27.5,24.732559,92.520127,Synthetic 443-unit demo allocation scaled from June 2025 local FRA-cell state shares
+FRA-AS-012,Assam,Assam FRA Monitoring Unit 12,48,24,12,12,50.0,25.0,25.0,25.858483,95.078577,Synthetic 443-unit demo allocation scaled from June 2025 local FRA-cell state shares
+FRA-AS-013,Assam,Assam FRA Monitoring Unit 13,114,63,32,19,55.3,28.1,16.7,26.242037,92.6375,Synthetic 443-unit demo allocation scaled from June 2025 local FRA-cell state shares
+FRA-AS-014,Assam,Assam FRA Monitoring Unit 14,117,67,37,13,57.3,31.6,11.1,25.8595,94.272224,Synthetic 443-unit demo allocation scaled from June 2025 local FRA-cell state shares
+FRA-AS-015,Assam,Assam FRA Monitoring Unit 15,39,23,10,6,59.0,25.6,15.4,24.81325,93.440429,Synthetic 443-unit demo allocation scaled from June 2025 local FRA-cell state shares
+FRA-AS-016,Assam,Assam FRA Monitoring Unit 16,98,50,29,19,51.0,29.6,19.4,25.50084,95.044274,Synthetic 443-unit demo allocation scaled from June 2025 local FRA-cell state shares
+FRA-AS-017,Assam,Assam FRA Monitoring Unit 17,56,29,12,15,51.8,21.4,26.8,25.044717,92.256508,Synthetic 443-unit demo allocation scaled from June 2025 local FRA-cell state shares
+FRA-AS-018,Assam,Assam FRA Monitoring Unit 18,76,38,25,13,50.0,32.9,17.1,26.954394,94.014677,Synthetic 443-unit demo allocation scaled from June 2025 local FRA-cell state shares
+FRA-AS-019,Assam,Assam FRA Monitoring Unit 19,90,45,23,22,50.0,25.6,24.4,25.827085,90.916388,Synthetic 443-unit demo allocation scaled from June 2025 local FRA-cell state shares
+FRA-AS-020,Assam,Assam FRA Monitoring Unit 20,74,41,19,14,55.4,25.7,18.9,26.840525,94.867643,Synthetic 443-unit demo allocation scaled from June 2025 local FRA-cell state shares
+FRA-AS-021,Assam,Assam FRA Monitoring Unit 21,101,59,25,17,58.4,24.8,16.8,24.857214,94.417955,Synthetic 443-unit demo allocation scaled from June 2025 local FRA-cell state shares
+FRA-AS-022,Assam,Assam FRA Monitoring Unit 22,81,47,20,14,58.0,24.7,17.3,25.833582,91.120322,Synthetic 443-unit demo allocation scaled from June 2025 local FRA-cell state shares
+FRA-AS-023,Assam,Assam FRA Monitoring Unit 23,102,51,31,20,50.0,30.4,19.6,26.527133,93.761957,Synthetic 443-unit demo allocation scaled from June 2025 local FRA-cell state shares
+FRA-AS-024,Assam,Assam FRA Monitoring Unit 24,41,21,15,5,51.2,36.6,12.2,25.080234,94.775082,Synthetic 443-unit demo allocation scaled from June 2025 local FRA-cell state shares
+FRA-AS-025,Assam,Assam FRA Monitoring Unit 25,129,68,38,23,52.7,29.5,17.8,26.954862,93.708957,Synthetic 443-unit demo allocation scaled from June 2025 local FRA-cell state shares
+FRA-AS-026,Assam,Assam FRA Monitoring Unit 26,61,38,10,13,62.3,16.4,21.3,26.927735,92.352029,Synthetic 443-unit demo allocation scaled from June 2025 local FRA-cell state shares
+FRA-AS-027,Assam,Assam FRA Monitoring Unit 27,138,85,33,20,61.6,23.9,14.5,26.179017,94.796554,Synthetic 443-unit demo allocation scaled from June 2025 local FRA-cell state shares
+FRA-BR-001,Bihar,Bihar FRA Monitoring Unit 01,60,34,18,8,56.7,30.0,13.3,26.692079,85.813019,Synthetic 443-unit demo allocation scaled from June 2025 local FRA-cell state shares
+FRA-BR-002,Bihar,Bihar FRA Monitoring Unit 02,38,26,5,7,68.4,13.2,18.4,25.630936,84.910582,Synthetic 443-unit demo allocation scaled from June 2025 local FRA-cell state shares
+FRA-BR-003,Bihar,Bihar FRA Monitoring Unit 03,68,42,14,12,61.8,20.6,17.6,26.759319,87.039169,Synthetic 443-unit demo allocation scaled from June 2025 local FRA-cell state shares
+FRA-BR-004,Bihar,Bihar FRA Monitoring Unit 04,50,29,13,8,58.0,26.0,16.0,25.227486,84.601312,Synthetic 443-unit demo allocation scaled from June 2025 local FRA-cell state shares
+FRA-BR-005,Bihar,Bihar FRA Monitoring Unit 05,102,63,22,17,61.8,21.6,16.7,24.86586,84.082304,Synthetic 443-unit demo allocation scaled from June 2025 local FRA-cell state shares
+FRA-BR-006,Bihar,Bihar FRA Monitoring Unit 06,75,44,23,8,58.7,30.7,10.7,25.427589,85.399184,Synthetic 443-unit demo allocation scaled from June 2025 local FRA-cell state shares
+FRA-BR-007,Bihar,Bihar FRA Monitoring Unit 07,52,35,10,7,67.3,19.2,13.5,24.994499,85.8468,Synthetic 443-unit demo allocation scaled from June 2025 local FRA-cell state shares
+FRA-BR-008,Bihar,Bihar FRA Monitoring Unit 08,58,34,13,11,58.6,22.4,19.0,26.092736,85.870954,Synthetic 443-unit demo allocation scaled from June 2025 local FRA-cell state shares
+FRA-BR-009,Bihar,Bihar FRA Monitoring Unit 09,80,46,20,14,57.5,25.0,17.5,25.18067,86.72078,Synthetic 443-unit demo allocation scaled from June 2025 local FRA-cell state shares
+FRA-BR-010,Bihar,Bihar FRA Monitoring Unit 10,42,24,12,6,57.1,28.6,14.3,25.222363,87.506353,Synthetic 443-unit demo allocation scaled from June 2025 local FRA-cell state shares
+FRA-CG-001,Chhattisgarh,Chhattisgarh FRA Monitoring Unit 01,85,54,17,14,63.5,20.0,16.5,21.880393,83.762338,Synthetic 443-unit demo allocation scaled from June 2025 local FRA-cell state shares
+FRA-CG-002,Chhattisgarh,Chhattisgarh FRA Monitoring Unit 02,33,20,7,6,60.6,21.2,18.2,22.503119,82.559328,Synthetic 443-unit demo allocation scaled from June 2025 local FRA-cell state shares
+FRA-CG-003,Chhattisgarh,Chhattisgarh FRA Monitoring Unit 03,80,38,26,16,47.5,32.5,20.0,22.167793,80.880327,Synthetic 443-unit demo allocation scaled from June 2025 local FRA-cell state shares
+FRA-CG-004,Chhattisgarh,Chhattisgarh FRA Monitoring Unit 04,58,30,15,13,51.7,25.9,22.4,22.089942,82.765853,Synthetic 443-unit demo allocation scaled from June 2025 local FRA-cell state shares
+FRA-CG-005,Chhattisgarh,Chhattisgarh FRA Monitoring Unit 05,61,34,17,10,55.7,27.9,16.4,21.953303,82.268392,Synthetic 443-unit demo allocation scaled from June 2025 local FRA-cell state shares
+FRA-CG-006,Chhattisgarh,Chhattisgarh FRA Monitoring Unit 06,154,85,41,28,55.2,26.6,18.2,19.78726,82.421082,Synthetic 443-unit demo allocation scaled from June 2025 local FRA-cell state shares
+FRA-CG-007,Chhattisgarh,Chhattisgarh FRA Monitoring Unit 07,120,68,31,21,56.7,25.8,17.5,21.882941,83.134887,Synthetic 443-unit demo allocation scaled from June 2025 local FRA-cell state shares
+FRA-CG-008,Chhattisgarh,Chhattisgarh FRA Monitoring Unit 08,54,33,11,10,61.1,20.4,18.5,20.677189,82.51529,Synthetic 443-unit demo allocation scaled from June 2025 local FRA-cell state shares
+FRA-CG-009,Chhattisgarh,Chhattisgarh FRA Monitoring Unit 09,97,59,28,10,60.8,28.9,10.3,19.131792,81.645499,Synthetic 443-unit demo allocation scaled from June 2025 local FRA-cell state shares
+FRA-CG-010,Chhattisgarh,Chhattisgarh FRA Monitoring Unit 10,129,78,35,16,60.5,27.1,12.4,20.015659,81.457117,Synthetic 443-unit demo allocation scaled from June 2025 local FRA-cell state shares
+FRA-CG-011,Chhattisgarh,Chhattisgarh FRA Monitoring Unit 11,72,45,19,8,62.5,26.4,11.1,22.980123,82.502945,Synthetic 443-unit demo allocation scaled from June 2025 local FRA-cell state shares
+FRA-CG-012,Chhattisgarh,Chhattisgarh FRA Monitoring Unit 12,57,35,15,7,61.4,26.3,12.3,19.872376,83.245273,Synthetic 443-unit demo allocation scaled from June 2025 local FRA-cell state shares
+FRA-CG-013,Chhattisgarh,Chhattisgarh FRA Monitoring Unit 13,90,51,16,23,56.7,17.8,25.6,20.994256,83.294812,Synthetic 443-unit demo allocation scaled from June 2025 local FRA-cell state shares
+FRA-CG-014,Chhattisgarh,Chhattisgarh FRA Monitoring Unit 14,126,68,37,21,54.0,29.4,16.7,19.538357,81.555478,Synthetic 443-unit demo allocation scaled from June 2025 local FRA-cell state shares
+FRA-CG-015,Chhattisgarh,Chhattisgarh FRA Monitoring Unit 15,60,31,13,16,51.7,21.7,26.7,20.843994,81.857487,Synthetic 443-unit demo allocation scaled from June 2025 local FRA-cell state shares
+FRA-CG-016,Chhattisgarh,Chhattisgarh FRA Monitoring Unit 16,104,55,26,23,52.9,25.0,22.1,20.733932,83.246523,Synthetic 443-unit demo allocation scaled from June 2025 local FRA-cell state shares
+FRA-CG-017,Chhattisgarh,Chhattisgarh FRA Monitoring Unit 17,71,41,18,12,57.7,25.4,16.9,19.600607,81.800932,Synthetic 443-unit demo allocation scaled from June 2025 local FRA-cell state shares
+FRA-CG-018,Chhattisgarh,Chhattisgarh FRA Monitoring Unit 18,99,59,19,21,59.6,19.2,21.2,20.70529,83.166006,Synthetic 443-unit demo allocation scaled from June 2025 local FRA-cell state shares
+FRA-CG-019,Chhattisgarh,Chhattisgarh FRA Monitoring Unit 19,85,44,26,15,51.8,30.6,17.6,21.199803,83.403201,Synthetic 443-unit demo allocation scaled from June 2025 local FRA-cell state shares
+FRA-CG-020,Chhattisgarh,Chhattisgarh FRA Monitoring Unit 20,92,58,24,10,63.0,26.1,10.9,20.859226,83.382211,Synthetic 443-unit demo allocation scaled from June 2025 local FRA-cell state shares
+FRA-CG-021,Chhattisgarh,Chhattisgarh FRA Monitoring Unit 21,153,82,48,23,53.6,31.4,15.0,21.140198,82.379991,Synthetic 443-unit demo allocation scaled from June 2025 local FRA-cell state shares
+FRA-CG-022,Chhattisgarh,Chhattisgarh FRA Monitoring Unit 22,134,81,25,28,60.4,18.7,20.9,20.433223,82.848111,Synthetic 443-unit demo allocation scaled from June 2025 local FRA-cell state shares
+FRA-CG-023,Chhattisgarh,Chhattisgarh FRA Monitoring Unit 23,130,70,30,30,53.8,23.1,23.1,20.961673,83.841962,Synthetic 443-unit demo allocation scaled from June 2025 local FRA-cell state shares
+FRA-CG-024,Chhattisgarh,Chhattisgarh FRA Monitoring Unit 24,147,78,35,34,53.1,23.8,23.1,19.319262,82.79205,Synthetic 443-unit demo allocation scaled from June 2025 local FRA-cell state shares
+FRA-CG-025,Chhattisgarh,Chhattisgarh FRA Monitoring Unit 25,116,69,24,23,59.5,20.7,19.8,22.589376,81.858326,Synthetic 443-unit demo allocation scaled from June 2025 local FRA-cell state shares
+FRA-CG-026,Chhattisgarh,Chhattisgarh FRA Monitoring Unit 26,107,72,21,14,67.3,19.6,13.1,21.412564,81.411031,Synthetic 443-unit demo allocation scaled from June 2025 local FRA-cell state shares
+FRA-CG-027,Chhattisgarh,Chhattisgarh FRA Monitoring Unit 27,65,44,12,9,67.7,18.5,13.8,22.649583,82.877338,Synthetic 443-unit demo allocation scaled from June 2025 local FRA-cell state shares
+FRA-CG-028,Chhattisgarh,Chhattisgarh FRA Monitoring Unit 28,95,54,23,18,56.8,24.2,18.9,20.617892,83.545122,Synthetic 443-unit demo allocation scaled from June 2025 local FRA-cell state shares
+FRA-CG-029,Chhattisgarh,Chhattisgarh FRA Monitoring Unit 29,168,97,44,27,57.7,26.2,16.1,19.23025,81.835714,Synthetic 443-unit demo allocation scaled from June 2025 local FRA-cell state shares
+FRA-CG-030,Chhattisgarh,Chhattisgarh FRA Monitoring Unit 30,91,52,25,14,57.1,27.5,15.4,19.30313,82.858052,Synthetic 443-unit demo allocation scaled from June 2025 local FRA-cell state shares
+FRA-CG-031,Chhattisgarh,Chhattisgarh FRA Monitoring Unit 31,113,64,29,20,56.6,25.7,17.7,21.017744,81.625034,Synthetic 443-unit demo allocation scaled from June 2025 local FRA-cell state shares
+FRA-CG-032,Chhattisgarh,Chhattisgarh FRA Monitoring Unit 32,98,52,28,18,53.1,28.6,18.4,22.160563,83.716755,Synthetic 443-unit demo allocation scaled from June 2025 local FRA-cell state shares
+FRA-GJ-001,Gujarat,Gujarat FRA Monitoring Unit 01,202,120,43,39,59.4,21.3,19.3,22.246684,73.09752,Synthetic 443-unit demo allocation scaled from June 2025 local FRA-cell state shares
+FRA-GJ-002,Gujarat,Gujarat FRA Monitoring Unit 02,40,24,9,7,60.0,22.5,17.5,21.367766,69.882148,Synthetic 443-unit demo allocation scaled from June 2025 local FRA-cell state shares
+FRA-GJ-003,Gujarat,Gujarat FRA Monitoring Unit 03,121,75,29,17,62.0,24.0,14.0,22.944201,69.44752,Synthetic 443-unit demo allocation scaled from June 2025 local FRA-cell state shares
+FRA-GJ-004,Gujarat,Gujarat FRA Monitoring Unit 04,84,49,20,15,58.3,23.8,17.9,21.663523,73.091286,Synthetic 443-unit demo allocation scaled from June 2025 local FRA-cell state shares
+FRA-GJ-005,Gujarat,Gujarat FRA Monitoring Unit 05,53,27,12,14,50.9,22.6,26.4,21.441751,69.201219,Synthetic 443-unit demo allocation scaled from June 2025 local FRA-cell state shares
+FRA-GJ-006,Gujarat,Gujarat FRA Monitoring Unit 06,145,76,34,35,52.4,23.4,24.1,21.13322,73.515789,Synthetic 443-unit demo allocation scaled from June 2025 local FRA-cell state shares
+FRA-GJ-007,Gujarat,Gujarat FRA Monitoring Unit 07,79,45,21,13,57.0,26.6,16.5,22.707161,72.109496,Synthetic 443-unit demo allocation scaled from June 2025 local FRA-cell state shares
+FRA-GJ-008,Gujarat,Gujarat FRA Monitoring Unit 08,106,60,30,16,56.6,28.3,15.1,21.97516,69.779554,Synthetic 443-unit demo allocation scaled from June 2025 local FRA-cell state shares
+FRA-GJ-009,Gujarat,Gujarat FRA Monitoring Unit 09,91,43,33,15,47.3,36.3,16.5,23.720584,69.106913,Synthetic 443-unit demo allocation scaled from June 2025 local FRA-cell state shares
+FRA-GJ-010,Gujarat,Gujarat FRA Monitoring Unit 10,59,33,16,10,55.9,27.1,16.9,21.213072,70.087416,Synthetic 443-unit demo allocation scaled from June 2025 local FRA-cell state shares
+FRA-GJ-011,Gujarat,Gujarat FRA Monitoring Unit 11,180,108,50,22,60.0,27.8,12.2,21.61379,69.533118,Synthetic 443-unit demo allocation scaled from June 2025 local FRA-cell state shares
+FRA-GJ-012,Gujarat,Gujarat FRA Monitoring Unit 12,107,53,29,25,49.5,27.1,23.4,21.549914,72.825122,Synthetic 443-unit demo allocation scaled from June 2025 local FRA-cell state shares
+FRA-GJ-013,Gujarat,Gujarat FRA Monitoring Unit 13,97,57,23,17,58.8,23.7,17.5,21.407911,71.660362,Synthetic 443-unit demo allocation scaled from June 2025 local FRA-cell state shares
+FRA-GJ-014,Gujarat,Gujarat FRA Monitoring Unit 14,100,55,28,17,55.0,28.0,17.0,23.468864,69.382721,Synthetic 443-unit demo allocation scaled from June 2025 local FRA-cell state shares
+FRA-GJ-015,Gujarat,Gujarat FRA Monitoring Unit 15,84,57,19,8,67.9,22.6,9.5,23.405291,69.750883,Synthetic 443-unit demo allocation scaled from June 2025 local FRA-cell state shares
+FRA-HP-001,Himachal Pradesh,Himachal Pradesh FRA Monitoring Unit 01,82,51,20,11,62.2,24.4,13.4,32.57352,77.028328,Synthetic 443-unit demo allocation scaled from June 2025 local FRA-cell state shares
+FRA-HP-002,Himachal Pradesh,Himachal Pradesh FRA Monitoring Unit 02,119,64,37,18,53.8,31.1,15.1,30.78563,77.504053,Synthetic 443-unit demo allocation scaled from June 2025 local FRA-cell state shares
+FRA-HP-003,Himachal Pradesh,Himachal Pradesh FRA Monitoring Unit 03,80,46,17,17,57.5,21.2,21.2,31.676742,77.340104,Synthetic 443-unit demo allocation scaled from June 2025 local FRA-cell state shares
+FRA-HP-004,Himachal Pradesh,Himachal Pradesh FRA Monitoring Unit 04,81,48,15,18,59.3,18.5,22.2,31.679293,77.226925,Synthetic 443-unit demo allocation scaled from June 2025 local FRA-cell state shares
+FRA-HP-005,Himachal Pradesh,Himachal Pradesh FRA Monitoring Unit 05,86,51,23,12,59.3,26.7,14.0,32.669763,77.372014,Synthetic 443-unit demo allocation scaled from June 2025 local FRA-cell state shares
+FRA-HP-006,Himachal Pradesh,Himachal Pradesh FRA Monitoring Unit 06,49,27,11,11,55.1,22.4,22.4,31.987247,76.481629,Synthetic 443-unit demo allocation scaled from June 2025 local FRA-cell state shares
+FRA-HP-007,Himachal Pradesh,Himachal Pradesh FRA Monitoring Unit 07,67,40,16,11,59.7,23.9,16.4,31.027516,77.211106,Synthetic 443-unit demo allocation scaled from June 2025 local FRA-cell state shares
+FRA-HP-008,Himachal Pradesh,Himachal Pradesh FRA Monitoring Unit 08,101,64,21,16,63.4,20.8,15.8,31.019454,76.13283,Synthetic 443-unit demo allocation scaled from June 2025 local FRA-cell state shares
+FRA-HP-009,Himachal Pradesh,Himachal Pradesh FRA Monitoring Unit 09,53,27,19,7,50.9,35.8,13.2,30.812389,78.427715,Synthetic 443-unit demo allocation scaled from June 2025 local FRA-cell state shares
+FRA-HP-010,Himachal Pradesh,Himachal Pradesh FRA Monitoring Unit 10,48,25,14,9,52.1,29.2,18.8,31.883967,77.892766,Synthetic 443-unit demo allocation scaled from June 2025 local FRA-cell state shares
+FRA-HP-011,Himachal Pradesh,Himachal Pradesh FRA Monitoring Unit 11,62,40,13,9,64.5,21.0,14.5,31.80993,77.525316,Synthetic 443-unit demo allocation scaled from June 2025 local FRA-cell state shares
+FRA-HP-012,Himachal Pradesh,Himachal Pradesh FRA Monitoring Unit 12,67,42,12,13,62.7,17.9,19.4,32.196485,78.294816,Synthetic 443-unit demo allocation scaled from June 2025 local FRA-cell state shares
+FRA-HP-013,Himachal Pradesh,Himachal Pradesh FRA Monitoring Unit 13,87,56,15,16,64.4,17.2,18.4,32.279034,78.297282,Synthetic 443-unit demo allocation scaled from June 2025 local FRA-cell state shares
+FRA-JK-001,Jammu and Kashmir,Jammu and Kashmir FRA Monitoring Unit 01,79,49,14,16,62.0,17.7,20.3,32.957821,76.405617,Synthetic 443-unit demo allocation scaled from June 2025 local FRA-cell state shares
+FRA-JK-002,Jammu and Kashmir,Jammu and Kashmir FRA Monitoring Unit 02,75,43,19,13,57.3,25.3,17.3,33.433898,75.4936,Synthetic 443-unit demo allocation scaled from June 2025 local FRA-cell state shares
+FRA-JK-003,Jammu and Kashmir,Jammu and Kashmir FRA Monitoring Unit 03,34,18,11,5,52.9,32.4,14.7,34.471086,75.445393,Synthetic 443-unit demo allocation scaled from June 2025 local FRA-cell state shares
+FRA-JK-004,Jammu and Kashmir,Jammu and Kashmir FRA Monitoring Unit 04,68,41,15,12,60.3,22.1,17.6,33.997511,75.264916,Synthetic 443-unit demo allocation scaled from June 2025 local FRA-cell state shares
+FRA-JK-005,Jammu and Kashmir,Jammu and Kashmir FRA Monitoring Unit 05,133,90,28,15,67.7,21.1,11.3,34.440741,74.992791,Synthetic 443-unit demo allocation scaled from June 2025 local FRA-cell state shares
+FRA-JK-006,Jammu and Kashmir,Jammu and Kashmir FRA Monitoring Unit 06,46,18,18,10,39.1,39.1,21.7,33.106027,75.101952,Synthetic 443-unit demo allocation scaled from June 2025 local FRA-cell state shares
+FRA-JK-007,Jammu and Kashmir,Jammu and Kashmir FRA Monitoring Unit 07,71,43,19,9,60.6,26.8,12.7,33.604407,74.35828,Synthetic 443-unit demo allocation scaled from June 2025 local FRA-cell state shares
+FRA-JK-008,Jammu and Kashmir,Jammu and Kashmir FRA Monitoring Unit 08,38,22,8,8,57.9,21.1,21.1,33.576064,74.323678,Synthetic 443-unit demo allocation scaled from June 2025 local FRA-cell state shares
+FRA-JK-009,Jammu and Kashmir,Jammu and Kashmir FRA Monitoring Unit 09,58,33,13,12,56.9,22.4,20.7,33.529753,74.61788,Synthetic 443-unit demo allocation scaled from June 2025 local FRA-cell state shares
+FRA-JK-010,Jammu and Kashmir,Jammu and Kashmir FRA Monitoring Unit 10,67,35,18,14,52.2,26.9,20.9,34.039566,74.274037,Synthetic 443-unit demo allocation scaled from June 2025 local FRA-cell state shares
+FRA-JK-011,Jammu and Kashmir,Jammu and Kashmir FRA Monitoring Unit 11,90,48,26,16,53.3,28.9,17.8,34.158356,75.612696,Synthetic 443-unit demo allocation scaled from June 2025 local FRA-cell state shares
+FRA-JK-012,Jammu and Kashmir,Jammu and Kashmir FRA Monitoring Unit 12,132,71,37,24,53.8,28.0,18.2,32.843772,76.158403,Synthetic 443-unit demo allocation scaled from June 2025 local FRA-cell state shares
+FRA-JK-013,Jammu and Kashmir,Jammu and Kashmir FRA Monitoring Unit 13,44,24,15,5,54.5,34.1,11.4,33.877838,75.778575,Synthetic 443-unit demo allocation scaled from June 2025 local FRA-cell state shares
+FRA-JK-014,Jammu and Kashmir,Jammu and Kashmir FRA Monitoring Unit 14,91,59,19,13,64.8,20.9,14.3,34.578652,74.581538,Synthetic 443-unit demo allocation scaled from June 2025 local FRA-cell state shares
+FRA-JK-015,Jammu and Kashmir,Jammu and Kashmir FRA Monitoring Unit 15,100,57,26,17,57.0,26.0,17.0,33.438131,74.541318,Synthetic 443-unit demo allocation scaled from June 2025 local FRA-cell state shares
+FRA-JK-016,Jammu and Kashmir,Jammu and Kashmir FRA Monitoring Unit 16,61,37,15,9,60.7,24.6,14.8,33.20918,74.227304,Synthetic 443-unit demo allocation scaled from June 2025 local FRA-cell state shares
+FRA-JK-017,Jammu and Kashmir,Jammu and Kashmir FRA Monitoring Unit 17,87,46,20,21,52.9,23.0,24.1,33.730007,76.329293,Synthetic 443-unit demo allocation scaled from June 2025 local FRA-cell state shares
+FRA-JK-018,Jammu and Kashmir,Jammu and Kashmir FRA Monitoring Unit 18,63,31,15,17,49.2,23.8,27.0,34.150588,75.76963,Synthetic 443-unit demo allocation scaled from June 2025 local FRA-cell state shares
+FRA-JK-019,Jammu and Kashmir,Jammu and Kashmir FRA Monitoring Unit 19,59,34,14,11,57.6,23.7,18.6,33.266343,75.243091,Synthetic 443-unit demo allocation scaled from June 2025 local FRA-cell state shares
+FRA-JK-020,Jammu and Kashmir,Jammu and Kashmir FRA Monitoring Unit 20,85,50,21,14,58.8,24.7,16.5,33.715148,74.501811,Synthetic 443-unit demo allocation scaled from June 2025 local FRA-cell state shares
+FRA-JK-021,Jammu and Kashmir,Jammu and Kashmir FRA Monitoring Unit 21,33,17,11,5,51.5,33.3,15.2,34.184691,74.680668,Synthetic 443-unit demo allocation scaled from June 2025 local FRA-cell state shares
+FRA-JH-001,Jharkhand,Jharkhand FRA Monitoring Unit 01,118,68,32,18,57.6,27.1,15.3,22.910842,84.327551,Synthetic 443-unit demo allocation scaled from June 2025 local FRA-cell state shares
+FRA-JH-002,Jharkhand,Jharkhand FRA Monitoring Unit 02,120,64,30,26,53.3,25.0,21.7,23.824512,84.287383,Synthetic 443-unit demo allocation scaled from June 2025 local FRA-cell state shares
+FRA-JH-003,Jharkhand,Jharkhand FRA Monitoring Unit 03,168,98,39,31,58.3,23.2,18.5,23.555133,85.561028,Synthetic 443-unit demo allocation scaled from June 2025 local FRA-cell state shares
+FRA-JH-004,Jharkhand,Jharkhand FRA Monitoring Unit 04,54,33,12,9,61.1,22.2,16.7,23.49025,84.3902,Synthetic 443-unit demo allocation scaled from June 2025 local FRA-cell state shares
+FRA-JH-005,Jharkhand,Jharkhand FRA Monitoring Unit 05,89,51,22,16,57.3,24.7,18.0,24.074886,87.021551,Synthetic 443-unit demo allocation scaled from June 2025 local FRA-cell state shares
+FRA-JH-006,Jharkhand,Jharkhand FRA Monitoring Unit 06,62,36,17,9,58.1,27.4,14.5,23.897989,86.076415,Synthetic 443-unit demo allocation scaled from June 2025 local FRA-cell state shares
+FRA-JH-007,Jharkhand,Jharkhand FRA Monitoring Unit 07,148,94,33,21,63.5,22.3,14.2,22.533832,87.122486,Synthetic 443-unit demo allocation scaled from June 2025 local FRA-cell state shares
+FRA-JH-008,Jharkhand,Jharkhand FRA Monitoring Unit 08,152,79,47,26,52.0,30.9,17.1,24.388857,86.951049,Synthetic 443-unit demo allocation scaled from June 2025 local FRA-cell state shares
+FRA-JH-009,Jharkhand,Jharkhand FRA Monitoring Unit 09,93,53,23,17,57.0,24.7,18.3,23.179055,85.910165,Synthetic 443-unit demo allocation scaled from June 2025 local FRA-cell state shares
+FRA-JH-010,Jharkhand,Jharkhand FRA Monitoring Unit 10,55,31,12,12,56.4,21.8,21.8,23.851992,84.534286,Synthetic 443-unit demo allocation scaled from June 2025 local FRA-cell state shares
+FRA-JH-011,Jharkhand,Jharkhand FRA Monitoring Unit 11,138,82,32,24,59.4,23.2,17.4,24.172117,84.164917,Synthetic 443-unit demo allocation scaled from June 2025 local FRA-cell state shares
+FRA-JH-012,Jharkhand,Jharkhand FRA Monitoring Unit 12,116,65,29,22,56.0,25.0,19.0,23.740765,84.373849,Synthetic 443-unit demo allocation scaled from June 2025 local FRA-cell state shares
+FRA-JH-013,Jharkhand,Jharkhand FRA Monitoring Unit 13,46,33,9,4,71.7,19.6,8.7,22.546559,85.363758,Synthetic 443-unit demo allocation scaled from June 2025 local FRA-cell state shares
+FRA-JH-014,Jharkhand,Jharkhand FRA Monitoring Unit 14,149,88,37,24,59.1,24.8,16.1,23.100257,85.496245,Synthetic 443-unit demo allocation scaled from June 2025 local FRA-cell state shares
+FRA-JH-015,Jharkhand,Jharkhand FRA Monitoring Unit 15,135,76,38,21,56.3,28.1,15.6,23.06121,86.141003,Synthetic 443-unit demo allocation scaled from June 2025 local FRA-cell state shares
+FRA-JH-016,Jharkhand,Jharkhand FRA Monitoring Unit 16,108,59,27,22,54.6,25.0,20.4,22.841576,86.195638,Synthetic 443-unit demo allocation scaled from June 2025 local FRA-cell state shares
+FRA-JH-017,Jharkhand,Jharkhand FRA Monitoring Unit 17,86,44,23,19,51.2,26.7,22.1,22.842476,85.589908,Synthetic 443-unit demo allocation scaled from June 2025 local FRA-cell state shares
+FRA-JH-018,Jharkhand,Jharkhand FRA Monitoring Unit 18,183,108,48,27,59.0,26.2,14.8,23.797913,84.516583,Synthetic 443-unit demo allocation scaled from June 2025 local FRA-cell state shares
+FRA-JH-019,Jharkhand,Jharkhand FRA Monitoring Unit 19,145,80,39,26,55.2,26.9,17.9,24.746038,84.544485,Synthetic 443-unit demo allocation scaled from June 2025 local FRA-cell state shares
+FRA-JH-020,Jharkhand,Jharkhand FRA Monitoring Unit 20,195,109,54,32,55.9,27.7,16.4,22.895597,85.920887,Synthetic 443-unit demo allocation scaled from June 2025 local FRA-cell state shares
+FRA-JH-021,Jharkhand,Jharkhand FRA Monitoring Unit 21,33,19,11,3,57.6,33.3,9.1,23.408402,86.346053,Synthetic 443-unit demo allocation scaled from June 2025 local FRA-cell state shares
+FRA-JH-022,Jharkhand,Jharkhand FRA Monitoring Unit 22,141,87,33,21,61.7,23.4,14.9,23.084238,84.544326,Synthetic 443-unit demo allocation scaled from June 2025 local FRA-cell state shares
+FRA-JH-023,Jharkhand,Jharkhand FRA Monitoring Unit 23,136,75,37,24,55.1,27.2,17.6,22.946719,85.842636,Synthetic 443-unit demo allocation scaled from June 2025 local FRA-cell state shares
+FRA-JH-024,Jharkhand,Jharkhand FRA Monitoring Unit 24,144,76,39,29,52.8,27.1,20.1,22.846328,86.659326,Synthetic 443-unit demo allocation scaled from June 2025 local FRA-cell state shares
+FRA-JH-025,Jharkhand,Jharkhand FRA Monitoring Unit 25,83,47,21,15,56.6,25.3,18.1,23.707579,85.382855,Synthetic 443-unit demo allocation scaled from June 2025 local FRA-cell state shares
+FRA-JH-026,Jharkhand,Jharkhand FRA Monitoring Unit 26,71,43,19,9,60.6,26.8,12.7,22.845702,87.018904,Synthetic 443-unit demo allocation scaled from June 2025 local FRA-cell state shares
+FRA-KA-001,Karnataka,Karnataka FRA Monitoring Unit 01,58,39,9,10,67.2,15.5,17.2,15.213311,75.970444,Synthetic 443-unit demo allocation scaled from June 2025 local FRA-cell state shares
+FRA-KA-002,Karnataka,Karnataka FRA Monitoring Unit 02,99,54,27,18,54.5,27.3,18.2,15.205948,77.224095,Synthetic 443-unit demo allocation scaled from June 2025 local FRA-cell state shares
+FRA-KA-003,Karnataka,Karnataka FRA Monitoring Unit 03,37,20,9,8,54.1,24.3,21.6,14.329557,74.73636,Synthetic 443-unit demo allocation scaled from June 2025 local FRA-cell state shares
+FRA-KA-004,Karnataka,Karnataka FRA Monitoring Unit 04,89,48,28,13,53.9,31.5,14.6,14.082441,77.750723,Synthetic 443-unit demo allocation scaled from June 2025 local FRA-cell state shares
+FRA-KA-005,Karnataka,Karnataka FRA Monitoring Unit 05,48,33,3,12,68.8,6.2,25.0,15.085356,77.219239,Synthetic 443-unit demo allocation scaled from June 2025 local FRA-cell state shares
+FRA-KA-006,Karnataka,Karnataka FRA Monitoring Unit 06,56,35,9,12,62.5,16.1,21.4,16.030275,76.319203,Synthetic 443-unit demo allocation scaled from June 2025 local FRA-cell state shares
+FRA-KA-007,Karnataka,Karnataka FRA Monitoring Unit 07,104,56,32,16,53.8,30.8,15.4,17.050473,77.631229,Synthetic 443-unit demo allocation scaled from June 2025 local FRA-cell state shares
+FRA-KA-008,Karnataka,Karnataka FRA Monitoring Unit 08,137,83,28,26,60.6,20.4,19.0,16.511565,77.56572,Synthetic 443-unit demo allocation scaled from June 2025 local FRA-cell state shares
+FRA-KA-009,Karnataka,Karnataka FRA Monitoring Unit 09,61,36,11,14,59.0,18.0,23.0,13.621727,75.225627,Synthetic 443-unit demo allocation scaled from June 2025 local FRA-cell state shares
+FRA-KA-010,Karnataka,Karnataka FRA Monitoring Unit 10,109,69,20,20,63.3,18.3,18.3,14.961392,76.761075,Synthetic 443-unit demo allocation scaled from June 2025 local FRA-cell state shares
+FRA-KA-011,Karnataka,Karnataka FRA Monitoring Unit 11,39,22,6,11,56.4,15.4,28.2,15.765889,76.064691,Synthetic 443-unit demo allocation scaled from June 2025 local FRA-cell state shares
+FRA-KA-012,Karnataka,Karnataka FRA Monitoring Unit 12,114,62,30,22,54.4,26.3,19.3,13.193118,75.018742,Synthetic 443-unit demo allocation scaled from June 2025 local FRA-cell state shares
+FRA-KA-013,Karnataka,Karnataka FRA Monitoring Unit 13,84,48,18,18,57.1,21.4,21.4,14.219168,77.61135,Synthetic 443-unit demo allocation scaled from June 2025 local FRA-cell state shares
+FRA-KA-014,Karnataka,Karnataka FRA Monitoring Unit 14,61,38,16,7,62.3,26.2,11.5,13.803952,76.39947,Synthetic 443-unit demo allocation scaled from June 2025 local FRA-cell state shares
+FRA-KA-015,Karnataka,Karnataka FRA Monitoring Unit 15,60,38,14,8,63.3,23.3,13.3,12.993158,77.593792,Synthetic 443-unit demo allocation scaled from June 2025 local FRA-cell state shares
+FRA-KA-016,Karnataka,Karnataka FRA Monitoring Unit 16,66,36,17,13,54.5,25.8,19.7,14.81774,76.301604,Synthetic 443-unit demo allocation scaled from June 2025 local FRA-cell state shares
+FRA-KA-017,Karnataka,Karnataka FRA Monitoring Unit 17,100,68,18,14,68.0,18.0,14.0,14.622436,76.784637,Synthetic 443-unit demo allocation scaled from June 2025 local FRA-cell state shares
+FRA-KA-018,Karnataka,Karnataka FRA Monitoring Unit 18,45,28,9,8,62.2,20.0,17.8,16.609363,76.260267,Synthetic 443-unit demo allocation scaled from June 2025 local FRA-cell state shares
+FRA-KA-019,Karnataka,Karnataka FRA Monitoring Unit 19,93,48,32,13,51.6,34.4,14.0,15.111726,76.275658,Synthetic 443-unit demo allocation scaled from June 2025 local FRA-cell state shares
+FRA-KL-001,Kerala,Kerala FRA Monitoring Unit 01,77,48,17,12,62.3,22.1,15.6,9.808312,76.188418,Synthetic 443-unit demo allocation scaled from June 2025 local FRA-cell state shares
+FRA-KL-002,Kerala,Kerala FRA Monitoring Unit 02,94,53,25,16,56.4,26.6,17.0,9.783501,75.604039,Synthetic 443-unit demo allocation scaled from June 2025 local FRA-cell state shares
+FRA-KL-003,Kerala,Kerala FRA Monitoring Unit 03,103,56,28,19,54.4,27.2,18.4,11.56022,75.280231,Synthetic 443-unit demo allocation scaled from June 2025 local FRA-cell state shares
+FRA-KL-004,Kerala,Kerala FRA Monitoring Unit 04,68,39,19,10,57.4,27.9,14.7,11.409314,75.441103,Synthetic 443-unit demo allocation scaled from June 2025 local FRA-cell state shares
+FRA-KL-005,Kerala,Kerala FRA Monitoring Unit 05,43,28,6,9,65.1,14.0,20.9,10.596205,75.581174,Synthetic 443-unit demo allocation scaled from June 2025 local FRA-cell state shares
+FRA-KL-006,Kerala,Kerala FRA Monitoring Unit 06,125,82,22,21,65.6,17.6,16.8,10.568048,76.075948,Synthetic 443-unit demo allocation scaled from June 2025 local FRA-cell state shares
+FRA-KL-007,Kerala,Kerala FRA Monitoring Unit 07,46,28,12,6,60.9,26.1,13.0,9.788449,76.451546,Synthetic 443-unit demo allocation scaled from June 2025 local FRA-cell state shares
+FRA-KL-008,Kerala,Kerala FRA Monitoring Unit 08,57,33,15,9,57.9,26.3,15.8,11.122893,75.934662,Synthetic 443-unit demo allocation scaled from June 2025 local FRA-cell state shares
+FRA-KL-009,Kerala,Kerala FRA Monitoring Unit 09,100,61,27,12,61.0,27.0,12.0,9.139566,75.690812,Synthetic 443-unit demo allocation scaled from June 2025 local FRA-cell state shares
+FRA-KL-010,Kerala,Kerala FRA Monitoring Unit 10,49,23,14,12,46.9,28.6,24.5,8.943569,76.503363,Synthetic 443-unit demo allocation scaled from June 2025 local FRA-cell state shares
+FRA-KL-011,Kerala,Kerala FRA Monitoring Unit 11,33,20,11,2,60.6,33.3,6.1,9.867849,75.436409,Synthetic 443-unit demo allocation scaled from June 2025 local FRA-cell state shares
+FRA-KL-012,Kerala,Kerala FRA Monitoring Unit 12,99,55,28,16,55.6,28.3,16.2,9.698549,75.841927,Synthetic 443-unit demo allocation scaled from June 2025 local FRA-cell state shares
+FRA-KL-013,Kerala,Kerala FRA Monitoring Unit 13,73,40,18,15,54.8,24.7,20.5,11.429058,76.617597,Synthetic 443-unit demo allocation scaled from June 2025 local FRA-cell state shares
+FRA-MP-001,Madhya Pradesh,Madhya Pradesh FRA Monitoring Unit 01,104,63,24,17,60.6,23.1,16.3,22.07857,76.184594,Synthetic 443-unit demo allocation scaled from June 2025 local FRA-cell state shares
+FRA-MP-002,Madhya Pradesh,Madhya Pradesh FRA Monitoring Unit 02,139,77,36,26,55.4,25.9,18.7,23.870108,79.081879,Synthetic 443-unit demo allocation scaled from June 2025 local FRA-cell state shares
+FRA-MP-003,Madhya Pradesh,Madhya Pradesh FRA Monitoring Unit 03,97,53,25,19,54.6,25.8,19.6,22.902546,81.223564,Synthetic 443-unit demo allocation scaled from June 2025 local FRA-cell state shares
+FRA-MP-004,Madhya Pradesh,Madhya Pradesh FRA Monitoring Unit 04,64,44,11,9,68.8,17.2,14.1,25.576731,79.602976,Synthetic 443-unit demo allocation scaled from June 2025 local FRA-cell state shares
+FRA-MP-005,Madhya Pradesh,Madhya Pradesh FRA Monitoring Unit 05,113,58,33,22,51.3,29.2,19.5,23.445038,78.328007,Synthetic 443-unit demo allocation scaled from June 2025 local FRA-cell state shares
+FRA-MP-006,Madhya Pradesh,Madhya Pradesh FRA Monitoring Unit 06,225,120,64,41,53.3,28.4,18.2,22.690098,80.94014,Synthetic 443-unit demo allocation scaled from June 2025 local FRA-cell state shares
+FRA-MP-007,Madhya Pradesh,Madhya Pradesh FRA Monitoring Unit 07,138,73,34,31,52.9,24.6,22.5,24.26204,78.458781,Synthetic 443-unit demo allocation scaled from June 2025 local FRA-cell state shares
+FRA-MP-008,Madhya Pradesh,Madhya Pradesh FRA Monitoring Unit 08,126,76,34,16,60.3,27.0,12.7,24.767228,78.406245,Synthetic 443-unit demo allocation scaled from June 2025 local FRA-cell state shares
+FRA-MP-009,Madhya Pradesh,Madhya Pradesh FRA Monitoring Unit 09,78,38,23,17,48.7,29.5,21.8,23.334928,81.163172,Synthetic 443-unit demo allocation scaled from June 2025 local FRA-cell state shares
+FRA-MP-010,Madhya Pradesh,Madhya Pradesh FRA Monitoring Unit 10,132,84,28,20,63.6,21.2,15.2,25.648756,79.620773,Synthetic 443-unit demo allocation scaled from June 2025 local FRA-cell state shares
+FRA-MP-011,Madhya Pradesh,Madhya Pradesh FRA Monitoring Unit 11,202,105,60,37,52.0,29.7,18.3,25.793091,78.145918,Synthetic 443-unit demo allocation scaled from June 2025 local FRA-cell state shares
+FRA-MP-012,Madhya Pradesh,Madhya Pradesh FRA Monitoring Unit 12,116,65,26,25,56.0,22.4,21.6,22.422709,78.005778,Synthetic 443-unit demo allocation scaled from June 2025 local FRA-cell state shares
+FRA-MP-013,Madhya Pradesh,Madhya Pradesh FRA Monitoring Unit 13,103,62,22,19,60.2,21.4,18.4,24.675113,75.96637,Synthetic 443-unit demo allocation scaled from June 2025 local FRA-cell state shares
+FRA-MP-014,Madhya Pradesh,Madhya Pradesh FRA Monitoring Unit 14,107,64,25,18,59.8,23.4,16.8,25.562583,79.288816,Synthetic 443-unit demo allocation scaled from June 2025 local FRA-cell state shares
+FRA-MP-015,Madhya Pradesh,Madhya Pradesh FRA Monitoring Unit 15,110,64,29,17,58.2,26.4,15.5,25.614373,81.099869,Synthetic 443-unit demo allocation scaled from June 2025 local FRA-cell state shares
+FRA-MP-016,Madhya Pradesh,Madhya Pradesh FRA Monitoring Unit 16,116,69,23,24,59.5,19.8,20.7,24.846033,78.490266,Synthetic 443-unit demo allocation scaled from June 2025 local FRA-cell state shares
+FRA-MP-017,Madhya Pradesh,Madhya Pradesh FRA Monitoring Unit 17,143,88,37,18,61.5,25.9,12.6,25.268822,77.947644,Synthetic 443-unit demo allocation scaled from June 2025 local FRA-cell state shares
+FRA-MP-018,Madhya Pradesh,Madhya Pradesh FRA Monitoring Unit 18,145,78,40,27,53.8,27.6,18.6,25.153447,78.575299,Synthetic 443-unit demo allocation scaled from June 2025 local FRA-cell state shares
+FRA-MP-019,Madhya Pradesh,Madhya Pradesh FRA Monitoring Unit 19,121,79,24,18,65.3,19.8,14.9,23.683388,80.809003,Synthetic 443-unit demo allocation scaled from June 2025 local FRA-cell state shares
+FRA-MP-020,Madhya Pradesh,Madhya Pradesh FRA Monitoring Unit 20,116,67,32,17,57.8,27.6,14.7,22.103484,76.507491,Synthetic 443-unit demo allocation scaled from June 2025 local FRA-cell state shares
+FRA-MP-021,Madhya Pradesh,Madhya Pradesh FRA Monitoring Unit 21,40,23,8,9,57.5,20.0,22.5,23.878852,81.266966,Synthetic 443-unit demo allocation scaled from June 2025 local FRA-cell state shares
+FRA-MP-022,Madhya Pradesh,Madhya Pradesh FRA Monitoring Unit 22,66,31,17,18,47.0,25.8,27.3,23.142516,78.816487,Synthetic 443-unit demo allocation scaled from June 2025 local FRA-cell state shares
+FRA-MP-023,Madhya Pradesh,Madhya Pradesh FRA Monitoring Unit 23,69,47,13,9,68.1,18.8,13.0,22.753374,81.275147,Synthetic 443-unit demo allocation scaled from June 2025 local FRA-cell state shares
+FRA-MP-024,Madhya Pradesh,Madhya Pradesh FRA Monitoring Unit 24,84,40,27,17,47.6,32.1,20.2,23.32417,79.910914,Synthetic 443-unit demo allocation scaled from June 2025 local FRA-cell state shares
+FRA-MP-025,Madhya Pradesh,Madhya Pradesh FRA Monitoring Unit 25,156,89,40,27,57.1,25.6,17.3,25.78139,79.385942,Synthetic 443-unit demo allocation scaled from June 2025 local FRA-cell state shares
+FRA-MP-026,Madhya Pradesh,Madhya Pradesh FRA Monitoring Unit 26,101,64,25,12,63.4,24.8,11.9,25.591676,80.323614,Synthetic 443-unit demo allocation scaled from June 2025 local FRA-cell state shares
+FRA-MP-027,Madhya Pradesh,Madhya Pradesh FRA Monitoring Unit 27,171,97,44,30,56.7,25.7,17.5,24.212657,80.779804,Synthetic 443-unit demo allocation scaled from June 2025 local FRA-cell state shares
+FRA-MP-028,Madhya Pradesh,Madhya Pradesh FRA Monitoring Unit 28,145,88,38,19,60.7,26.2,13.1,23.918398,77.429689,Synthetic 443-unit demo allocation scaled from June 2025 local FRA-cell state shares
+FRA-MP-029,Madhya Pradesh,Madhya Pradesh FRA Monitoring Unit 29,72,44,13,15,61.1,18.1,20.8,24.767765,78.416123,Synthetic 443-unit demo allocation scaled from June 2025 local FRA-cell state shares
+FRA-MP-030,Madhya Pradesh,Madhya Pradesh FRA Monitoring Unit 30,55,30,15,10,54.5,27.3,18.2,22.512439,78.957886,Synthetic 443-unit demo allocation scaled from June 2025 local FRA-cell state shares
+FRA-MP-031,Madhya Pradesh,Madhya Pradesh FRA Monitoring Unit 31,159,94,41,24,59.1,25.8,15.1,24.282328,75.406335,Synthetic 443-unit demo allocation scaled from June 2025 local FRA-cell state shares
+FRA-MP-032,Madhya Pradesh,Madhya Pradesh FRA Monitoring Unit 32,176,99,49,28,56.2,27.8,15.9,22.375097,78.229425,Synthetic 443-unit demo allocation scaled from June 2025 local FRA-cell state shares
+FRA-MP-033,Madhya Pradesh,Madhya Pradesh FRA Monitoring Unit 33,133,83,31,19,62.4,23.3,14.3,24.29888,77.203982,Synthetic 443-unit demo allocation scaled from June 2025 local FRA-cell state shares
+FRA-MP-034,Madhya Pradesh,Madhya Pradesh FRA Monitoring Unit 34,111,63,30,18,56.8,27.0,16.2,22.96341,79.163863,Synthetic 443-unit demo allocation scaled from June 2025 local FRA-cell state shares
+FRA-MP-035,Madhya Pradesh,Madhya Pradesh FRA Monitoring Unit 35,124,86,27,11,69.4,21.8,8.9,23.362415,80.499405,Synthetic 443-unit demo allocation scaled from June 2025 local FRA-cell state shares
+FRA-MP-036,Madhya Pradesh,Madhya Pradesh FRA Monitoring Unit 36,111,76,25,10,68.5,22.5,9.0,24.427793,79.339639,Synthetic 443-unit demo allocation scaled from June 2025 local FRA-cell state shares
+FRA-MP-037,Madhya Pradesh,Madhya Pradesh FRA Monitoring Unit 37,225,122,65,38,54.2,28.9,16.9,23.818127,76.300856,Synthetic 443-unit demo allocation scaled from June 2025 local FRA-cell state shares
+FRA-MP-038,Madhya Pradesh,Madhya Pradesh FRA Monitoring Unit 38,81,54,20,7,66.7,24.7,8.6,24.071924,76.876117,Synthetic 443-unit demo allocation scaled from June 2025 local FRA-cell state shares
+FRA-MP-039,Madhya Pradesh,Madhya Pradesh FRA Monitoring Unit 39,148,77,46,25,52.0,31.1,16.9,24.680406,79.395048,Synthetic 443-unit demo allocation scaled from June 2025 local FRA-cell state shares
+FRA-MP-040,Madhya Pradesh,Madhya Pradesh FRA Monitoring Unit 40,153,86,36,31,56.2,23.5,20.3,25.066281,76.976151,Synthetic 443-unit demo allocation scaled from June 2025 local FRA-cell state shares
+FRA-MP-041,Madhya Pradesh,Madhya Pradesh FRA Monitoring Unit 41,116,63,37,16,54.3,31.9,13.8,24.780335,80.157689,Synthetic 443-unit demo allocation scaled from June 2025 local FRA-cell state shares
+FRA-MP-042,Madhya Pradesh,Madhya Pradesh FRA Monitoring Unit 42,183,108,46,29,59.0,25.1,15.8,24.58704,78.141222,Synthetic 443-unit demo allocation scaled from June 2025 local FRA-cell state shares
+FRA-MP-043,Madhya Pradesh,Madhya Pradesh FRA Monitoring Unit 43,57,30,14,13,52.6,24.6,22.8,24.486095,75.858344,Synthetic 443-unit demo allocation scaled from June 2025 local FRA-cell state shares
+FRA-MP-044,Madhya Pradesh,Madhya Pradesh FRA Monitoring Unit 44,107,57,32,18,53.3,29.9,16.8,25.934437,77.28939,Synthetic 443-unit demo allocation scaled from June 2025 local FRA-cell state shares
+FRA-MP-045,Madhya Pradesh,Madhya Pradesh FRA Monitoring Unit 45,80,49,14,17,61.2,17.5,21.2,25.586475,79.955581,Synthetic 443-unit demo allocation scaled from June 2025 local FRA-cell state shares
+FRA-MP-046,Madhya Pradesh,Madhya Pradesh FRA Monitoring Unit 46,108,73,31,4,67.6,28.7,3.7,24.709936,76.162716,Synthetic 443-unit demo allocation scaled from June 2025 local FRA-cell state shares
+FRA-MP-047,Madhya Pradesh,Madhya Pradesh FRA Monitoring Unit 47,149,94,32,23,63.1,21.5,15.4,22.335087,78.935234,Synthetic 443-unit demo allocation scaled from June 2025 local FRA-cell state shares
+FRA-MP-048,Madhya Pradesh,Madhya Pradesh FRA Monitoring Unit 48,91,62,15,14,68.1,16.5,15.4,22.283659,79.132436,Synthetic 443-unit demo allocation scaled from June 2025 local FRA-cell state shares
+FRA-MP-049,Madhya Pradesh,Madhya Pradesh FRA Monitoring Unit 49,133,85,31,17,63.9,23.3,12.8,25.486727,80.202821,Synthetic 443-unit demo allocation scaled from June 2025 local FRA-cell state shares
+FRA-MP-050,Madhya Pradesh,Madhya Pradesh FRA Monitoring Unit 50,79,52,16,11,65.8,20.3,13.9,25.4447,79.094115,Synthetic 443-unit demo allocation scaled from June 2025 local FRA-cell state shares
+FRA-MP-051,Madhya Pradesh,Madhya Pradesh FRA Monitoring Unit 51,117,71,22,24,60.7,18.8,20.5,25.184799,81.044592,Synthetic 443-unit demo allocation scaled from June 2025 local FRA-cell state shares
+FRA-MP-052,Madhya Pradesh,Madhya Pradesh FRA Monitoring Unit 52,98,53,26,19,54.1,26.5,19.4,23.689244,76.744252,Synthetic 443-unit demo allocation scaled from June 2025 local FRA-cell state shares
+FRA-MP-053,Madhya Pradesh,Madhya Pradesh FRA Monitoring Unit 53,144,83,39,22,57.6,27.1,15.3,23.80756,76.329233,Synthetic 443-unit demo allocation scaled from June 2025 local FRA-cell state shares
+FRA-MP-054,Madhya Pradesh,Madhya Pradesh FRA Monitoring Unit 54,158,87,42,29,55.1,26.6,18.4,22.600995,79.683804,Synthetic 443-unit demo allocation scaled from June 2025 local FRA-cell state shares
+FRA-MP-055,Madhya Pradesh,Madhya Pradesh FRA Monitoring Unit 55,225,131,51,43,58.2,22.7,19.1,25.920911,81.115518,Synthetic 443-unit demo allocation scaled from June 2025 local FRA-cell state shares
+FRA-MP-056,Madhya Pradesh,Madhya Pradesh FRA Monitoring Unit 56,88,53,18,17,60.2,20.5,19.3,22.431715,78.008962,Synthetic 443-unit demo allocation scaled from June 2025 local FRA-cell state shares
+FRA-MP-057,Madhya Pradesh,Madhya Pradesh FRA Monitoring Unit 57,108,66,27,15,61.1,25.0,13.9,22.093548,76.318787,Synthetic 443-unit demo allocation scaled from June 2025 local FRA-cell state shares
+FRA-MP-058,Madhya Pradesh,Madhya Pradesh FRA Monitoring Unit 58,138,88,30,20,63.8,21.7,14.5,25.728681,76.371092,Synthetic 443-unit demo allocation scaled from June 2025 local FRA-cell state shares
+FRA-MP-059,Madhya Pradesh,Madhya Pradesh FRA Monitoring Unit 59,69,45,14,10,65.2,20.3,14.5,23.951342,76.817687,Synthetic 443-unit demo allocation scaled from June 2025 local FRA-cell state shares
+FRA-MH-001,Maharashtra,Maharashtra FRA Monitoring Unit 01,58,33,13,12,56.9,22.4,20.7,16.855981,78.085755,Synthetic 443-unit demo allocation scaled from June 2025 local FRA-cell state shares
+FRA-MH-002,Maharashtra,Maharashtra FRA Monitoring Unit 02,137,80,34,23,58.4,24.8,16.8,20.068942,76.502263,Synthetic 443-unit demo allocation scaled from June 2025 local FRA-cell state shares
+FRA-MH-003,Maharashtra,Maharashtra FRA Monitoring Unit 03,211,114,58,39,54.0,27.5,18.5,19.223962,79.422491,Synthetic 443-unit demo allocation scaled from June 2025 local FRA-cell state shares
+FRA-MH-004,Maharashtra,Maharashtra FRA Monitoring Unit 04,75,36,25,14,48.0,33.3,18.7,20.24495,75.355184,Synthetic 443-unit demo allocation scaled from June 2025 local FRA-cell state shares
+FRA-MH-005,Maharashtra,Maharashtra FRA Monitoring Unit 05,122,86,19,17,70.5,15.6,13.9,18.994836,74.253322,Synthetic 443-unit demo allocation scaled from June 2025 local FRA-cell state shares
+FRA-MH-006,Maharashtra,Maharashtra FRA Monitoring Unit 06,147,90,36,21,61.2,24.5,14.3,21.040819,77.297595,Synthetic 443-unit demo allocation scaled from June 2025 local FRA-cell state shares
+FRA-MH-007,Maharashtra,Maharashtra FRA Monitoring Unit 07,86,47,28,11,54.7,32.6,12.8,21.024305,75.368211,Synthetic 443-unit demo allocation scaled from June 2025 local FRA-cell state shares
+FRA-MH-008,Maharashtra,Maharashtra FRA Monitoring Unit 08,98,52,27,19,53.1,27.6,19.4,17.715311,77.193492,Synthetic 443-unit demo allocation scaled from June 2025 local FRA-cell state shares
+FRA-MH-009,Maharashtra,Maharashtra FRA Monitoring Unit 09,89,51,21,17,57.3,23.6,19.1,19.956835,74.665275,Synthetic 443-unit demo allocation scaled from June 2025 local FRA-cell state shares
+FRA-MH-010,Maharashtra,Maharashtra FRA Monitoring Unit 10,90,57,21,12,63.3,23.3,13.3,17.104135,75.300431,Synthetic 443-unit demo allocation scaled from June 2025 local FRA-cell state shares
+FRA-MH-011,Maharashtra,Maharashtra FRA Monitoring Unit 11,45,26,10,9,57.8,22.2,20.0,17.710372,75.538818,Synthetic 443-unit demo allocation scaled from June 2025 local FRA-cell state shares
+FRA-MH-012,Maharashtra,Maharashtra FRA Monitoring Unit 12,68,44,15,9,64.7,22.1,13.2,20.998726,75.825159,Synthetic 443-unit demo allocation scaled from June 2025 local FRA-cell state shares
+FRA-MH-013,Maharashtra,Maharashtra FRA Monitoring Unit 13,76,43,16,17,56.6,21.1,22.4,18.899366,75.098231,Synthetic 443-unit demo allocation scaled from June 2025 local FRA-cell state shares
+FRA-MH-014,Maharashtra,Maharashtra FRA Monitoring Unit 14,225,122,61,42,54.2,27.1,18.7,19.765033,79.123003,Synthetic 443-unit demo allocation scaled from June 2025 local FRA-cell state shares
+FRA-MH-015,Maharashtra,Maharashtra FRA Monitoring Unit 15,184,107,46,31,58.2,25.0,16.8,18.934371,74.30134,Synthetic 443-unit demo allocation scaled from June 2025 local FRA-cell state shares
+FRA-MH-016,Maharashtra,Maharashtra FRA Monitoring Unit 16,102,68,18,16,66.7,17.6,15.7,17.620757,77.173954,Synthetic 443-unit demo allocation scaled from June 2025 local FRA-cell state shares
+FRA-MH-017,Maharashtra,Maharashtra FRA Monitoring Unit 17,106,56,28,22,52.8,26.4,20.8,16.716334,77.240801,Synthetic 443-unit demo allocation scaled from June 2025 local FRA-cell state shares
+FRA-MH-018,Maharashtra,Maharashtra FRA Monitoring Unit 18,71,47,15,9,66.2,21.1,12.7,19.653111,74.696184,Synthetic 443-unit demo allocation scaled from June 2025 local FRA-cell state shares
+FRA-MH-019,Maharashtra,Maharashtra FRA Monitoring Unit 19,107,65,25,17,60.7,23.4,15.9,19.60094,79.016773,Synthetic 443-unit demo allocation scaled from June 2025 local FRA-cell state shares
+FRA-MH-020,Maharashtra,Maharashtra FRA Monitoring Unit 20,124,71,30,23,57.3,24.2,18.5,20.749639,78.134448,Synthetic 443-unit demo allocation scaled from June 2025 local FRA-cell state shares
+FRA-MH-021,Maharashtra,Maharashtra FRA Monitoring Unit 21,80,54,15,11,67.5,18.8,13.8,20.038496,75.005047,Synthetic 443-unit demo allocation scaled from June 2025 local FRA-cell state shares
+FRA-MH-022,Maharashtra,Maharashtra FRA Monitoring Unit 22,151,88,34,29,58.3,22.5,19.2,16.938928,78.31836,Synthetic 443-unit demo allocation scaled from June 2025 local FRA-cell state shares
+FRA-MH-023,Maharashtra,Maharashtra FRA Monitoring Unit 23,196,120,39,37,61.2,19.9,18.9,20.382431,75.731336,Synthetic 443-unit demo allocation scaled from June 2025 local FRA-cell state shares
+FRA-MH-024,Maharashtra,Maharashtra FRA Monitoring Unit 24,150,79,43,28,52.7,28.7,18.7,19.136221,75.281887,Synthetic 443-unit demo allocation scaled from June 2025 local FRA-cell state shares
+FRA-MH-025,Maharashtra,Maharashtra FRA Monitoring Unit 25,126,75,30,21,59.5,23.8,16.7,19.906026,74.041697,Synthetic 443-unit demo allocation scaled from June 2025 local FRA-cell state shares
+FRA-MH-026,Maharashtra,Maharashtra FRA Monitoring Unit 26,94,58,24,12,61.7,25.5,12.8,17.822172,77.012353,Synthetic 443-unit demo allocation scaled from June 2025 local FRA-cell state shares
+FRA-MH-027,Maharashtra,Maharashtra FRA Monitoring Unit 27,46,24,13,9,52.2,28.3,19.6,16.73794,79.149178,Synthetic 443-unit demo allocation scaled from June 2025 local FRA-cell state shares
+FRA-MH-028,Maharashtra,Maharashtra FRA Monitoring Unit 28,127,72,32,23,56.7,25.2,18.1,19.281829,74.277965,Synthetic 443-unit demo allocation scaled from June 2025 local FRA-cell state shares
+FRA-OD-001,Odisha,Odisha FRA Monitoring Unit 01,68,45,12,11,66.2,17.6,16.2,19.290212,84.496252,Synthetic 443-unit demo allocation scaled from June 2025 local FRA-cell state shares
+FRA-OD-002,Odisha,Odisha FRA Monitoring Unit 02,135,76,34,25,56.3,25.2,18.5,21.300983,84.740941,Synthetic 443-unit demo allocation scaled from June 2025 local FRA-cell state shares
+FRA-OD-003,Odisha,Odisha FRA Monitoring Unit 03,109,59,35,15,54.1,32.1,13.8,21.006098,84.572502,Synthetic 443-unit demo allocation scaled from June 2025 local FRA-cell state shares
+FRA-OD-004,Odisha,Odisha FRA Monitoring Unit 04,116,60,28,28,51.7,24.1,24.1,18.975598,85.661638,Synthetic 443-unit demo allocation scaled from June 2025 local FRA-cell state shares
+FRA-OD-005,Odisha,Odisha FRA Monitoring Unit 05,146,77,41,28,52.7,28.1,19.2,19.707976,85.87276,Synthetic 443-unit demo allocation scaled from June 2025 local FRA-cell state shares
+FRA-OD-006,Odisha,Odisha FRA Monitoring Unit 06,136,82,36,18,60.3,26.5,13.2,18.679623,85.722447,Synthetic 443-unit demo allocation scaled from June 2025 local FRA-cell state shares
+FRA-OD-007,Odisha,Odisha FRA Monitoring Unit 07,99,62,23,14,62.6,23.2,14.1,20.333465,86.168854,Synthetic 443-unit demo allocation scaled from June 2025 local FRA-cell state shares
+FRA-OD-008,Odisha,Odisha FRA Monitoring Unit 08,225,137,55,33,60.9,24.4,14.7,21.718614,85.737543,Synthetic 443-unit demo allocation scaled from June 2025 local FRA-cell state shares
+FRA-OD-009,Odisha,Odisha FRA Monitoring Unit 09,106,63,30,13,59.4,28.3,12.3,21.080308,83.007877,Synthetic 443-unit demo allocation scaled from June 2025 local FRA-cell state shares
+FRA-OD-010,Odisha,Odisha FRA Monitoring Unit 10,125,68,33,24,54.4,26.4,19.2,20.614395,85.167075,Synthetic 443-unit demo allocation scaled from June 2025 local FRA-cell state shares
+FRA-OD-011,Odisha,Odisha FRA Monitoring Unit 11,128,66,36,26,51.6,28.1,20.3,19.00053,85.489328,Synthetic 443-unit demo allocation scaled from June 2025 local FRA-cell state shares
+FRA-OD-012,Odisha,Odisha FRA Monitoring Unit 12,108,73,23,12,67.6,21.3,11.1,19.775787,82.415595,Synthetic 443-unit demo allocation scaled from June 2025 local FRA-cell state shares
+FRA-OD-013,Odisha,Odisha FRA Monitoring Unit 13,121,77,28,16,63.6,23.1,13.2,19.435928,83.494393,Synthetic 443-unit demo allocation scaled from June 2025 local FRA-cell state shares
+FRA-OD-014,Odisha,Odisha FRA Monitoring Unit 14,46,32,9,5,69.6,19.6,10.9,19.555743,83.414659,Synthetic 443-unit demo allocation scaled from June 2025 local FRA-cell state shares
+FRA-OD-015,Odisha,Odisha FRA Monitoring Unit 15,225,124,53,48,55.1,23.6,21.3,19.008352,84.802033,Synthetic 443-unit demo allocation scaled from June 2025 local FRA-cell state shares
+FRA-OD-016,Odisha,Odisha FRA Monitoring Unit 16,109,64,23,22,58.7,21.1,20.2,18.722105,82.24499,Synthetic 443-unit demo allocation scaled from June 2025 local FRA-cell state shares
+FRA-OD-017,Odisha,Odisha FRA Monitoring Unit 17,88,51,20,17,58.0,22.7,19.3,19.469515,82.985581,Synthetic 443-unit demo allocation scaled from June 2025 local FRA-cell state shares
+FRA-OD-018,Odisha,Odisha FRA Monitoring Unit 18,93,46,31,16,49.5,33.3,17.2,18.996605,84.798372,Synthetic 443-unit demo allocation scaled from June 2025 local FRA-cell state shares
+FRA-OD-019,Odisha,Odisha FRA Monitoring Unit 19,122,82,26,14,67.2,21.3,11.5,19.828043,83.299578,Synthetic 443-unit demo allocation scaled from June 2025 local FRA-cell state shares
+FRA-OD-020,Odisha,Odisha FRA Monitoring Unit 20,119,66,33,20,55.5,27.7,16.8,21.688869,84.178358,Synthetic 443-unit demo allocation scaled from June 2025 local FRA-cell state shares
+FRA-OD-021,Odisha,Odisha FRA Monitoring Unit 21,71,40,15,16,56.3,21.1,22.5,20.291009,85.80398,Synthetic 443-unit demo allocation scaled from June 2025 local FRA-cell state shares
+FRA-OD-022,Odisha,Odisha FRA Monitoring Unit 22,225,127,60,38,56.4,26.7,16.9,18.938718,83.270543,Synthetic 443-unit demo allocation scaled from June 2025 local FRA-cell state shares
+FRA-OD-023,Odisha,Odisha FRA Monitoring Unit 23,102,54,36,12,52.9,35.3,11.8,19.759302,86.437673,Synthetic 443-unit demo allocation scaled from June 2025 local FRA-cell state shares
+FRA-OD-024,Odisha,Odisha FRA Monitoring Unit 24,108,73,19,16,67.6,17.6,14.8,19.380546,83.13361,Synthetic 443-unit demo allocation scaled from June 2025 local FRA-cell state shares
+FRA-OD-025,Odisha,Odisha FRA Monitoring Unit 25,190,116,40,34,61.1,21.1,17.9,19.823809,84.010815,Synthetic 443-unit demo allocation scaled from June 2025 local FRA-cell state shares
+FRA-OD-026,Odisha,Odisha FRA Monitoring Unit 26,199,113,52,34,56.8,26.1,17.1,21.098471,84.029931,Synthetic 443-unit demo allocation scaled from June 2025 local FRA-cell state shares
+FRA-OD-027,Odisha,Odisha FRA Monitoring Unit 27,170,104,30,36,61.2,17.6,21.2,20.904828,85.800573,Synthetic 443-unit demo allocation scaled from June 2025 local FRA-cell state shares
+FRA-OD-028,Odisha,Odisha FRA Monitoring Unit 28,68,40,13,15,58.8,19.1,22.1,19.641429,85.423758,Synthetic 443-unit demo allocation scaled from June 2025 local FRA-cell state shares
+FRA-OD-029,Odisha,Odisha FRA Monitoring Unit 29,77,45,22,10,58.4,28.6,13.0,21.025986,84.466172,Synthetic 443-unit demo allocation scaled from June 2025 local FRA-cell state shares
+FRA-OD-030,Odisha,Odisha FRA Monitoring Unit 30,140,78,42,20,55.7,30.0,14.3,19.89347,84.094143,Synthetic 443-unit demo allocation scaled from June 2025 local FRA-cell state shares
+FRA-OD-031,Odisha,Odisha FRA Monitoring Unit 31,172,102,43,27,59.3,25.0,15.7,21.718556,85.02248,Synthetic 443-unit demo allocation scaled from June 2025 local FRA-cell state shares
+FRA-OD-032,Odisha,Odisha FRA Monitoring Unit 32,112,55,34,23,49.1,30.4,20.5,19.769516,83.420357,Synthetic 443-unit demo allocation scaled from June 2025 local FRA-cell state shares
+FRA-OD-033,Odisha,Odisha FRA Monitoring Unit 33,145,85,41,19,58.6,28.3,13.1,19.456796,83.654849,Synthetic 443-unit demo allocation scaled from June 2025 local FRA-cell state shares
+FRA-OD-034,Odisha,Odisha FRA Monitoring Unit 34,225,120,62,43,53.3,27.6,19.1,20.999688,82.720704,Synthetic 443-unit demo allocation scaled from June 2025 local FRA-cell state shares
+FRA-OD-035,Odisha,Odisha FRA Monitoring Unit 35,189,117,32,40,61.9,16.9,21.2,18.531878,86.518721,Synthetic 443-unit demo allocation scaled from June 2025 local FRA-cell state shares
+FRA-OD-036,Odisha,Odisha FRA Monitoring Unit 36,81,48,25,8,59.3,30.9,9.9,20.460492,83.381936,Synthetic 443-unit demo allocation scaled from June 2025 local FRA-cell state shares
+FRA-OD-037,Odisha,Odisha FRA Monitoring Unit 37,170,105,40,25,61.8,23.5,14.7,21.478383,86.11678,Synthetic 443-unit demo allocation scaled from June 2025 local FRA-cell state shares
+FRA-OD-038,Odisha,Odisha FRA Monitoring Unit 38,111,67,23,21,60.4,20.7,18.9,20.738641,86.253974,Synthetic 443-unit demo allocation scaled from June 2025 local FRA-cell state shares
+FRA-OD-039,Odisha,Odisha FRA Monitoring Unit 39,100,59,27,14,59.0,27.0,14.0,21.805411,83.631653,Synthetic 443-unit demo allocation scaled from June 2025 local FRA-cell state shares
+FRA-OD-040,Odisha,Odisha FRA Monitoring Unit 40,60,36,12,12,60.0,20.0,20.0,19.225876,85.169724,Synthetic 443-unit demo allocation scaled from June 2025 local FRA-cell state shares
+FRA-OD-041,Odisha,Odisha FRA Monitoring Unit 41,137,80,33,24,58.4,24.1,17.5,19.744666,82.668041,Synthetic 443-unit demo allocation scaled from June 2025 local FRA-cell state shares
+FRA-OD-042,Odisha,Odisha FRA Monitoring Unit 42,159,86,40,33,54.1,25.2,20.8,19.654591,86.459306,Synthetic 443-unit demo allocation scaled from June 2025 local FRA-cell state shares
+FRA-OD-043,Odisha,Odisha FRA Monitoring Unit 43,103,67,17,19,65.0,16.5,18.4,18.627735,84.316426,Synthetic 443-unit demo allocation scaled from June 2025 local FRA-cell state shares
+FRA-OD-044,Odisha,Odisha FRA Monitoring Unit 44,162,98,35,29,60.5,21.6,17.9,21.802984,82.525642,Synthetic 443-unit demo allocation scaled from June 2025 local FRA-cell state shares
+FRA-OD-045,Odisha,Odisha FRA Monitoring Unit 45,225,142,56,27,63.1,24.9,12.0,18.448987,82.246794,Synthetic 443-unit demo allocation scaled from June 2025 local FRA-cell state shares
+FRA-OD-046,Odisha,Odisha FRA Monitoring Unit 46,169,101,37,31,59.8,21.9,18.3,20.386721,86.000276,Synthetic 443-unit demo allocation scaled from June 2025 local FRA-cell state shares
+FRA-OD-047,Odisha,Odisha FRA Monitoring Unit 47,78,43,21,14,55.1,26.9,17.9,20.533291,85.390616,Synthetic 443-unit demo allocation scaled from June 2025 local FRA-cell state shares
+FRA-OD-048,Odisha,Odisha FRA Monitoring Unit 48,63,39,11,13,61.9,17.5,20.6,20.547505,84.765617,Synthetic 443-unit demo allocation scaled from June 2025 local FRA-cell state shares
+FRA-OD-049,Odisha,Odisha FRA Monitoring Unit 49,95,57,18,20,60.0,18.9,21.1,20.816521,86.372704,Synthetic 443-unit demo allocation scaled from June 2025 local FRA-cell state shares
+FRA-OD-050,Odisha,Odisha FRA Monitoring Unit 50,138,80,27,31,58.0,19.6,22.5,19.092636,85.558478,Synthetic 443-unit demo allocation scaled from June 2025 local FRA-cell state shares
+FRA-OD-051,Odisha,Odisha FRA Monitoring Unit 51,210,122,48,40,58.1,22.9,19.0,18.762394,83.859668,Synthetic 443-unit demo allocation scaled from June 2025 local FRA-cell state shares
+FRA-OD-052,Odisha,Odisha FRA Monitoring Unit 52,94,47,24,23,50.0,25.5,24.5,19.287581,86.041357,Synthetic 443-unit demo allocation scaled from June 2025 local FRA-cell state shares
+FRA-OD-053,Odisha,Odisha FRA Monitoring Unit 53,117,72,24,21,61.5,20.5,17.9,20.898138,82.913707,Synthetic 443-unit demo allocation scaled from June 2025 local FRA-cell state shares
+FRA-OD-054,Odisha,Odisha FRA Monitoring Unit 54,137,79,34,24,57.7,24.8,17.5,20.108747,86.210388,Synthetic 443-unit demo allocation scaled from June 2025 local FRA-cell state shares
+FRA-OD-055,Odisha,Odisha FRA Monitoring Unit 55,176,98,41,37,55.7,23.3,21.0,18.985782,83.931242,Synthetic 443-unit demo allocation scaled from June 2025 local FRA-cell state shares
+FRA-OD-056,Odisha,Odisha FRA Monitoring Unit 56,58,35,10,13,60.3,17.2,22.4,21.662101,83.422266,Synthetic 443-unit demo allocation scaled from June 2025 local FRA-cell state shares
+FRA-OD-057,Odisha,Odisha FRA Monitoring Unit 57,74,47,18,9,63.5,24.3,12.2,19.697114,84.781931,Synthetic 443-unit demo allocation scaled from June 2025 local FRA-cell state shares
+FRA-OD-058,Odisha,Odisha FRA Monitoring Unit 58,145,88,35,22,60.7,24.1,15.2,21.144503,84.516719,Synthetic 443-unit demo allocation scaled from June 2025 local FRA-cell state shares
+FRA-OD-059,Odisha,Odisha FRA Monitoring Unit 59,75,43,17,15,57.3,22.7,20.0,19.196018,85.973297,Synthetic 443-unit demo allocation scaled from June 2025 local FRA-cell state shares
+FRA-OD-060,Odisha,Odisha FRA Monitoring Unit 60,99,63,21,15,63.6,21.2,15.2,19.819956,86.263879,Synthetic 443-unit demo allocation scaled from June 2025 local FRA-cell state shares
+FRA-OD-061,Odisha,Odisha FRA Monitoring Unit 61,108,65,28,15,60.2,25.9,13.9,18.78621,86.084646,Synthetic 443-unit demo allocation scaled from June 2025 local FRA-cell state shares
+FRA-OD-062,Odisha,Odisha FRA Monitoring Unit 62,92,58,21,13,63.0,22.8,14.1,21.241729,85.97768,Synthetic 443-unit demo allocation scaled from June 2025 local FRA-cell state shares
+FRA-RJ-001,Rajasthan,Rajasthan FRA Monitoring Unit 01,35,21,9,5,60.0,25.7,14.3,25.166722,72.614368,Synthetic 443-unit demo allocation scaled from June 2025 local FRA-cell state shares
+FRA-RJ-002,Rajasthan,Rajasthan FRA Monitoring Unit 02,50,28,7,15,56.0,14.0,30.0,28.758526,73.74135,Synthetic 443-unit demo allocation scaled from June 2025 local FRA-cell state shares
+FRA-RJ-003,Rajasthan,Rajasthan FRA Monitoring Unit 03,93,62,22,9,66.7,23.7,9.7,25.772485,74.307955,Synthetic 443-unit demo allocation scaled from June 2025 local FRA-cell state shares
+FRA-RJ-004,Rajasthan,Rajasthan FRA Monitoring Unit 04,76,46,20,10,60.5,26.3,13.2,26.913395,74.032189,Synthetic 443-unit demo allocation scaled from June 2025 local FRA-cell state shares
+FRA-RJ-005,Rajasthan,Rajasthan FRA Monitoring Unit 05,87,53,19,15,60.9,21.8,17.2,26.302249,76.200861,Synthetic 443-unit demo allocation scaled from June 2025 local FRA-cell state shares
+FRA-RJ-006,Rajasthan,Rajasthan FRA Monitoring Unit 06,82,46,24,12,56.1,29.3,14.6,24.729936,71.323281,Synthetic 443-unit demo allocation scaled from June 2025 local FRA-cell state shares
+FRA-RJ-007,Rajasthan,Rajasthan FRA Monitoring Unit 07,44,30,3,11,68.2,6.8,25.0,26.284823,72.179105,Synthetic 443-unit demo allocation scaled from June 2025 local FRA-cell state shares
+FRA-RJ-008,Rajasthan,Rajasthan FRA Monitoring Unit 08,73,44,20,9,60.3,27.4,12.3,25.30674,74.208381,Synthetic 443-unit demo allocation scaled from June 2025 local FRA-cell state shares
+FRA-RJ-009,Rajasthan,Rajasthan FRA Monitoring Unit 09,63,34,14,15,54.0,22.2,23.8,28.748638,76.479843,Synthetic 443-unit demo allocation scaled from June 2025 local FRA-cell state shares
+FRA-RJ-010,Rajasthan,Rajasthan FRA Monitoring Unit 10,90,49,24,17,54.4,26.7,18.9,24.318053,71.661406,Synthetic 443-unit demo allocation scaled from June 2025 local FRA-cell state shares
+FRA-RJ-011,Rajasthan,Rajasthan FRA Monitoring Unit 11,40,21,11,8,52.5,27.5,20.0,28.095238,73.874563,Synthetic 443-unit demo allocation scaled from June 2025 local FRA-cell state shares
+FRA-RJ-012,Rajasthan,Rajasthan FRA Monitoring Unit 12,124,70,35,19,56.5,28.2,15.3,25.73658,71.281207,Synthetic 443-unit demo allocation scaled from June 2025 local FRA-cell state shares
+FRA-RJ-013,Rajasthan,Rajasthan FRA Monitoring Unit 13,156,89,40,27,57.1,25.6,17.3,28.900048,71.613765,Synthetic 443-unit demo allocation scaled from June 2025 local FRA-cell state shares
+FRA-RJ-014,Rajasthan,Rajasthan FRA Monitoring Unit 14,34,21,9,4,61.8,26.5,11.8,28.599642,71.979447,Synthetic 443-unit demo allocation scaled from June 2025 local FRA-cell state shares
+FRA-RJ-015,Rajasthan,Rajasthan FRA Monitoring Unit 15,66,35,18,13,53.0,27.3,19.7,28.198233,74.264916,Synthetic 443-unit demo allocation scaled from June 2025 local FRA-cell state shares
+FRA-RJ-016,Rajasthan,Rajasthan FRA Monitoring Unit 16,62,36,15,11,58.1,24.2,17.7,24.564858,75.901677,Synthetic 443-unit demo allocation scaled from June 2025 local FRA-cell state shares
+FRA-RJ-017,Rajasthan,Rajasthan FRA Monitoring Unit 17,108,63,27,18,58.3,25.0,16.7,26.871621,73.177338,Synthetic 443-unit demo allocation scaled from June 2025 local FRA-cell state shares
+FRA-RJ-018,Rajasthan,Rajasthan FRA Monitoring Unit 18,148,79,36,33,53.4,24.3,22.3,24.664543,75.541041,Synthetic 443-unit demo allocation scaled from June 2025 local FRA-cell state shares
+FRA-RJ-019,Rajasthan,Rajasthan FRA Monitoring Unit 19,89,49,30,10,55.1,33.7,11.2,26.765105,73.790494,Synthetic 443-unit demo allocation scaled from June 2025 local FRA-cell state shares
+FRA-TN-001,Tamil Nadu,Tamil Nadu FRA Monitoring Unit 01,47,30,11,6,63.8,23.4,12.8,12.557185,78.906926,Synthetic 443-unit demo allocation scaled from June 2025 local FRA-cell state shares
+FRA-TN-002,Tamil Nadu,Tamil Nadu FRA Monitoring Unit 02,67,41,15,11,61.2,22.4,16.4,10.613324,78.57277,Synthetic 443-unit demo allocation scaled from June 2025 local FRA-cell state shares
+FRA-TN-003,Tamil Nadu,Tamil Nadu FRA Monitoring Unit 03,73,46,15,12,63.0,20.5,16.4,12.566178,79.228477,Synthetic 443-unit demo allocation scaled from June 2025 local FRA-cell state shares
+FRA-TN-004,Tamil Nadu,Tamil Nadu FRA Monitoring Unit 04,72,50,16,6,69.4,22.2,8.3,10.895383,78.234099,Synthetic 443-unit demo allocation scaled from June 2025 local FRA-cell state shares
+FRA-TN-005,Tamil Nadu,Tamil Nadu FRA Monitoring Unit 05,102,61,26,15,59.8,25.5,14.7,11.86475,77.109608,Synthetic 443-unit demo allocation scaled from June 2025 local FRA-cell state shares
+FRA-TN-006,Tamil Nadu,Tamil Nadu FRA Monitoring Unit 06,34,19,7,8,55.9,20.6,23.5,11.903664,78.360151,Synthetic 443-unit demo allocation scaled from June 2025 local FRA-cell state shares
+FRA-TN-007,Tamil Nadu,Tamil Nadu FRA Monitoring Unit 07,73,48,18,7,65.8,24.7,9.6,11.934646,76.89766,Synthetic 443-unit demo allocation scaled from June 2025 local FRA-cell state shares
+FRA-TN-008,Tamil Nadu,Tamil Nadu FRA Monitoring Unit 08,77,51,13,13,66.2,16.9,16.9,10.714357,78.782397,Synthetic 443-unit demo allocation scaled from June 2025 local FRA-cell state shares
+FRA-TN-009,Tamil Nadu,Tamil Nadu FRA Monitoring Unit 09,42,28,8,6,66.7,19.0,14.3,12.535565,76.979161,Synthetic 443-unit demo allocation scaled from June 2025 local FRA-cell state shares
+FRA-TN-010,Tamil Nadu,Tamil Nadu FRA Monitoring Unit 10,59,32,18,9,54.2,30.5,15.3,9.014534,78.633855,Synthetic 443-unit demo allocation scaled from June 2025 local FRA-cell state shares
+FRA-TN-011,Tamil Nadu,Tamil Nadu FRA Monitoring Unit 11,49,35,7,7,71.4,14.3,14.3,11.089926,77.177679,Synthetic 443-unit demo allocation scaled from June 2025 local FRA-cell state shares
+FRA-TN-012,Tamil Nadu,Tamil Nadu FRA Monitoring Unit 12,80,39,26,15,48.8,32.5,18.8,9.987436,77.394511,Synthetic 443-unit demo allocation scaled from June 2025 local FRA-cell state shares
+FRA-TN-013,Tamil Nadu,Tamil Nadu FRA Monitoring Unit 13,43,26,8,9,60.5,18.6,20.9,10.664969,78.893868,Synthetic 443-unit demo allocation scaled from June 2025 local FRA-cell state shares
+FRA-TN-014,Tamil Nadu,Tamil Nadu FRA Monitoring Unit 14,48,29,10,9,60.4,20.8,18.8,12.138356,76.988561,Synthetic 443-unit demo allocation scaled from June 2025 local FRA-cell state shares
+FRA-TN-015,Tamil Nadu,Tamil Nadu FRA Monitoring Unit 15,59,32,20,7,54.2,33.9,11.9,10.19281,77.587324,Synthetic 443-unit demo allocation scaled from June 2025 local FRA-cell state shares
+FRA-TN-016,Tamil Nadu,Tamil Nadu FRA Monitoring Unit 16,80,49,17,14,61.2,21.2,17.5,9.835497,78.860769,Synthetic 443-unit demo allocation scaled from June 2025 local FRA-cell state shares
+FRA-TN-017,Tamil Nadu,Tamil Nadu FRA Monitoring Unit 17,63,29,22,12,46.0,34.9,19.0,9.993495,78.452573,Synthetic 443-unit demo allocation scaled from June 2025 local FRA-cell state shares
+FRA-TN-018,Tamil Nadu,Tamil Nadu FRA Monitoring Unit 18,33,24,3,6,72.7,9.1,18.2,10.033963,77.433706,Synthetic 443-unit demo allocation scaled from June 2025 local FRA-cell state shares
+FRA-TN-019,Tamil Nadu,Tamil Nadu FRA Monitoring Unit 19,93,54,21,18,58.1,22.6,19.4,11.780239,78.407569,Synthetic 443-unit demo allocation scaled from June 2025 local FRA-cell state shares
+FRA-TN-020,Tamil Nadu,Tamil Nadu FRA Monitoring Unit 20,50,30,12,8,60.0,24.0,16.0,11.244669,78.22089,Synthetic 443-unit demo allocation scaled from June 2025 local FRA-cell state shares
+FRA-TN-021,Tamil Nadu,Tamil Nadu FRA Monitoring Unit 21,123,68,36,19,55.3,29.3,15.4,12.418363,79.315388,Synthetic 443-unit demo allocation scaled from June 2025 local FRA-cell state shares
+FRA-TN-022,Tamil Nadu,Tamil Nadu FRA Monitoring Unit 22,90,52,21,17,57.8,23.3,18.9,11.040482,77.402705,Synthetic 443-unit demo allocation scaled from June 2025 local FRA-cell state shares
+FRA-TN-023,Tamil Nadu,Tamil Nadu FRA Monitoring Unit 23,46,22,16,8,47.8,34.8,17.4,10.00881,78.23802,Synthetic 443-unit demo allocation scaled from June 2025 local FRA-cell state shares
+FRA-TN-024,Tamil Nadu,Tamil Nadu FRA Monitoring Unit 24,106,57,29,20,53.8,27.4,18.9,12.602594,77.47913,Synthetic 443-unit demo allocation scaled from June 2025 local FRA-cell state shares
+FRA-TN-025,Tamil Nadu,Tamil Nadu FRA Monitoring Unit 25,76,40,18,18,52.6,23.7,23.7,9.674442,77.7602,Synthetic 443-unit demo allocation scaled from June 2025 local FRA-cell state shares
+FRA-TN-026,Tamil Nadu,Tamil Nadu FRA Monitoring Unit 26,38,24,10,4,63.2,26.3,10.5,11.076405,77.253283,Synthetic 443-unit demo allocation scaled from June 2025 local FRA-cell state shares
+FRA-TN-027,Tamil Nadu,Tamil Nadu FRA Monitoring Unit 27,128,71,35,22,55.5,27.3,17.2,9.721988,76.909565,Synthetic 443-unit demo allocation scaled from June 2025 local FRA-cell state shares
+FRA-TN-028,Tamil Nadu,Tamil Nadu FRA Monitoring Unit 28,89,55,28,6,61.8,31.5,6.7,9.834331,78.039607,Synthetic 443-unit demo allocation scaled from June 2025 local FRA-cell state shares
+FRA-TN-029,Tamil Nadu,Tamil Nadu FRA Monitoring Unit 29,48,30,12,6,62.5,25.0,12.5,10.511397,79.055036,Synthetic 443-unit demo allocation scaled from June 2025 local FRA-cell state shares
+FRA-TN-030,Tamil Nadu,Tamil Nadu FRA Monitoring Unit 30,63,36,13,14,57.1,20.6,22.2,12.136158,78.914888,Synthetic 443-unit demo allocation scaled from June 2025 local FRA-cell state shares
+FRA-TN-031,Tamil Nadu,Tamil Nadu FRA Monitoring Unit 31,70,43,16,11,61.4,22.9,15.7,11.355226,79.437043,Synthetic 443-unit demo allocation scaled from June 2025 local FRA-cell state shares
+FRA-TN-032,Tamil Nadu,Tamil Nadu FRA Monitoring Unit 32,148,84,41,23,56.8,27.7,15.5,10.25957,78.0992,Synthetic 443-unit demo allocation scaled from June 2025 local FRA-cell state shares
+FRA-TN-033,Tamil Nadu,Tamil Nadu FRA Monitoring Unit 33,74,45,19,10,60.8,25.7,13.5,9.966988,76.712984,Synthetic 443-unit demo allocation scaled from June 2025 local FRA-cell state shares
+FRA-TN-034,Tamil Nadu,Tamil Nadu FRA Monitoring Unit 34,100,55,24,21,55.0,24.0,21.0,12.129618,76.787599,Synthetic 443-unit demo allocation scaled from June 2025 local FRA-cell state shares
+FRA-TS-001,Telangana,Telangana FRA Monitoring Unit 01,85,46,25,14,54.1,29.4,16.5,16.793238,78.644284,Synthetic 443-unit demo allocation scaled from June 2025 local FRA-cell state shares
+FRA-TS-002,Telangana,Telangana FRA Monitoring Unit 02,64,37,17,10,57.8,26.6,15.6,18.955498,78.574202,Synthetic 443-unit demo allocation scaled from June 2025 local FRA-cell state shares
+FRA-TS-003,Telangana,Telangana FRA Monitoring Unit 03,111,61,27,23,55.0,24.3,20.7,17.910269,78.324978,Synthetic 443-unit demo allocation scaled from June 2025 local FRA-cell state shares
+FRA-TS-004,Telangana,Telangana FRA Monitoring Unit 04,102,57,30,15,55.9,29.4,14.7,18.951559,78.448052,Synthetic 443-unit demo allocation scaled from June 2025 local FRA-cell state shares
+FRA-TS-005,Telangana,Telangana FRA Monitoring Unit 05,92,55,23,14,59.8,25.0,15.2,17.493375,78.336417,Synthetic 443-unit demo allocation scaled from June 2025 local FRA-cell state shares
+FRA-TS-006,Telangana,Telangana FRA Monitoring Unit 06,102,52,26,24,51.0,25.5,23.5,17.846883,79.021244,Synthetic 443-unit demo allocation scaled from June 2025 local FRA-cell state shares
+FRA-TS-007,Telangana,Telangana FRA Monitoring Unit 07,75,41,24,10,54.7,32.0,13.3,19.109216,78.005828,Synthetic 443-unit demo allocation scaled from June 2025 local FRA-cell state shares
+FRA-TS-008,Telangana,Telangana FRA Monitoring Unit 08,157,79,37,41,50.3,23.6,26.1,16.930277,79.755832,Synthetic 443-unit demo allocation scaled from June 2025 local FRA-cell state shares
+FRA-TS-009,Telangana,Telangana FRA Monitoring Unit 09,78,54,13,11,69.2,16.7,14.1,18.137352,78.162011,Synthetic 443-unit demo allocation scaled from June 2025 local FRA-cell state shares
+FRA-TS-010,Telangana,Telangana FRA Monitoring Unit 10,190,119,50,21,62.6,26.3,11.1,18.970221,80.091261,Synthetic 443-unit demo allocation scaled from June 2025 local FRA-cell state shares
+FRA-TS-011,Telangana,Telangana FRA Monitoring Unit 11,49,26,16,7,53.1,32.7,14.3,18.274648,77.979604,Synthetic 443-unit demo allocation scaled from June 2025 local FRA-cell state shares
+FRA-TS-012,Telangana,Telangana FRA Monitoring Unit 12,75,43,20,12,57.3,26.7,16.0,17.754912,78.045608,Synthetic 443-unit demo allocation scaled from June 2025 local FRA-cell state shares
+FRA-TS-013,Telangana,Telangana FRA Monitoring Unit 13,90,51,26,13,56.7,28.9,14.4,17.634368,80.004502,Synthetic 443-unit demo allocation scaled from June 2025 local FRA-cell state shares
+FRA-TS-014,Telangana,Telangana FRA Monitoring Unit 14,71,41,19,11,57.7,26.8,15.5,17.599002,80.019692,Synthetic 443-unit demo allocation scaled from June 2025 local FRA-cell state shares
+FRA-TS-015,Telangana,Telangana FRA Monitoring Unit 15,46,27,7,12,58.7,15.2,26.1,17.539329,78.229902,Synthetic 443-unit demo allocation scaled from June 2025 local FRA-cell state shares
+FRA-TS-016,Telangana,Telangana FRA Monitoring Unit 16,210,123,46,41,58.6,21.9,19.5,17.598351,78.013638,Synthetic 443-unit demo allocation scaled from June 2025 local FRA-cell state shares
+FRA-TS-017,Telangana,Telangana FRA Monitoring Unit 17,69,49,10,10,71.0,14.5,14.5,18.054798,79.74291,Synthetic 443-unit demo allocation scaled from June 2025 local FRA-cell state shares
+FRA-TS-018,Telangana,Telangana FRA Monitoring Unit 18,158,89,47,22,56.3,29.7,13.9,17.536818,78.114115,Synthetic 443-unit demo allocation scaled from June 2025 local FRA-cell state shares
+FRA-TS-019,Telangana,Telangana FRA Monitoring Unit 19,96,60,19,17,62.5,19.8,17.7,18.232424,79.411234,Synthetic 443-unit demo allocation scaled from June 2025 local FRA-cell state shares
+FRA-TS-020,Telangana,Telangana FRA Monitoring Unit 20,78,41,20,17,52.6,25.6,21.8,16.541806,78.007022,Synthetic 443-unit demo allocation scaled from June 2025 local FRA-cell state shares
+FRA-TS-021,Telangana,Telangana FRA Monitoring Unit 21,188,118,32,38,62.8,17.0,20.2,16.823256,77.689885,Synthetic 443-unit demo allocation scaled from June 2025 local FRA-cell state shares
+FRA-TS-022,Telangana,Telangana FRA Monitoring Unit 22,84,49,25,10,58.3,29.8,11.9,17.308457,77.993671,Synthetic 443-unit demo allocation scaled from June 2025 local FRA-cell state shares
+FRA-TS-023,Telangana,Telangana FRA Monitoring Unit 23,225,120,69,36,53.3,30.7,16.0,16.725463,77.70033,Synthetic 443-unit demo allocation scaled from June 2025 local FRA-cell state shares
+FRA-TS-024,Telangana,Telangana FRA Monitoring Unit 24,88,46,30,12,52.3,34.1,13.6,19.234731,77.984424,Synthetic 443-unit demo allocation scaled from June 2025 local FRA-cell state shares
+FRA-TS-025,Telangana,Telangana FRA Monitoring Unit 25,87,52,18,17,59.8,20.7,19.5,18.570463,78.364721,Synthetic 443-unit demo allocation scaled from June 2025 local FRA-cell state shares
+FRA-TS-026,Telangana,Telangana FRA Monitoring Unit 26,84,53,15,16,63.1,17.9,19.0,18.821192,80.300287,Synthetic 443-unit demo allocation scaled from June 2025 local FRA-cell state shares
+FRA-TS-027,Telangana,Telangana FRA Monitoring Unit 27,142,86,31,25,60.6,21.8,17.6,17.254353,78.065031,Synthetic 443-unit demo allocation scaled from June 2025 local FRA-cell state shares
+FRA-TS-028,Telangana,Telangana FRA Monitoring Unit 28,75,49,18,8,65.3,24.0,10.7,18.272138,79.695576,Synthetic 443-unit demo allocation scaled from June 2025 local FRA-cell state shares
+FRA-TS-029,Telangana,Telangana FRA Monitoring Unit 29,79,49,17,13,62.0,21.5,16.5,17.85635,79.640122,Synthetic 443-unit demo allocation scaled from June 2025 local FRA-cell state shares
+FRA-TS-030,Telangana,Telangana FRA Monitoring Unit 30,173,108,40,25,62.4,23.1,14.5,17.76436,78.056555,Synthetic 443-unit demo allocation scaled from June 2025 local FRA-cell state shares
+FRA-TS-031,Telangana,Telangana FRA Monitoring Unit 31,103,51,28,24,49.5,27.2,23.3,18.115439,79.952629,Synthetic 443-unit demo allocation scaled from June 2025 local FRA-cell state shares
+FRA-TR-001,Tripura,Tripura FRA Monitoring Unit 01,91,57,25,9,62.6,27.5,9.9,23.454303,91.288764,Synthetic 443-unit demo allocation scaled from June 2025 local FRA-cell state shares
+FRA-TR-002,Tripura,Tripura FRA Monitoring Unit 02,141,79,38,24,56.0,27.0,17.0,23.357951,91.635488,Synthetic 443-unit demo allocation scaled from June 2025 local FRA-cell state shares
+FRA-TR-003,Tripura,Tripura FRA Monitoring Unit 03,116,67,21,28,57.8,18.1,24.1,23.490416,91.961388,Synthetic 443-unit demo allocation scaled from June 2025 local FRA-cell state shares
+FRA-TR-004,Tripura,Tripura FRA Monitoring Unit 04,162,91,38,33,56.2,23.5,20.4,24.325752,91.218054,Synthetic 443-unit demo allocation scaled from June 2025 local FRA-cell state shares
+FRA-TR-005,Tripura,Tripura FRA Monitoring Unit 05,35,21,11,3,60.0,31.4,8.6,23.321436,91.576513,Synthetic 443-unit demo allocation scaled from June 2025 local FRA-cell state shares
+FRA-TR-006,Tripura,Tripura FRA Monitoring Unit 06,95,58,22,15,61.1,23.2,15.8,23.353914,91.28318,Synthetic 443-unit demo allocation scaled from June 2025 local FRA-cell state shares
+FRA-TR-007,Tripura,Tripura FRA Monitoring Unit 07,162,93,46,23,57.4,28.4,14.2,24.14291,91.437374,Synthetic 443-unit demo allocation scaled from June 2025 local FRA-cell state shares
+FRA-TR-008,Tripura,Tripura FRA Monitoring Unit 08,122,70,36,16,57.4,29.5,13.1,23.724645,91.757304,Synthetic 443-unit demo allocation scaled from June 2025 local FRA-cell state shares
+FRA-UP-001,Uttar Pradesh,Uttar Pradesh FRA Monitoring Unit 01,51,35,6,10,68.6,11.8,19.6,28.681498,83.537985,Synthetic 443-unit demo allocation scaled from June 2025 local FRA-cell state shares
+FRA-UK-001,Uttarakhand,Uttarakhand FRA Monitoring Unit 01,42,27,12,3,64.3,28.6,7.1,29.769726,79.661867,Synthetic 443-unit demo allocation scaled from June 2025 local FRA-cell state shares
+FRA-UK-002,Uttarakhand,Uttarakhand FRA Monitoring Unit 02,57,34,14,9,59.6,24.6,15.8,30.432825,79.42632,Synthetic 443-unit demo allocation scaled from June 2025 local FRA-cell state shares
+FRA-UK-003,Uttarakhand,Uttarakhand FRA Monitoring Unit 03,81,53,13,15,65.4,16.0,18.5,30.401514,78.265926,Synthetic 443-unit demo allocation scaled from June 2025 local FRA-cell state shares
+FRA-UK-004,Uttarakhand,Uttarakhand FRA Monitoring Unit 04,68,31,21,16,45.6,30.9,23.5,30.52917,80.231131,Synthetic 443-unit demo allocation scaled from June 2025 local FRA-cell state shares
+FRA-UK-005,Uttarakhand,Uttarakhand FRA Monitoring Unit 05,42,22,14,6,52.4,33.3,14.3,29.502563,80.050934,Synthetic 443-unit demo allocation scaled from June 2025 local FRA-cell state shares
+FRA-UK-006,Uttarakhand,Uttarakhand FRA Monitoring Unit 06,66,41,17,8,62.1,25.8,12.1,30.182636,79.714081,Synthetic 443-unit demo allocation scaled from June 2025 local FRA-cell state shares
+FRA-UK-007,Uttarakhand,Uttarakhand FRA Monitoring Unit 07,67,37,17,13,55.2,25.4,19.4,30.097531,80.335876,Synthetic 443-unit demo allocation scaled from June 2025 local FRA-cell state shares
+FRA-UK-008,Uttarakhand,Uttarakhand FRA Monitoring Unit 08,42,24,12,6,57.1,28.6,14.3,30.804104,80.264138,Synthetic 443-unit demo allocation scaled from June 2025 local FRA-cell state shares
+FRA-UK-009,Uttarakhand,Uttarakhand FRA Monitoring Unit 09,74,45,20,9,60.8,27.0,12.2,30.235315,79.558264,Synthetic 443-unit demo allocation scaled from June 2025 local FRA-cell state shares

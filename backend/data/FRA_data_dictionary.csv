@@ -1,0 +1,43 @@
+feature,description
+claim_id,Unique synthetic claim identifier
+state,State/UT for the synthetic monitoring unit
+district,Synthetic monitoring-unit label; not an official 443-district sanctioned-name list
+village,Synthetic village identifier
+latitude,Synthetic WGS84 latitude
+longitude,Synthetic WGS84 longitude
+claim_geometry_id,Future GeoJSON join key
+claim_type,Individual or Community
+rights_subtype,IFR/CFR/community-right subtype
+submission_date,Claim submission date
+current_stage,Current FRA processing stage
+last_updated_date,Latest record update
+status,Approved/Pending/Rejected
+gram_sabha_date,Gram Sabha processing date
+sdlc_date,SDLC processing date
+dlc_date,DLC processing date
+decision_date,Final decision date
+pending_reason,Reason claim is waiting
+gram_sabha_recommendation,Gram Sabha recommendation
+sdlc_recommendation,SDLC recommendation
+remand_count,Number of remands/reconsiderations
+last_remand_reason,Latest remand reason
+evidence_types,Semicolon-separated evidence sources
+rejection_reason,Reason for rejection
+appeal_status,Appeal status
+appeal_date,Appeal filing date
+claimed_area_ha,Claimed area in hectares
+forest_record_area_ha,Synthetic forest-record area
+revenue_record_area_ha,Synthetic revenue-record area
+forest_overlap_pct,Synthetic forest overlap percentage
+protected_area_type,Protected-area context
+protected_area_overlap_pct,Protected-area overlap
+cfr_map_available,Whether CFR map exists
+gram_sabha_resolution_date,CFR resolution date
+assigned_unit_id,Monitoring-unit foreign key
+verification_visit_count,Field-verification visit count
+applicant_hash,Synthetic non-identifying applicant hash
+estimated_eligible_households,Synthetic village estimate
+forest_dependent_households,Synthetic village aggregate
+village_forest_area_ha,Synthetic village forest area
+title_copy_delivered_date,Title delivery date
+linked_schemes,Semicolon-separated convergence schemes

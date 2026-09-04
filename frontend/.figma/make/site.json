@@ -1,0 +1,10 @@
+{
+  "description": "Streamline task management and enhance productivity with an intuitive interface designed for teams to collaborate efficiently and track progress.",
+  "robots": {
+    "index": false
+  },
+  "accessibility": {
+    "addBypassLinks": false,
+    "ignoreReducedMotion": false
+  }
+}

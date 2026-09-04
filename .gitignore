@@ -1,0 +1,19 @@
+# Local development/build artifacts
+.pnpm-store/
+frontend/node_modules/
+frontend/dist/
+backend/.deps/
+backend/.venv/
+backend/fra.db
+backend/__pycache__/
+backend/app/__pycache__/
+backend/tests/__pycache__/
+backend/.pytest_cache/
+
+# Local configuration and editor files
+.env
+.env.local
+frontend/.env
+backend/.env
+.vscode/
+*.log
