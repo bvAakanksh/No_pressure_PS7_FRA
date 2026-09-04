@@ -177,6 +177,10 @@ app.add_middleware(CORSMiddleware,allow_origins=origins,allow_credentials=True,a
 @app.on_event("startup")
 def startup(): ensure_db()
 
+@app.get("/")
+def root():
+    return {"status":"ok","message":"FRA Monitoring API is running.","frontend":"http://127.0.0.1:5173/","docs":"/docs","health":"/api/health"}
+
 @app.get("/api/health")
 def health(): return {"status":"ok","databaseInitialized":db_ready(),"dataAsOf":AS_OF.isoformat()}
 @app.get("/api")
