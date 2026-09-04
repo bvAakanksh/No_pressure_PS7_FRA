@@ -190,20 +190,26 @@ def api_root():
 @app.get("/api/states")
 def states():
     with SessionLocal() as db:
+        claims_by_state=defaultdict(list)
+        for claim in db.scalars(select(Claim)).all():
+            claims_by_state[claim.state_id].append(claim)
         records=[]
         for s in db.scalars(select(State).order_by(State.name)).all():
-            cs=db.scalars(select(Claim).where(Claim.state_id==s.id)).all(); counts=Counter(x.status for x in cs)
+            cs=claims_by_state[s.id]; counts=Counter(x.status for x in cs)
             records.append({"id":s.id,"name":s.name,"code":s.id.upper()[:3],"center":[s.center_lat,s.center_lon],"zoom":6,"totalClaims":len(cs),"pendingClaims":counts["Pending"],"approvedClaims":counts["Approved"],"rejectedClaims":counts["Rejected"],"highRiskClaims":sum(x.risk_level=="high" for x in cs),"avgProcessingTimeDays":round(sum(age(x) for x in cs)/len(cs),1),"overallRiskScore":round(sum(x.risk_score for x in cs)/len(cs),1)})
         return records
-def district_out(db: Session, u: Unit) -> dict[str,Any]:
-    cs=db.scalars(select(Claim).where(Claim.district_id==u.id)).all(); counts=Counter(x.status for x in cs); total=len(cs) or 1; risk=round(sum(x.risk_score for x in cs)/total,1); kinds=Counter(k for x in cs for k in anomaly_types(x))
+def district_out(db: Session, u: Unit, claims: list[Claim] | None = None) -> dict[str,Any]:
+    cs=claims if claims is not None else db.scalars(select(Claim).where(Claim.district_id==u.id)).all(); counts=Counter(x.status for x in cs); total=len(cs) or 1; risk=round(sum(x.risk_score for x in cs)/total,1); kinds=Counter(k for x in cs for k in anomaly_types(x))
     return {"id":u.id,"stateId":u.state_id,"stateName":db.get(State,u.state_id).name,"name":u.name,"code":u.id,"center":[u.center_lat,u.center_lon],"totalClaims":len(cs),"pendingClaims":counts["Pending"],"approvedClaims":counts["Approved"],"rejectedClaims":counts["Rejected"],"approvalRate":round(counts["Approved"]*100/total,1),"rejectionRate":round(counts["Rejected"]*100/total,1),"pendingRate":round(counts["Pending"]*100/total,1),"avgProcessingTimeDays":round(sum(age(x) for x in cs)/total,1),"overallRiskScore":risk,"highRiskClaimsCount":sum(x.risk_level=="high" for x in cs),"riskCategory":"critical" if risk>=75 else risk_level(risk),"keyAnomalies":[x for x,_ in kinds.most_common(3)]}
 @app.get("/api/districts")
 def districts(stateId: str|None=None):
     with SessionLocal() as db:
         q=select(Unit).order_by(Unit.name)
         if stateId: q=q.where(Unit.state_id==stateId)
-        return [district_out(db,u) for u in db.scalars(q).all()]
+        claims_by_district=defaultdict(list)
+        for claim in db.scalars(select(Claim)).all():
+            claims_by_district[claim.district_id].append(claim)
+        return [district_out(db,u,claims_by_district.get(u.id,[])) for u in db.scalars(q).all()]
 @app.get("/api/districts/{district_id}")
 @app.get("/api/districts/{district_id}/summary")
 def district(district_id: str):
