@@ -172,7 +172,7 @@ def nearby(c: Claim) -> list[dict[str,Any]]:
     return sorted(rows,key=lambda x:x["distanceKm"])[:8]
 
 app=FastAPI(title="FRA Monitoring API",version="1.0.0",description="Synthetic-data decision support API. Risk scoring is deterministic.")
-origins=[x.strip() for x in os.getenv("FRONTEND_ORIGIN","http://localhost:5173,http://localhost:8443,http://127.0.0.1:5180").split(",")]
+origins=[x.strip() for x in os.getenv("FRONTEND_ORIGIN","http://localhost:5173,http://127.0.0.1:5173,http://localhost:8443,http://127.0.0.1:8443,http://127.0.0.1:5180").split(",")]
 app.add_middleware(CORSMiddleware,allow_origins=origins,allow_credentials=True,allow_methods=["*"],allow_headers=["*"])
 @app.on_event("startup")
 def startup(): ensure_db()
