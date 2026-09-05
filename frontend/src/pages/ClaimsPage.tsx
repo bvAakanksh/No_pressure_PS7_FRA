@@ -7,13 +7,17 @@ import LoadingState from '../components/common/LoadingState';
 import EmptyState from '../components/common/EmptyState';
 import ErrorState from '../components/common/ErrorState';
 import { Claim, StateData, DistrictData } from '../types/schemas';
-import { getClaims, getStates, getDistricts, getClaim, getClaimRisk, getClaimTimeline, getNearbyAnomalies } from '../services/api';
+import { getClaimsPage, getStates, getDistricts, getClaim, getClaimRisk, getClaimTimeline, getNearbyAnomalies } from '../services/api';
+import { ChevronLeft, ChevronRight } from 'lucide-react';
 
 export default function ClaimsPage() {
   const [loading, setLoading] = useState(true);
   const [error, setError] = useState<string | null>(null);
 
   const [claims, setClaims] = useState<Claim[]>([]);
+  const [totalClaims, setTotalClaims] = useState(0);
+  const [page, setPage] = useState(1);
+  const pageSize = 50;
   const [states, setStates] = useState<StateData[]>([]);
   const [districts, setDistricts] = useState<DistrictData[]>([]);
 
@@ -44,21 +48,16 @@ export default function ClaimsPage() {
     setLoading(true);
     setError(null);
     try {
-      const [fetchedClaims, fetchedStates, fetchedDistricts] = await Promise.all([
-        getClaims({
+      const fetchedClaims = await getClaimsPage({
           claimId: searchQuery,
           stateId,
           districtId,
           status,
           riskLevel: riskLevel as any,
           anomalyType,
-        }),
-        getStates(),
-        getDistricts(stateId),
-      ]);
-      setClaims(fetchedClaims);
-      setStates(fetchedStates);
-      setDistricts(fetchedDistricts);
+        }, page, pageSize);
+      setClaims(fetchedClaims.items);
+      setTotalClaims(fetchedClaims.total);
     } catch (err: any) {
       setError(err.message || 'Failed to fetch claims data');
     } finally {
@@ -67,8 +66,17 @@ export default function ClaimsPage() {
   };
 
   useEffect(() => {
-    fetchData();
-  }, [searchQuery, stateId, districtId, status, riskLevel, anomalyType]);
+    void Promise.all([getStates(), getDistricts(stateId || undefined)])
+      .then(([fetchedStates, fetchedDistricts]) => {
+        setStates(fetchedStates);
+        setDistricts(fetchedDistricts);
+      })
+      .catch((err: any) => setError(err.message || 'Failed to load claim filters'));
+  }, [stateId]);
+
+  useEffect(() => {
+    void fetchData();
+  }, [searchQuery, stateId, districtId, status, riskLevel, anomalyType, page]);
 
   const handleSelectClaim = async (cId: string) => {
     const requestId = ++detailRequest.current;
@@ -111,6 +119,7 @@ export default function ClaimsPage() {
   };
 
   const handleResetFilters = () => {
+    setPage(1);
     setSearchQuery('');
     setStateId('');
     setDistrictId('');
@@ -120,12 +129,23 @@ export default function ClaimsPage() {
     handleCloseDetail();
   };
 
+  const updateFilter = (setter: (value: string) => void) => (value: string) => {
+    setPage(1);
+    setter(value);
+  };
+  const pageCount = Math.max(1, Math.ceil(totalClaims / pageSize));
+  const goToPage = (nextPage: number) => {
+    setSelectedClaimId(null);
+    setSelectedClaim(null);
+    setPage(Math.min(Math.max(nextPage, 1), pageCount));
+  };
+
   return (
     <div className="space-y-6">
       {/* Top Search & Filter Control Bar */}
       <div className="space-y-3">
         <SearchBar
-          onSearch={(q) => setSearchQuery(q)}
+          onSearch={updateFilter(setSearchQuery)}
           placeholder="Search by Claim ID, Applicant Name, Village..."
           isNlpMode={false}
         />
@@ -138,11 +158,11 @@ export default function ClaimsPage() {
           anomalyType={anomalyType}
           states={states}
           districts={districts}
-          onStateChange={setStateId}
-          onDistrictChange={setDistrictId}
-          onStatusChange={setStatus}
-          onRiskLevelChange={setRiskLevel}
-          onAnomalyTypeChange={setAnomalyType}
+          onStateChange={updateFilter(setStateId)}
+          onDistrictChange={updateFilter(setDistrictId)}
+          onStatusChange={updateFilter(setStatus)}
+          onRiskLevelChange={updateFilter(setRiskLevel)}
+          onAnomalyTypeChange={updateFilter(setAnomalyType)}
           onReset={handleResetFilters}
         />
       </div>
@@ -164,7 +184,7 @@ export default function ClaimsPage() {
           <div className={`${selectedClaimId ? 'lg:col-span-7' : 'lg:col-span-12'} ${selectedClaimId ? 'order-2 lg:order-1' : ''} transition-all`}>
             <div className="flex items-center justify-between mb-2">
               <h2 className="text-xs font-bold text-slate-800 uppercase tracking-wider">
-                Claim Records ({claims.length})
+                Claim Records ({totalClaims.toLocaleString()})
               </h2>
             </div>
             <ClaimTable
@@ -172,6 +192,17 @@ export default function ClaimsPage() {
               selectedClaimId={selectedClaimId}
               onSelectClaim={handleSelectClaim}
             />
+            <div className="flex items-center justify-between border-t border-slate-200 px-3 py-2 text-xs text-slate-600">
+              <span>Page {page} of {pageCount} ({pageSize} per page)</span>
+              <div className="flex items-center gap-1">
+                <button type="button" onClick={() => goToPage(page - 1)} disabled={page === 1} className="inline-flex items-center gap-1 rounded-md border border-slate-200 px-2 py-1 disabled:cursor-not-allowed disabled:opacity-40">
+                  <ChevronLeft className="size-3.5" /> Previous
+                </button>
+                <button type="button" onClick={() => goToPage(page + 1)} disabled={page === pageCount} className="inline-flex items-center gap-1 rounded-md border border-slate-200 px-2 py-1 disabled:cursor-not-allowed disabled:opacity-40">
+                  Next <ChevronRight className="size-3.5" />
+                </button>
+              </div>
+            </div>
           </div>
 
           {/* Selected Claim Detail Panel */}

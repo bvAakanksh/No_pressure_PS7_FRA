@@ -8,8 +8,12 @@ def test_health_and_core_endpoints():
     assert client.get('/api/health').json()['status'] == 'ok'
     assert len(client.get('/api/states').json()) > 0
     assert len(client.get('/api/districts').json()) == 443
-    claims = client.get('/api/claims?limit=2').json()
+    paged = client.get('/api/claims?page=2&pageSize=2')
+    claims = paged.json()
     assert len(claims) == 2 and 0 <= claims[0]['riskScore'] <= 100
+    assert paged.headers['x-total-count'] == '44300'
+    assert paged.headers['x-page'] == '2'
+    assert paged.headers['x-page-size'] == '2'
     claim_id = claims[0]['id']
     assert client.get(f'/api/claims/{claim_id}').status_code == 200
     assert client.get(f'/api/claims/{claim_id}/risk').status_code == 200

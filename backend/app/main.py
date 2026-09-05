@@ -5,16 +5,17 @@ import csv
 import math
 import os
 import re
+import time
 from collections import Counter, defaultdict
-from datetime import date, datetime
+from datetime import date, datetime, timedelta
 from pathlib import Path
 from typing import Any
 
 from dotenv import load_dotenv
-from fastapi import FastAPI, HTTPException, Query
+from fastapi import FastAPI, HTTPException, Query, Response
 from fastapi.middleware.cors import CORSMiddleware
 from pydantic import BaseModel, Field, field_validator
-from sqlalchemy import Date, Float, Integer, String, create_engine, func, select
+from sqlalchemy import Date, Float, Index, Integer, String, create_engine, func, or_, select
 from sqlalchemy.orm import DeclarativeBase, Mapped, Session, mapped_column, sessionmaker
 
 ROOT = Path(__file__).resolve().parents[1]
@@ -40,6 +41,13 @@ class Unit(Base):
     center_lon: Mapped[float] = mapped_column(Float)
 class Claim(Base):
     __tablename__ = "claims"
+    __table_args__ = (
+        Index("ix_claims_state_status", "state_id", "status"),
+        Index("ix_claims_district_status", "district_id", "status"),
+        Index("ix_claims_stage_status", "current_stage", "status"),
+        Index("ix_claims_risk_level_score", "risk_level", "risk_score"),
+        Index("ix_claims_village_applicant", "village", "applicant_hash"),
+    )
     id: Mapped[str] = mapped_column(String, primary_key=True)
     state_id: Mapped[str] = mapped_column(String, index=True)
     district_id: Mapped[str] = mapped_column(String, index=True)
@@ -50,8 +58,8 @@ class Claim(Base):
     claim_type: Mapped[str] = mapped_column(String)
     rights_subtype: Mapped[str] = mapped_column(String)
     submission_date: Mapped[date] = mapped_column(Date, index=True)
-    current_stage: Mapped[str] = mapped_column(String)
-    last_updated_date: Mapped[date] = mapped_column(Date)
+    current_stage: Mapped[str] = mapped_column(String, index=True)
+    last_updated_date: Mapped[date] = mapped_column(Date, index=True)
     status: Mapped[str] = mapped_column(String, index=True)
     gram_sabha_date: Mapped[date | None] = mapped_column(Date, nullable=True)
     sdlc_date: Mapped[date | None] = mapped_column(Date, nullable=True)
@@ -64,18 +72,34 @@ class Claim(Base):
     claimed_area: Mapped[float] = mapped_column(Float)
     forest_area: Mapped[float] = mapped_column(Float)
     revenue_area: Mapped[float] = mapped_column(Float)
-    forest_overlap: Mapped[float] = mapped_column(Float)
+    forest_overlap: Mapped[float] = mapped_column(Float, index=True)
     protected_type: Mapped[str | None] = mapped_column(String, nullable=True)
-    protected_overlap: Mapped[float] = mapped_column(Float)
+    protected_overlap: Mapped[float] = mapped_column(Float, index=True)
     verification_visits: Mapped[int] = mapped_column(Integer)
     applicant_hash: Mapped[str] = mapped_column(String, index=True)
     remand_count: Mapped[int] = mapped_column(Integer)
     risk_score: Mapped[float] = mapped_column(Float, index=True)
     risk_level: Mapped[str] = mapped_column(String, index=True)
-    duplicate_score: Mapped[float] = mapped_column(Float)
+    duplicate_score: Mapped[float] = mapped_column(Float, index=True)
 
 engine = create_engine(DB_URL, connect_args={"check_same_thread": False} if DB_URL.startswith("sqlite") else {})
 SessionLocal = sessionmaker(engine, expire_on_commit=False)
+CACHE_TTL_SECONDS = 60
+_response_cache: dict[str, tuple[float, Any]] = {}
+
+def cache_get(key: str) -> Any | None:
+    entry = _response_cache.get(key)
+    if not entry or time.monotonic() - entry[0] >= CACHE_TTL_SECONDS:
+        _response_cache.pop(key, None)
+        return None
+    return entry[1]
+
+def cache_set(key: str, value: Any) -> Any:
+    _response_cache[key] = (time.monotonic(), value)
+    return value
+
+def clear_response_cache() -> None:
+    _response_cache.clear()
 
 def slug(value: str) -> str: return re.sub(r"[^a-z0-9]+", "-", value.lower()).strip("-")
 def parse_date(value: str) -> date | None:
@@ -128,6 +152,7 @@ def seed(force: bool = False) -> dict[str, Any]:
                 c.duplicate_score=max([0]+[min(100, 70 + (30*(1-abs(c.claimed_area-o.claimed_area)/max(c.claimed_area,o.claimed_area,.01)))) for o in group if o is not c and c.village==o.village and haversine(c,o)<=5])
         for c in claims: c.risk_score=calc_score(c); c.risk_level=risk_level(c.risk_score)
         db.bulk_save_objects(claims); db.commit()
+        clear_response_cache()
         return {"status":"initialized","claims":len(claims),"units":len(units),"invalidCoordinates":invalid}
 
 def db_ready() -> bool:
@@ -135,6 +160,9 @@ def db_ready() -> bool:
         with SessionLocal() as db: return bool(db.scalar(select(func.count()).select_from(Claim)))
     except Exception: return False
 def ensure_db() -> None:
+    Base.metadata.create_all(engine)
+    for index in Claim.__table__.indexes:
+        index.create(engine, checkfirst=True)
     if not db_ready(): seed()
 def anomaly_types(c: Claim) -> list[str]:
     result=[]
@@ -173,7 +201,7 @@ def nearby(c: Claim) -> list[dict[str,Any]]:
 
 app=FastAPI(title="FRA Monitoring API",version="1.0.0",description="Synthetic-data decision support API. Risk scoring is deterministic.")
 origins=[x.strip() for x in os.getenv("FRONTEND_ORIGIN","http://localhost:5173,http://127.0.0.1:5173,http://localhost:8443,http://127.0.0.1:8443,http://127.0.0.1:5180").split(",")]
-app.add_middleware(CORSMiddleware,allow_origins=origins,allow_credentials=True,allow_methods=["*"],allow_headers=["*"])
+app.add_middleware(CORSMiddleware,allow_origins=origins,allow_credentials=True,allow_methods=["*"],allow_headers=["*"],expose_headers=["X-Total-Count","X-Page","X-Page-Size"])
 @app.on_event("startup")
 def startup(): ensure_db()
 
@@ -189,6 +217,8 @@ def api_root():
     return {"status":"ok","message":"FRA Monitoring API is running. Open /docs for interactive documentation.","docs":"/docs","health":"/api/health"}
 @app.get("/api/states")
 def states():
+    cached=cache_get("states")
+    if cached is not None: return cached
     with SessionLocal() as db:
         claims_by_state=defaultdict(list)
         for claim in db.scalars(select(Claim)).all():
@@ -197,28 +227,38 @@ def states():
         for s in db.scalars(select(State).order_by(State.name)).all():
             cs=claims_by_state[s.id]; counts=Counter(x.status for x in cs)
             records.append({"id":s.id,"name":s.name,"code":s.id.upper()[:3],"center":[s.center_lat,s.center_lon],"zoom":6,"totalClaims":len(cs),"pendingClaims":counts["Pending"],"approvedClaims":counts["Approved"],"rejectedClaims":counts["Rejected"],"highRiskClaims":sum(x.risk_level=="high" for x in cs),"avgProcessingTimeDays":round(sum(age(x) for x in cs)/len(cs),1),"overallRiskScore":round(sum(x.risk_score for x in cs)/len(cs),1)})
-        return records
+        return cache_set("states", records)
 def district_out(db: Session, u: Unit, claims: list[Claim] | None = None) -> dict[str,Any]:
     cs=claims if claims is not None else db.scalars(select(Claim).where(Claim.district_id==u.id)).all(); counts=Counter(x.status for x in cs); total=len(cs) or 1; risk=round(sum(x.risk_score for x in cs)/total,1); kinds=Counter(k for x in cs for k in anomaly_types(x))
     return {"id":u.id,"stateId":u.state_id,"stateName":db.get(State,u.state_id).name,"name":u.name,"code":u.id,"center":[u.center_lat,u.center_lon],"totalClaims":len(cs),"pendingClaims":counts["Pending"],"approvedClaims":counts["Approved"],"rejectedClaims":counts["Rejected"],"approvalRate":round(counts["Approved"]*100/total,1),"rejectionRate":round(counts["Rejected"]*100/total,1),"pendingRate":round(counts["Pending"]*100/total,1),"avgProcessingTimeDays":round(sum(age(x) for x in cs)/total,1),"overallRiskScore":risk,"highRiskClaimsCount":sum(x.risk_level=="high" for x in cs),"riskCategory":"critical" if risk>=75 else risk_level(risk),"keyAnomalies":[x for x,_ in kinds.most_common(3)]}
 @app.get("/api/districts")
 def districts(stateId: str|None=None):
+    cache_key=f"districts:{stateId or 'all'}"
+    cached=cache_get(cache_key)
+    if cached is not None: return cached
     with SessionLocal() as db:
         q=select(Unit).order_by(Unit.name)
         if stateId: q=q.where(Unit.state_id==stateId)
+        units=db.scalars(q).all()
+        unit_ids=[unit.id for unit in units]
         claims_by_district=defaultdict(list)
-        for claim in db.scalars(select(Claim)).all():
+        claim_query=select(Claim)
+        if stateId: claim_query=claim_query.where(Claim.district_id.in_(unit_ids))
+        for claim in db.scalars(claim_query):
             claims_by_district[claim.district_id].append(claim)
-        return [district_out(db,u,claims_by_district.get(u.id,[])) for u in db.scalars(q).all()]
+        return cache_set(cache_key, [district_out(db,u,claims_by_district.get(u.id,[])) for u in units])
 @app.get("/api/districts/{district_id}")
 @app.get("/api/districts/{district_id}/summary")
 def district(district_id: str):
+    cache_key=f"district:{district_id}"
+    cached=cache_get(cache_key)
+    if cached is not None: return cached
     with SessionLocal() as db:
         u=db.get(Unit,district_id)
         if not u: raise HTTPException(404,"District not found")
-        return district_out(db,u)
+        return cache_set(cache_key, district_out(db,u))
 @app.get("/api/claims")
-def claims(claimId:str|None=None,stateId:str|None=None,districtId:str|None=None,villageName:str|None=None,status:str|None=None,riskLevel:str|None=None,minRiskScore:float|None=Query(None,ge=0,le=100),anomalyType:str|None=None,claimType:str|None=None,startDate:str|None=None,endDate:str|None=None,limit:int=Query(1000,ge=1,le=44300)):
+def claims(response: Response, claimId:str|None=None,stateId:str|None=None,districtId:str|None=None,villageName:str|None=None,status:str|None=None,riskLevel:str|None=None,minRiskScore:float|None=Query(None,ge=0,le=100),anomalyType:str|None=None,claimType:str|None=None,startDate:str|None=None,endDate:str|None=None,page:int=Query(1,ge=1),pageSize:int=Query(50,alias="pageSize",ge=1,le=100),limit:int|None=Query(None,ge=1,le=100)):
     with SessionLocal() as db:
         q=select(Claim)
         if claimId:q=q.where(Claim.id.contains(claimId))
@@ -241,8 +281,19 @@ def claims(claimId:str|None=None,stateId:str|None=None,districtId:str|None=None,
             elif claimType == "Community": q=q.where(Claim.claim_type == "Community")
         if startDate:q=q.where(Claim.submission_date>=date.fromisoformat(startDate))
         if endDate:q=q.where(Claim.submission_date<=date.fromisoformat(endDate))
-        rows=db.scalars(q.order_by(Claim.risk_score.desc()).limit(limit)).all()
-        if anomalyType and anomalyType!="All":rows=[c for c in rows if anomalyType.lower() in " ".join(anomaly_types(c)).lower()]
+        if anomalyType and anomalyType!="All":
+            if anomalyType=="Severe Anomaly": q=q.where(Claim.risk_score>=70)
+            elif anomalyType=="Boundary Overlap": q=q.where(or_(Claim.forest_overlap>=20,Claim.protected_overlap>=10))
+            elif anomalyType=="Duplicate Suspect": q=q.where(Claim.duplicate_score>=70)
+            elif anomalyType=="Minor Mismatch": q=q.where(Claim.risk_score<70,Claim.status!="Rejected",Claim.forest_overlap<20,Claim.protected_overlap<10,Claim.duplicate_score<70,func.abs(Claim.claimed_area-Claim.revenue_area)/func.max(Claim.revenue_area,0.01)>=0.3)
+            elif anomalyType=="Clean": q=q.where(Claim.risk_score<40,Claim.status!="Rejected",Claim.forest_overlap<20,Claim.protected_overlap<10,Claim.duplicate_score<70,func.abs(Claim.claimed_area-Claim.revenue_area)/func.max(Claim.revenue_area,0.01)<0.3,or_(Claim.status!="Pending",Claim.submission_date>=AS_OF-timedelta(days=365)))
+        total=db.scalar(select(func.count()).select_from(q.subquery())) or 0
+        effective_page_size=limit or pageSize
+        effective_page=1 if limit else page
+        rows=db.scalars(q.order_by(Claim.risk_score.desc()).offset((effective_page-1)*effective_page_size).limit(effective_page_size)).all()
+        response.headers["X-Total-Count"]=str(total)
+        response.headers["X-Page"]=str(effective_page)
+        response.headers["X-Page-Size"]=str(effective_page_size)
         return [claim_out(c,False) for c in rows]
 @app.get("/api/claims/{claim_id}")
 def claim(claim_id:str):
@@ -270,33 +321,54 @@ def claim_nearby(claim_id:str):
         return nearby(c)
 @app.get("/api/anomalies/clusters")
 def clusters(districtId:str|None=None):
+    cache_key=f"clusters:{districtId or 'all'}"
+    cached=cache_get(cache_key)
+    if cached is not None: return cached
     with SessionLocal() as db:
-        q=select(Claim).where(Claim.risk_score>=40)
+        q=select(Claim.id,Claim.district_id,Claim.district_name,Claim.village,Claim.latitude,Claim.longitude,Claim.risk_score,Claim.status,Claim.submission_date,Claim.claimed_area,Claim.revenue_area,Claim.forest_overlap,Claim.protected_overlap,Claim.duplicate_score).where(Claim.risk_score>=40)
         if districtId:q=q.where(Claim.district_id==districtId)
         groups=defaultdict(list)
-        for c in db.scalars(q).all(): groups[(c.district_id,c.village)].append(c)
+        for row in db.execute(q): groups[(row.district_id,row.village)].append(row)
         result=[]
         for (did,_),cs in groups.items():
             if len(cs)<2:continue
-            result.append({"id":f"cluster-{did}-{slug(cs[0].village)}","districtId":did,"districtName":cs[0].district_name,"center":[round(sum(x.latitude for x in cs)/len(cs),5),round(sum(x.longitude for x in cs)/len(cs),5)],"claimCount":len(cs),"severity":severity(sum(x.risk_score for x in cs)/len(cs)),"primaryAnomalyType":Counter(k for x in cs for k in anomaly_types(x)).most_common(1)[0][0],"avgRiskScore":round(sum(x.risk_score for x in cs)/len(cs),1),"affectedClaims":[x.id for x in cs]})
-        return sorted(result,key=lambda x:x["avgRiskScore"],reverse=True)[:100]
+            anomaly_counts=Counter()
+            for row in cs:
+                if (AS_OF-row.submission_date).days>365 and row.status=="Pending": anomaly_counts["Processing Delay"]+=1
+                if abs(row.claimed_area-row.revenue_area)/max(row.revenue_area,.01)*100>=30: anomaly_counts["Land Mismatch"]+=1
+                if row.duplicate_score>=70: anomaly_counts["Duplicate Suspect"]+=1
+                if row.forest_overlap>=20: anomaly_counts["Boundary Overlap"]+=1
+                if row.protected_overlap>=10: anomaly_counts["Protected Area Overlap"]+=1
+                if row.status=="Rejected": anomaly_counts["Rejection Pattern"]+=1
+            result.append({"id":f"cluster-{did}-{slug(cs[0].village)}","districtId":did,"districtName":cs[0].district_name,"center":[round(sum(x.latitude for x in cs)/len(cs),5),round(sum(x.longitude for x in cs)/len(cs),5)],"claimCount":len(cs),"severity":severity(sum(x.risk_score for x in cs)/len(cs)),"primaryAnomalyType":anomaly_counts.most_common(1)[0][0],"avgRiskScore":round(sum(x.risk_score for x in cs)/len(cs),1),"affectedClaims":[x.id for x in cs]})
+        return cache_set(cache_key, sorted(result,key=lambda x:x["avgRiskScore"],reverse=True)[:100])
 @app.get("/api/priority-queue")
 def priority_queue():
+    cached=cache_get("priority-queue")
+    if cached is not None: return cached
     with SessionLocal() as db:
         cs=db.scalars(select(Claim).order_by(Claim.risk_score.desc()).limit(100)).all()
-        return [{"priorityRank":i,"claimId":c.id,"districtName":c.district_name,"villageName":c.village,"riskScore":c.risk_score,"riskLevel":c.risk_level,"mainAnomaly":(anomaly_types(c) or ["Review required"])[0],"ageDays":age(c),"status":c.status} for i,c in enumerate(cs,1)]
+        return cache_set("priority-queue", [{"priorityRank":i,"claimId":c.id,"districtName":c.district_name,"villageName":c.village,"riskScore":c.risk_score,"riskLevel":c.risk_level,"mainAnomaly":(anomaly_types(c) or ["Review required"])[0],"ageDays":age(c),"status":c.status} for i,c in enumerate(cs,1)])
 @app.get("/api/districts/{district_id}/benchmark")
 def benchmark(district_id:str):
+    cache_key=f"benchmark:{district_id}"
+    cached=cache_get(cache_key)
+    if cached is not None: return cached
     with SessionLocal() as db:
         u=db.get(Unit,district_id)
         if not u:raise HTTPException(404,"District not found")
-        d=district_out(db,u); us=db.scalars(select(Unit).where(Unit.state_id==u.state_id)).all(); allcs=[c for x in us for c in db.scalars(select(Claim).where(Claim.district_id==x.id)).all()]; n=len(allcs) or 1; co=Counter(x.status for x in allcs)
+        claims_by_district=defaultdict(list)
+        for claim_row in db.scalars(select(Claim)).all(): claims_by_district[claim_row.district_id].append(claim_row)
+        d=district_out(db,u,claims_by_district.get(u.id,[])); us=db.scalars(select(Unit).where(Unit.state_id==u.state_id)).all(); allcs=[c for x in us for c in claims_by_district.get(x.id,[])]; n=len(allcs) or 1; co=Counter(x.status for x in allcs)
         sm={"approvalRate":round(co["Approved"]*100/n,1),"rejectionRate":round(co["Rejected"]*100/n,1),"pendingRate":round(co["Pending"]*100/n,1),"avgProcessingTimeDays":round(sum(age(x) for x in allcs)/n,1),"highRiskClaimsPercentage":round(sum(x.risk_level=="high" for x in allcs)*100/n,1)}
         dm={"approvalRate":d["approvalRate"],"rejectionRate":d["rejectionRate"],"pendingRate":d["pendingRate"],"avgProcessingTimeDays":d["avgProcessingTimeDays"],"highRiskClaimsPercentage":round(d["highRiskClaimsCount"]*100/max(d["totalClaims"],1),1)}
-        return {"districtId":u.id,"districtName":u.name,"stateAvg":sm,"districtMetrics":dm,"differences":{"approvalRateDiff":round(dm["approvalRate"]-sm["approvalRate"],1),"rejectionRateDiff":round(dm["rejectionRate"]-sm["rejectionRate"],1),"pendingRateDiff":round(dm["pendingRate"]-sm["pendingRate"],1),"avgProcessingTimeDiff":round(dm["avgProcessingTimeDays"]-sm["avgProcessingTimeDays"],1),"highRiskDiff":round(dm["highRiskClaimsPercentage"]-sm["highRiskClaimsPercentage"],1)}}
+        return cache_set(cache_key, {"districtId":u.id,"districtName":u.name,"stateAvg":sm,"districtMetrics":dm,"differences":{"approvalRateDiff":round(dm["approvalRate"]-sm["approvalRate"],1),"rejectionRateDiff":round(dm["rejectionRate"]-sm["rejectionRate"],1),"pendingRateDiff":round(dm["pendingRate"]-sm["pendingRate"],1),"avgProcessingTimeDiff":round(dm["avgProcessingTimeDays"]-sm["avgProcessingTimeDays"],1),"highRiskDiff":round(dm["highRiskClaimsPercentage"]-sm["highRiskClaimsPercentage"],1)}})
 
 @app.get("/api/analytics/historical")
 def historical(groupBy:str="quarter",stateId:str|None=None,districtId:str|None=None):
+    cache_key=f"historical:{groupBy}:{stateId or ''}:{districtId or ''}"
+    cached=cache_get(cache_key)
+    if cached is not None: return cached
     with SessionLocal() as db:
         q=select(Claim)
         if stateId:q=q.where(Claim.state_id==stateId)
@@ -310,7 +382,7 @@ def historical(groupBy:str="quarter",stateId:str|None=None,districtId:str|None=N
         out=[]
         for (stamp,label),cs in sorted(groups.items()):
             co=Counter(c.status for c in cs); out.append({"periodLabel":label,"date":stamp.isoformat(),"totalClaims":len(cs),"approved":co["Approved"],"rejected":co["Rejected"],"pending":co["Pending"],"avgProcessingTimeDays":round(sum(age(c) for c in cs)/len(cs),1),"highRiskClaims":sum(c.risk_level=="high" for c in cs)})
-        return out
+        return cache_set(cache_key, out)
 @app.get("/api/analytics/compare-periods")
 def compare(periodA:str,periodB:str):
     points={x["periodLabel"]:x for x in historical()}
@@ -320,21 +392,27 @@ def compare(periodA:str,periodB:str):
     return {"periodA":value(points[periodA]),"periodB":value(points[periodB])}
 @app.get("/api/analytics/land-mismatches")
 def land_mismatches():
+    cached=cache_get("land-mismatches")
+    if cached is not None: return cached
     with SessionLocal() as db:
         cs=db.scalars(select(Claim).where(Claim.risk_score>=0)).all(); result=[]
         for c in cs:
             pct=ratio(c)
             if pct>=30:result.append({"claimId":c.id,"districtName":c.district_name,"villageName":c.village,"claimedAreaHectares":c.claimed_area,"referenceAreaHectares":c.revenue_area,"differenceHectares":round(c.claimed_area-c.revenue_area,2),"mismatchPercentage":round(pct,1),"severity":severity(pct),"surveyNumber":f"SYN-{c.id[-5:]}","status":c.status})
-        return sorted(result,key=lambda x:x["mismatchPercentage"],reverse=True)[:500]
+        return cache_set("land-mismatches", sorted(result,key=lambda x:x["mismatchPercentage"],reverse=True)[:500])
 @app.get("/api/analytics/boundary-overlaps")
 def boundary_overlaps():
+    cached=cache_get("boundary-overlaps")
+    if cached is not None: return cached
     with SessionLocal() as db:
         result=[]
         for c in db.scalars(select(Claim).where(Claim.forest_overlap>=20)).all():
             result.append({"claimId":c.id,"districtName":c.district_name,"villageName":c.village,"claimedAreaHectares":c.claimed_area,"forestBoundaryType":c.protected_type or "Synthetic Forest Record Boundary","overlapPercentage":c.forest_overlap,"status":"Prohibited Overlap" if c.protected_overlap>=10 else "Conditional Boundary","severity":severity(c.forest_overlap)})
-        return sorted(result,key=lambda x:x["overlapPercentage"],reverse=True)[:500]
+        return cache_set("boundary-overlaps", sorted(result,key=lambda x:x["overlapPercentage"],reverse=True)[:500])
 @app.get("/api/analytics/duplicate-claims")
 def duplicates():
+    cached=cache_get("duplicate-claims")
+    if cached is not None: return cached
     with SessionLocal() as db:
         cs=db.scalars(select(Claim).where(Claim.duplicate_score>=70)).all(); pairs=[]; used=set()
         by_hash=defaultdict(list)
@@ -347,7 +425,7 @@ def duplicates():
                     if key in used:continue
                     used.add(key); similarity=round(min(a.duplicate_score,b.duplicate_score),1)
                     pairs.append({"id":"dup-"+"-".join(key),"claimA":{"id":a.id,"applicant":f"Synthetic applicant {a.applicant_hash[-4:]}","village":a.village,"areaHectares":a.claimed_area,"coordinates":[a.latitude,a.longitude]},"claimB":{"id":b.id,"applicant":f"Synthetic applicant {b.applicant_hash[-4:]}","village":b.village,"areaHectares":b.claimed_area,"coordinates":[b.latitude,b.longitude]},"similarityPercentage":similarity,"matchingFactors":["Same anonymized applicant hash","Same village","Nearby coordinates","Comparable claimed area"],"status":"Flagged for Review"})
-        return sorted(pairs,key=lambda x:x["similarityPercentage"],reverse=True)[:500]
+        return cache_set("duplicate-claims", sorted(pairs,key=lambda x:x["similarityPercentage"],reverse=True)[:500])
 
 class RiskWeights(BaseModel):
     processingDelay:int=Field(ge=0,le=100); rejectionPattern:int=Field(ge=0,le=100); landAreaMismatch:int=Field(ge=0,le=100); duplicateProbability:int=Field(ge=0,le=100); boundaryOverlap:int=Field(ge=0,le=100); satelliteDiscrepancy:int=Field(ge=0,le=100)
@@ -363,6 +441,7 @@ def update_weights(weights:RiskWeights):
     with SessionLocal() as db:
         for c in db.scalars(select(Claim)).all():c.risk_score=calc_score(c,DEFAULT_WEIGHTS);c.risk_level=risk_level(c.risk_score)
         db.commit()
+    clear_response_cache()
     return {"success":True,"updatedWeights":DEFAULT_WEIGHTS}
 @app.post("/api/natural-language-query")
 def nlu(body:dict[str,str]):
