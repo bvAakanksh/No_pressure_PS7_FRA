@@ -1,4 +1,4 @@
-import React from 'react';
+import React, { Suspense } from 'react';
 import { NavLink, Outlet } from 'react-router';
 import {
   LayoutDashboard,
@@ -82,7 +82,9 @@ export default function AppLayout() {
 
       {/* Main Content Viewport */}
       <main className="flex-1 max-w-[1600px] w-full mx-auto p-4 sm:p-6 space-y-6">
-        <Outlet />
+        <Suspense fallback={<div className="min-h-56 flex items-center justify-center text-sm text-slate-500">Loading dashboard section...</div>}>
+          <Outlet />
+        </Suspense>
       </main>
 
       {/* Footer */}

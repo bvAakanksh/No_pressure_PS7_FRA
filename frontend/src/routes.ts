@@ -1,11 +1,13 @@
+import { lazy } from 'react';
 import { createBrowserRouter } from 'react-router';
 import AppLayout from './components/layout/AppLayout';
-import OverviewPage from './pages/OverviewPage';
-import ClaimsPage from './pages/ClaimsPage';
-import RiskAnomaliesPage from './pages/RiskAnomaliesPage';
-import DistrictsPage from './pages/DistrictsPage';
-import AnalysisPage from './pages/AnalysisPage';
-import SettingsPage from './pages/SettingsPage';
+
+const OverviewPage = lazy(() => import('./pages/OverviewPage'));
+const ClaimsPage = lazy(() => import('./pages/ClaimsPage'));
+const RiskAnomaliesPage = lazy(() => import('./pages/RiskAnomaliesPage'));
+const DistrictsPage = lazy(() => import('./pages/DistrictsPage'));
+const AnalysisPage = lazy(() => import('./pages/AnalysisPage'));
+const SettingsPage = lazy(() => import('./pages/SettingsPage'));
 
 export const router = createBrowserRouter([
   {
