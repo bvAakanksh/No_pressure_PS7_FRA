@@ -137,6 +137,9 @@ export default function OverviewPage() {
         stateIds,
         districtId,
         status: result.interpretedFilters.status,
+        workflow: result.interpretedFilters.workflow,
+        claimId: result.interpretedFilters.claimId,
+        villageName: result.interpretedFilters.villageName,
         riskLevel: result.interpretedFilters.minRiskScore && result.interpretedFilters.minRiskScore >= 70
           ? 'high'
           : result.interpretedFilters.riskLevel,

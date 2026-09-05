@@ -246,6 +246,10 @@ export interface NaturalLanguageQueryResult {
     riskLevel?: 'low' | 'medium' | 'high';
     maxRejectionRate?: number;
     status?: string;
+    workflow?: string;
+    claimId?: string;
+    villageName?: string;
+    countType?: string;
     claimType?: string;
   };
   matchedCount: number;

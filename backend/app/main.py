@@ -287,7 +287,7 @@ def district(district_id: str):
         if not u: raise HTTPException(404,"District not found")
         return cache_set(cache_key, district_out(db,u))
 @app.get("/api/claims")
-def claims(response: Response, claimId:str|None=None,stateId:str|None=None,stateIds:str|None=None,districtId:str|None=None,villageName:str|None=None,status:str|None=None,riskLevel:str|None=None,minRiskScore:float|None=Query(None,ge=0,le=100),anomalyType:str|None=None,claimType:str|None=None,startDate:str|None=None,endDate:str|None=None,page:int=Query(1,ge=1),pageSize:int=Query(50,alias="pageSize",ge=1,le=500),limit:int|None=Query(None,ge=1,le=500)):
+def claims(response: Response, claimId:str|None=None,stateId:str|None=None,stateIds:str|None=None,districtId:str|None=None,villageName:str|None=None,status:str|None=None,workflow:str|None=None,riskLevel:str|None=None,minRiskScore:float|None=Query(None,ge=0,le=100),anomalyType:str|None=None,claimType:str|None=None,startDate:str|None=None,endDate:str|None=None,page:int=Query(1,ge=1),pageSize:int=Query(50,alias="pageSize",ge=1,le=500),limit:int|None=Query(None,ge=1,le=500)):
     with SessionLocal() as db:
         q=select(Claim)
         if claimId:q=q.where(Claim.id.contains(claimId))
@@ -302,7 +302,9 @@ def claims(response: Response, claimId:str|None=None,stateId:str|None=None,state
             "Under Field Inspection": "Field Verification",
             "In Committee Review": "SDLC",
         }
-        if status in stage_filters:
+        if workflow=="processing":
+            q=q.where(or_(Claim.status=="Pending",Claim.current_stage.in_(["Field Verification","SDLC"])))
+        elif status in stage_filters:
             q=q.where(Claim.current_stage==stage_filters[status])
         elif status and status!="All":q=q.where(Claim.status==status)
         if riskLevel and riskLevel!="All":q=q.where(Claim.risk_level==riskLevel)
@@ -489,11 +491,30 @@ def nlu(body:dict[str,str]):
         filters["startDate"]=f"{years[0]}-01-01"; filters["endDate"]=f"{years[0]}-12-31"
     with SessionLocal() as db:
         states_list=db.scalars(select(State)).all(); units=db.scalars(select(Unit)).all()
+        count_request=any(term in lower for term in ("how many", "number of", "count of", "total number"))
+        count_type="claims" if "claim" in lower or "case" in lower else "states" if "state" in lower else "districts" if "district" in lower else "villages" if any(term in lower for term in ("village", "sub-level", "sub level", "sublevel")) else None
+        if count_request and count_type:
+            if count_type=="states": entity_count=len(states_list)
+            elif count_type=="districts": entity_count=len(units)
+            elif count_type=="villages": entity_count=db.scalar(select(func.count(func.distinct(Claim.village)))) or 0
+            else: entity_count=db.scalar(select(func.count()).select_from(Claim)) or 0
+            return {"query":query,"interpretedFilters":{"countType":count_type},"matchedCount":entity_count,"matchingClaimIds":[],"summaryMessage":f"The synthetic FRA dataset contains {entity_count:,} {count_type}."}
+        village_match=re.search(r"(FRA-[A-Z]{2}-\d{3}-Village-\d{2})", query, re.IGNORECASE)
+        claim_match=re.search(r"\b(FRA-\d{7})\b", query, re.IGNORECASE)
+        if village_match: filters["villageName"]=village_match.group(1).upper()
+        elif claim_match: filters["claimId"]=claim_match.group(1).upper()
+        if filters.get("villageName"):
+            sample=db.scalar(select(Claim).where(func.lower(Claim.village)==filters["villageName"].lower()).limit(1))
+            if sample: filters["district"]=sample.district_id
+        elif filters.get("claimId"):
+            sample=db.scalar(select(Claim).where(Claim.id==filters["claimId"]).limit(1))
+            if sample: filters["district"]=sample.district_id
         for s in states_list:
             aliases=STATE_ALIASES.get(s.id,(s.name.lower(),))
-            if any(re.search(rf"(?<!\w){re.escape(alias)}(?!\w)", lower) for alias in aliases):filters["state"]=s.id
+            if not filters.get("villageName") and not filters.get("claimId") and any(re.search(rf"(?<!\w){re.escape(alias)}(?!\w)", lower) for alias in aliases):filters["state"]=s.id
         for u in units:
-            if u.name.lower() in lower or u.name.lower().replace(" fra monitoring unit "," ") in lower:filters["district"]=u.id
+            district_alias=u.name.lower()
+            if not filters.get("villageName") and not filters.get("claimId") and (re.search(rf"(?<!\w){re.escape(district_alias)}(?!\w)", lower) or re.search(rf"(?<!\w){re.escape(u.id.lower())}(?!\w)", lower)):filters["district"]=u.id
         if "critical" in lower or "severe risk" in lower: filters["minRiskScore"]=85
         elif "high risk" in lower or "high-risk" in lower:filters["minRiskScore"]=70
         elif "medium risk" in lower or "medium-risk" in lower:filters["riskLevel"]="medium"
@@ -503,12 +524,16 @@ def nlu(body:dict[str,str]):
         elif "approved" in lower:filters["status"]="Approved"
         elif "field inspection" in lower or "field verification" in lower:filters["status"]="Under Field Inspection"
         elif "committee review" in lower or "in committee" in lower:filters["status"]="In Committee Review"
+        if "processing" in lower or "in process" in lower:filters["workflow"]="processing"
         if any(term in lower for term in ("individual claim", "individual forest right", " ifr")): filters["claimType"]="Individual"
         elif any(term in lower for term in ("community claim", "community forest", " cfr", " crr")): filters["claimType"]="Community"
         q=select(Claim)
         if filters.get("stateIds"):q=q.where(Claim.state_id.in_(filters["stateIds"]))
         elif filters.get("state"):q=q.where(Claim.state_id==filters["state"])
         if filters.get("district"):q=q.where(Claim.district_id==filters["district"])
+        if filters.get("villageName"):q=q.where(func.lower(Claim.village)==filters["villageName"].lower())
+        if filters.get("claimId"):q=q.where(Claim.id.contains(filters["claimId"]))
+        if filters.get("workflow")=="processing":q=q.where(or_(Claim.status=="Pending",Claim.current_stage.in_(["Field Verification","SDLC"])))
         if filters.get("status") in ("Under Field Inspection", "In Committee Review"):
             stage_filter={"Under Field Inspection":"Field Verification","In Committee Review":"SDLC"}
             q=q.where(Claim.current_stage==stage_filter[filters["status"]])

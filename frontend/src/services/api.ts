@@ -21,7 +21,7 @@ async function requestWithMeta<T>(path: string): Promise<{ data: T; total: numbe
 }
 function params(values: object) { const p = new URLSearchParams(); Object.entries(values as Record<string, string | undefined>).forEach(([k,v]) => v && p.set(k,v)); const q=p.toString(); return q ? `?${q}` : ''; }
 
-export interface ClaimFilters { claimId?: string; stateId?: string; stateIds?: string[]; districtId?: string; villageName?: string; status?: string; riskLevel?: 'low' | 'medium' | 'high'; minRiskScore?: number; anomalyType?: string; claimType?: string; dateRange?: { start?: string; end?: string }; }
+export interface ClaimFilters { claimId?: string; stateId?: string; stateIds?: string[]; districtId?: string; villageName?: string; status?: string; workflow?: string; riskLevel?: 'low' | 'medium' | 'high'; minRiskScore?: number; anomalyType?: string; claimType?: string; dateRange?: { start?: string; end?: string }; }
 let statesRequest: Promise<StateData[]> | null = null;
 const districtRequests = new Map<string, Promise<DistrictData[]>>();
 const districtSummaryRequests = new Map<string, Promise<DistrictData | null>>();
@@ -47,7 +47,7 @@ export function getDistrictSummary(districtId: string): Promise<DistrictData | n
 }
 export interface ClaimsPage { items: Claim[]; total: number; page: number; pageSize: number; }
 export function getClaimsPage(filters: ClaimFilters = {}, page = 1, pageSize = 50): Promise<ClaimsPage> {
-  return requestWithMeta<Claim[]>(`/claims${params({ claimId: filters.claimId, stateId: filters.stateId, stateIds: filters.stateIds?.join(','), districtId: filters.districtId, villageName: filters.villageName, status: filters.status, riskLevel: filters.riskLevel, minRiskScore: filters.minRiskScore?.toString(), anomalyType: filters.anomalyType, claimType: filters.claimType, startDate: filters.dateRange?.start, endDate: filters.dateRange?.end, page: page.toString(), pageSize: pageSize.toString() })}`).then(({ data, total, page: responsePage, pageSize: responsePageSize }) => ({ items: data, total, page: responsePage, pageSize: responsePageSize }));
+  return requestWithMeta<Claim[]>(`/claims${params({ claimId: filters.claimId, stateId: filters.stateId, stateIds: filters.stateIds?.join(','), districtId: filters.districtId, villageName: filters.villageName, status: filters.status, workflow: filters.workflow, riskLevel: filters.riskLevel, minRiskScore: filters.minRiskScore?.toString(), anomalyType: filters.anomalyType, claimType: filters.claimType, startDate: filters.dateRange?.start, endDate: filters.dateRange?.end, page: page.toString(), pageSize: pageSize.toString() })}`).then(({ data, total, page: responsePage, pageSize: responsePageSize }) => ({ items: data, total, page: responsePage, pageSize: responsePageSize }));
 }
 export function getClaims(filters: ClaimFilters = {}, page = 1, pageSize = 50): Promise<Claim[]> { return getClaimsPage(filters, page, pageSize).then((result) => result.items); }
 export async function getClaim(claimId: string): Promise<Claim | null> { try { return await request<Claim>(`/claims/${encodeURIComponent(claimId)}`); } catch { return null; } }
