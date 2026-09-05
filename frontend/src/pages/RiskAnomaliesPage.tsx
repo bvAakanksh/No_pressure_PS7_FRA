@@ -15,6 +15,8 @@ import {
 } from '../services/api';
 import { ShieldAlert, Flame, MapPin } from 'lucide-react';
 
+const MAP_CLAIM_LIMIT = 500;
+
 export default function RiskAnomaliesPage() {
   const [loading, setLoading] = useState(true);
   const [error, setError] = useState<string | null>(null);
@@ -34,7 +36,7 @@ export default function RiskAnomaliesPage() {
       const [queueData, clusterData, claimsData, districtData] = await Promise.all([
         getPriorityQueue(),
         getAnomalyClusters(),
-        getClaims(),
+        getClaims({}, 1, MAP_CLAIM_LIMIT),
         getDistricts(),
       ]);
       setPriorityQueue(queueData);

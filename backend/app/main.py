@@ -258,7 +258,7 @@ def district(district_id: str):
         if not u: raise HTTPException(404,"District not found")
         return cache_set(cache_key, district_out(db,u))
 @app.get("/api/claims")
-def claims(response: Response, claimId:str|None=None,stateId:str|None=None,districtId:str|None=None,villageName:str|None=None,status:str|None=None,riskLevel:str|None=None,minRiskScore:float|None=Query(None,ge=0,le=100),anomalyType:str|None=None,claimType:str|None=None,startDate:str|None=None,endDate:str|None=None,page:int=Query(1,ge=1),pageSize:int=Query(50,alias="pageSize",ge=1,le=100),limit:int|None=Query(None,ge=1,le=100)):
+def claims(response: Response, claimId:str|None=None,stateId:str|None=None,districtId:str|None=None,villageName:str|None=None,status:str|None=None,riskLevel:str|None=None,minRiskScore:float|None=Query(None,ge=0,le=100),anomalyType:str|None=None,claimType:str|None=None,startDate:str|None=None,endDate:str|None=None,page:int=Query(1,ge=1),pageSize:int=Query(50,alias="pageSize",ge=1,le=500),limit:int|None=Query(None,ge=1,le=500)):
     with SessionLocal() as db:
         q=select(Claim)
         if claimId:q=q.where(Claim.id.contains(claimId))

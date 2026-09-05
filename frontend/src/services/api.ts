@@ -49,7 +49,7 @@ export interface ClaimsPage { items: Claim[]; total: number; page: number; pageS
 export function getClaimsPage(filters: ClaimFilters = {}, page = 1, pageSize = 50): Promise<ClaimsPage> {
   return requestWithMeta<Claim[]>(`/claims${params({ claimId: filters.claimId, stateId: filters.stateId, districtId: filters.districtId, villageName: filters.villageName, status: filters.status, riskLevel: filters.riskLevel, minRiskScore: filters.minRiskScore?.toString(), anomalyType: filters.anomalyType, claimType: filters.claimType, startDate: filters.dateRange?.start, endDate: filters.dateRange?.end, page: page.toString(), pageSize: pageSize.toString() })}`).then(({ data, total, page: responsePage, pageSize: responsePageSize }) => ({ items: data, total, page: responsePage, pageSize: responsePageSize }));
 }
-export function getClaims(filters: ClaimFilters = {}): Promise<Claim[]> { return getClaimsPage(filters).then((result) => result.items); }
+export function getClaims(filters: ClaimFilters = {}, page = 1, pageSize = 50): Promise<Claim[]> { return getClaimsPage(filters, page, pageSize).then((result) => result.items); }
 export async function getClaim(claimId: string): Promise<Claim | null> { try { return await request<Claim>(`/claims/${encodeURIComponent(claimId)}`); } catch { return null; } }
 export const getClaimRisk = (claimId: string) => request(`/claims/${encodeURIComponent(claimId)}/risk`);
 export const getClaimTimeline = (claimId: string) => request(`/claims/${encodeURIComponent(claimId)}/timeline`);

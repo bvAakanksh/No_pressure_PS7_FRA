@@ -31,6 +31,8 @@ import {
   CheckCircle2,
   AlertTriangle,
 } from 'lucide-react';
+
+const MAP_CLAIM_LIMIT = 500;
 import {
   AreaChart,
   Area,
@@ -73,7 +75,7 @@ export default function AnalysisPage() {
     try {
       const [hist, claims, stateRecords, districtRecords] = await Promise.all([
         getHistoricalData(),
-        getClaims(),
+        getClaims({}, 1, MAP_CLAIM_LIMIT),
         getStates(),
         getDistricts(),
       ]);

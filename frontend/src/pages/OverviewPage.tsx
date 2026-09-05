@@ -25,6 +25,8 @@ import {
   RefreshCw,
 } from 'lucide-react';
 
+const MAP_CLAIM_LIMIT = 500;
+
 export default function OverviewPage() {
   const [loading, setLoading] = useState(true);
   const [error, setError] = useState<string | null>(null);
@@ -46,7 +48,7 @@ export default function OverviewPage() {
       const [fetchedStates, fetchedDistricts, fetchedClaims] = await Promise.all([
         getStates(),
         getDistricts(),
-        getClaims(),
+        getClaims({}, 1, MAP_CLAIM_LIMIT),
       ]);
       setStates(fetchedStates);
       setDistricts(fetchedDistricts);
@@ -93,7 +95,10 @@ export default function OverviewPage() {
       setIsAnswering(true);
       setSearchQuestion(query);
       const result = await naturalLanguageQuery(query);
-      setSearchSummary(result.summaryMessage);
+      const mapSummary = result.matchedCount > MAP_CLAIM_LIMIT
+        ? `${result.summaryMessage} Map markers show the ${MAP_CLAIM_LIMIT} highest-risk matching locations.`
+        : `${result.summaryMessage} Map markers show all matching locations.`;
+      setSearchSummary(mapSummary);
 
       const stateId = result.interpretedFilters.state;
       const districtId = result.interpretedFilters.district;
@@ -113,7 +118,7 @@ export default function OverviewPage() {
           : result.interpretedFilters.riskLevel,
         minRiskScore: result.interpretedFilters.minRiskScore,
         claimType: result.interpretedFilters.claimType,
-      });
+      }, 1, Math.min(Math.max(result.matchedCount, 50), MAP_CLAIM_LIMIT));
       setClaims(matchingClaims);
     } catch (err) {
       console.error(err);
