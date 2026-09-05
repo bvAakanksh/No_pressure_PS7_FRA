@@ -33,16 +33,21 @@ interface FRAMapProps {
 }
 
 // Controller component to invalidate size and smoothly update map view on state/district change
-function MapController({ center, zoom }: { center: [number, number]; zoom: number }) {
+function MapController({ center, zoom, claims, fitClaims }: { center: [number, number]; zoom: number; claims: Claim[]; fitClaims: boolean }) {
   const map = useMap();
   useEffect(() => {
     // Force Leaflet to recalculate container bounds on render/resize
     const timer = setTimeout(() => {
       map.invalidateSize();
     }, 100);
-    map.flyTo(center, zoom, { duration: 1.2 });
+    if (fitClaims && claims.length) {
+      const bounds = L.latLngBounds(claims.map((claim) => claim.coordinates));
+      map.flyToBounds(bounds, { padding: [24, 24], maxZoom: Math.min(zoom, 8), duration: 1.2 });
+    } else {
+      map.flyTo(center, zoom, { duration: 1.2 });
+    }
     return () => clearTimeout(timer);
-  }, [center, zoom, map]);
+  }, [center, zoom, claims.length, fitClaims, map]);
   return null;
 }
 
@@ -143,7 +148,7 @@ export default function FRAMap({
         className="w-full h-full"
         style={{ height: `${height}px`, width: '100%' }}
       >
-        <MapController center={currentCenter} zoom={currentZoom} />
+        <MapController center={currentCenter} zoom={currentZoom} claims={claims} fitClaims={Boolean(selectedState || selectedDistrict || viewCenter)} />
 
         {/* Standard clean topographic map tiles */}
         <TileLayer
