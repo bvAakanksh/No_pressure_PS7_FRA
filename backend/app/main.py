@@ -246,12 +246,14 @@ def startup(): ensure_db()
 def root():
     return {"status":"ok","message":"FRA Monitoring API is running.","frontend":"http://127.0.0.1:5173/","docs":"/docs","health":"/api/health"}
 
+@app.get("/health")
 @app.get("/api/health")
 def health(): return {"status":"ok","databaseInitialized":db_ready(),"dataAsOf":AS_OF.isoformat()}
 @app.get("/api")
 def api_root():
     """Small browser-friendly API landing response for the configured frontend base URL."""
     return {"status":"ok","message":"FRA Monitoring API is running. Open /docs for interactive documentation.","docs":"/docs","health":"/api/health"}
+@app.get("/states")
 @app.get("/api/states")
 def states():
     cached=cache_get("states")
@@ -268,6 +270,7 @@ def states():
 def district_out(db: Session, u: Unit, claims: list[Claim] | None = None) -> dict[str,Any]:
     cs=claims if claims is not None else db.scalars(select(Claim).where(Claim.district_id==u.id)).all(); counts=Counter(x.status for x in cs); total=len(cs) or 1; risk=round(sum(x.risk_score for x in cs)/total,1); kinds=Counter(k for x in cs for k in anomaly_types(x))
     return {"id":u.id,"stateId":u.state_id,"stateName":db.get(State,u.state_id).name,"name":u.name,"code":u.id,"center":[u.center_lat,u.center_lon],"totalClaims":len(cs),"pendingClaims":counts["Pending"],"approvedClaims":counts["Approved"],"rejectedClaims":counts["Rejected"],"approvalRate":round(counts["Approved"]*100/total,1),"rejectionRate":round(counts["Rejected"]*100/total,1),"pendingRate":round(counts["Pending"]*100/total,1),"avgProcessingTimeDays":round(sum(age(x) for x in cs)/total,1),"overallRiskScore":risk,"highRiskClaimsCount":sum(x.risk_level=="high" for x in cs),"riskCategory":"critical" if risk>=75 else risk_level(risk),"keyAnomalies":[x for x,_ in kinds.most_common(3)]}
+@app.get("/districts")
 @app.get("/api/districts")
 def districts(stateId: str|None=None):
     cache_key=f"districts:{stateId or 'all'}"
@@ -284,7 +287,9 @@ def districts(stateId: str|None=None):
         for claim in db.scalars(claim_query):
             claims_by_district[claim.district_id].append(claim)
         return cache_set(cache_key, [district_out(db,u,claims_by_district.get(u.id,[])) for u in units])
+@app.get("/districts/{district_id}")
 @app.get("/api/districts/{district_id}")
+@app.get("/districts/{district_id}/summary")
 @app.get("/api/districts/{district_id}/summary")
 def district(district_id: str):
     cache_key=f"district:{district_id}"
@@ -294,6 +299,7 @@ def district(district_id: str):
         u=db.get(Unit,district_id)
         if not u: raise HTTPException(404,"District not found")
         return cache_set(cache_key, district_out(db,u))
+@app.get("/claims")
 @app.get("/api/claims")
 def claims(response: Response, claimId:str|None=None,stateId:str|None=None,stateIds:str|None=None,districtId:str|None=None,villageName:str|None=None,status:str|None=None,workflow:str|None=None,riskLevel:str|None=None,minRiskScore:float|None=Query(None,ge=0,le=100),anomalyType:str|None=None,claimType:str|None=None,startDate:str|None=None,endDate:str|None=None,page:int=Query(1,ge=1),pageSize:int=Query(50,alias="pageSize",ge=1,le=500),limit:int|None=Query(None,ge=1,le=500)):
     with SessionLocal() as db:
@@ -336,30 +342,35 @@ def claims(response: Response, claimId:str|None=None,stateId:str|None=None,state
         response.headers["X-Page"]=str(effective_page)
         response.headers["X-Page-Size"]=str(effective_page_size)
         return [claim_out(c,False) for c in rows]
+@app.get("/claims/{claim_id}")
 @app.get("/api/claims/{claim_id}")
 def claim(claim_id:str):
     with SessionLocal() as db:
         c=db.get(Claim,claim_id)
         if not c: raise HTTPException(404,"Claim not found")
         return claim_out(c)
+@app.get("/claims/{claim_id}/risk")
 @app.get("/api/claims/{claim_id}/risk")
 def claim_risk(claim_id:str):
     with SessionLocal() as db:
         c=db.get(Claim,claim_id)
         if not c: raise HTTPException(404,"Claim not found")
         return {"riskScore":c.risk_score,"riskLevel":c.risk_level,"riskFactorBreakdown":breakdown(c)}
+@app.get("/claims/{claim_id}/timeline")
 @app.get("/api/claims/{claim_id}/timeline")
 def claim_timeline(claim_id:str):
     with SessionLocal() as db:
         c=db.get(Claim,claim_id)
         if not c: raise HTTPException(404,"Claim not found")
         return timeline(c)
+@app.get("/claims/{claim_id}/nearby-anomalies")
 @app.get("/api/claims/{claim_id}/nearby-anomalies")
 def claim_nearby(claim_id:str):
     with SessionLocal() as db:
         c=db.get(Claim,claim_id)
         if not c: raise HTTPException(404,"Claim not found")
         return nearby(c)
+@app.get("/anomalies/clusters")
 @app.get("/api/anomalies/clusters")
 def clusters(districtId:str|None=None):
     cache_key=f"clusters:{districtId or 'all'}"
@@ -383,6 +394,7 @@ def clusters(districtId:str|None=None):
                 if row.status=="Rejected": anomaly_counts["Rejection Pattern"]+=1
             result.append({"id":f"cluster-{did}-{slug(cs[0].village)}","districtId":did,"districtName":cs[0].district_name,"center":[round(sum(x.latitude for x in cs)/len(cs),5),round(sum(x.longitude for x in cs)/len(cs),5)],"claimCount":len(cs),"severity":severity(sum(x.risk_score for x in cs)/len(cs)),"primaryAnomalyType":anomaly_counts.most_common(1)[0][0],"avgRiskScore":round(sum(x.risk_score for x in cs)/len(cs),1),"affectedClaims":[x.id for x in cs]})
         return cache_set(cache_key, sorted(result,key=lambda x:x["avgRiskScore"],reverse=True)[:100])
+@app.get("/priority-queue")
 @app.get("/api/priority-queue")
 def priority_queue():
     cached=cache_get("priority-queue")
@@ -390,6 +402,7 @@ def priority_queue():
     with SessionLocal() as db:
         cs=db.scalars(select(Claim).order_by(Claim.risk_score.desc()).limit(100)).all()
         return cache_set("priority-queue", [{"priorityRank":i,"claimId":c.id,"districtName":c.district_name,"villageName":c.village,"riskScore":c.risk_score,"riskLevel":c.risk_level,"mainAnomaly":(anomaly_types(c) or ["Review required"])[0],"ageDays":age(c),"status":c.status} for i,c in enumerate(cs,1)])
+@app.get("/districts/{district_id}/benchmark")
 @app.get("/api/districts/{district_id}/benchmark")
 def benchmark(district_id:str):
     cache_key=f"benchmark:{district_id}"
@@ -405,6 +418,7 @@ def benchmark(district_id:str):
         dm={"approvalRate":d["approvalRate"],"rejectionRate":d["rejectionRate"],"pendingRate":d["pendingRate"],"avgProcessingTimeDays":d["avgProcessingTimeDays"],"highRiskClaimsPercentage":round(d["highRiskClaimsCount"]*100/max(d["totalClaims"],1),1)}
         return cache_set(cache_key, {"districtId":u.id,"districtName":u.name,"stateAvg":sm,"districtMetrics":dm,"differences":{"approvalRateDiff":round(dm["approvalRate"]-sm["approvalRate"],1),"rejectionRateDiff":round(dm["rejectionRate"]-sm["rejectionRate"],1),"pendingRateDiff":round(dm["pendingRate"]-sm["pendingRate"],1),"avgProcessingTimeDiff":round(dm["avgProcessingTimeDays"]-sm["avgProcessingTimeDays"],1),"highRiskDiff":round(dm["highRiskClaimsPercentage"]-sm["highRiskClaimsPercentage"],1)}})
 
+@app.get("/analytics/historical")
 @app.get("/api/analytics/historical")
 def historical(groupBy:str="quarter",stateId:str|None=None,districtId:str|None=None):
     cache_key=f"historical:{groupBy}:{stateId or ''}:{districtId or ''}"
@@ -424,6 +438,7 @@ def historical(groupBy:str="quarter",stateId:str|None=None,districtId:str|None=N
         for (stamp,label),cs in sorted(groups.items()):
             co=Counter(c.status for c in cs); out.append({"periodLabel":label,"date":stamp.isoformat(),"totalClaims":len(cs),"approved":co["Approved"],"rejected":co["Rejected"],"pending":co["Pending"],"avgProcessingTimeDays":round(sum(age(c) for c in cs)/len(cs),1),"highRiskClaims":sum(c.risk_level=="high" for c in cs)})
         return cache_set(cache_key, out)
+@app.get("/analytics/compare-periods")
 @app.get("/api/analytics/compare-periods")
 def compare(periodA:str,periodB:str):
     points={x["periodLabel"]:x for x in historical()}
@@ -431,6 +446,7 @@ def compare(periodA:str,periodB:str):
     def value(p):
         return {"label":p["periodLabel"],"approvalRate":round(p["approved"]*100/max(p["totalClaims"],1),1),"rejectionRate":round(p["rejected"]*100/max(p["totalClaims"],1),1),"pendingClaims":p["pending"],"avgProcessingTimeDays":p["avgProcessingTimeDays"],"highRiskClaims":p["highRiskClaims"]}
     return {"periodA":value(points[periodA]),"periodB":value(points[periodB])}
+@app.get("/analytics/land-mismatches")
 @app.get("/api/analytics/land-mismatches")
 def land_mismatches():
     cached=cache_get("land-mismatches")
@@ -441,6 +457,7 @@ def land_mismatches():
             pct=ratio(c)
             if pct>=30:result.append({"claimId":c.id,"districtName":c.district_name,"villageName":c.village,"claimedAreaHectares":c.claimed_area,"referenceAreaHectares":c.revenue_area,"differenceHectares":round(c.claimed_area-c.revenue_area,2),"mismatchPercentage":round(pct,1),"severity":severity(pct),"surveyNumber":f"SYN-{c.id[-5:]}","status":c.status})
         return cache_set("land-mismatches", sorted(result,key=lambda x:x["mismatchPercentage"],reverse=True)[:500])
+@app.get("/analytics/boundary-overlaps")
 @app.get("/api/analytics/boundary-overlaps")
 def boundary_overlaps():
     cached=cache_get("boundary-overlaps")
@@ -450,6 +467,7 @@ def boundary_overlaps():
         for c in db.scalars(select(Claim).where(Claim.forest_overlap>=20)).all():
             result.append({"claimId":c.id,"districtName":c.district_name,"villageName":c.village,"claimedAreaHectares":c.claimed_area,"forestBoundaryType":c.protected_type or "Synthetic Forest Record Boundary","overlapPercentage":c.forest_overlap,"status":"Prohibited Overlap" if c.protected_overlap>=10 else "Conditional Boundary","severity":severity(c.forest_overlap)})
         return cache_set("boundary-overlaps", sorted(result,key=lambda x:x["overlapPercentage"],reverse=True)[:500])
+@app.get("/analytics/duplicate-claims")
 @app.get("/api/analytics/duplicate-claims")
 def duplicates():
     cached=cache_get("duplicate-claims")
@@ -475,6 +493,7 @@ class RiskWeights(BaseModel):
     def total(cls,v,info):
         if sum(list(info.data.values())+[v])!=100:raise ValueError("Risk weights must sum to 100")
         return v
+@app.post("/risk-weights")
 @app.post("/api/risk-weights")
 def update_weights(weights:RiskWeights):
     global DEFAULT_WEIGHTS
@@ -484,6 +503,7 @@ def update_weights(weights:RiskWeights):
         db.commit()
     clear_response_cache()
     return {"success":True,"updatedWeights":DEFAULT_WEIGHTS}
+@app.post("/natural-language-query")
 @app.post("/api/natural-language-query")
 def nlu(body:dict[str,str]):
     query=body.get("query","").strip(); lower=query.lower(); filters={}

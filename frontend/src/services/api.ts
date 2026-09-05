@@ -1,17 +1,32 @@
 /** Central HTTP client. The FastAPI service returns the UI schema directly. */
 import { StateData, DistrictData, Claim, AnomalyCluster, PriorityQueueItem, DistrictBenchmark, HistoricalTimePoint, PeriodComparison, DuplicateMatch, LandMismatchItem, BoundaryOverlapItem, RiskWeights, NaturalLanguageQueryResult } from '../types/schemas';
 
-const API_BASE_URL = import.meta.env.VITE_API_BASE_URL || 'http://localhost:8000/api';
+const envUrl = (import.meta.env.VITE_API_BASE_URL as string | undefined)?.trim() || '';
+const rawBase = (envUrl || 'http://localhost:8000/api').replace(/\/+$/, '');
+const API_BASE_URL = rawBase.endsWith('/api') ? rawBase : `${rawBase}/api`;
+
+function cleanPath(path: string) {
+  return path.startsWith('/') ? path : `/${path}`;
+}
+
 async function request<T>(path: string, init?: RequestInit): Promise<T> {
   const headers = new Headers(init?.headers);
   if (init?.body && !headers.has('Content-Type')) headers.set('Content-Type', 'application/json');
-  const response = await fetch(`${API_BASE_URL}${path}`, { ...init, headers });
-  if (!response.ok) throw new Error((await response.json().catch(() => null))?.detail || `API request failed (${response.status})`);
+  const url = `${API_BASE_URL}${cleanPath(path)}`;
+  const response = await fetch(url, { ...init, headers });
+  if (!response.ok) {
+    const errorData = await response.json().catch(() => null);
+    throw new Error(errorData?.detail || `API request failed with status ${response.status}`);
+  }
   return response.json() as Promise<T>;
 }
 async function requestWithMeta<T>(path: string): Promise<{ data: T; total: number; page: number; pageSize: number }> {
-  const response = await fetch(`${API_BASE_URL}${path}`);
-  if (!response.ok) throw new Error((await response.json().catch(() => null))?.detail || `API request failed (${response.status})`);
+  const url = `${API_BASE_URL}${cleanPath(path)}`;
+  const response = await fetch(url);
+  if (!response.ok) {
+    const errorData = await response.json().catch(() => null);
+    throw new Error(errorData?.detail || `API request failed with status ${response.status}`);
+  }
   return {
     data: await response.json() as T,
     total: Number(response.headers.get('X-Total-Count') || 0),
