@@ -44,6 +44,15 @@ function MapController({ center, zoom }: { center: [number, number]; zoom: numbe
   return null;
 }
 
+const INDIA_BOUNDS: L.LatLngBoundsExpression = [[6.5, 68], [37.5, 97.5]];
+const GEOJSON_STATE_IDS: Record<string, string> = {
+  'st-cg': 'chhattisgarh',
+  'st-od': 'odisha',
+  'st-mp': 'madhya-pradesh',
+  'st-jh': 'jharkhand',
+  'st-mh': 'maharashtra',
+};
+
 export default function FRAMap({
   selectedState,
   selectedDistrict,
@@ -80,21 +89,21 @@ export default function FRAMap({
   // consistent source of visible administrative boundaries.
   const stateStyle = (feature: any) => {
     return {
-      fillColor: 'transparent',
-      fillOpacity: 0,
-      color: 'transparent',
-      opacity: 0,
-      weight: 0,
+      fillColor: '#cbd5e1',
+      fillOpacity: 0.08,
+      color: '#64748b',
+      opacity: 0.7,
+      weight: 1,
     };
   };
 
   const districtStyle = (feature: any) => {
     return {
-      fillColor: 'transparent',
-      fillOpacity: 0,
-      color: 'transparent',
-      opacity: 0,
-      weight: 0,
+      fillColor: '#94a3b8',
+      fillOpacity: 0.06,
+      color: '#475569',
+      opacity: 0.75,
+      weight: 1,
     };
   };
 
@@ -102,7 +111,7 @@ export default function FRAMap({
     layer.on({
       click: () => {
         if (onSelectState) {
-          onSelectState(feature.id);
+          onSelectState(GEOJSON_STATE_IDS[feature.id] || feature.id);
         }
       },
     });
@@ -123,6 +132,9 @@ export default function FRAMap({
       <MapContainer
         center={defaultCenter}
         zoom={defaultZoom}
+        minZoom={4}
+        maxBounds={INDIA_BOUNDS}
+        maxBoundsViscosity={1}
         scrollWheelZoom={true}
         className="w-full h-full"
         style={{ height: `${height}px`, width: '100%' }}
@@ -146,7 +158,7 @@ export default function FRAMap({
 
         {/* The supplied mock district GeoJSON only covers Chhattisgarh. Do not
             render those districts over a different selected state. */}
-        {selectedState?.id === 'st-cg' && (
+        {selectedState?.id === 'chhattisgarh' && (
           <GeoJSON
             key={selectedState.id}
             data={CHHATTISGARH_DISTRICTS_GEOJSON as any}
