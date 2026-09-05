@@ -35,3 +35,10 @@ def test_natural_language_regions_feed_multi_state_filters():
     assert len(result['interpretedFilters']['stateIds']) == 5
     claims = client.get('/api/claims?stateIds=' + ','.join(result['interpretedFilters']['stateIds']) + '&status=Pending&pageSize=50').json()
     assert len(claims) == 50
+
+def test_natural_language_aliases_status_and_year_filters():
+    result = client.post('/api/natural-language-query', json={'query': 'Show approved claims in MP in 2024'}).json()
+    assert result['interpretedFilters']['state'] == 'madhya-pradesh'
+    assert result['interpretedFilters']['status'] == 'Approved'
+    assert result['interpretedFilters']['startDate'] == '2024-01-01'
+    assert result['interpretedFilters']['endDate'] == '2024-12-31'

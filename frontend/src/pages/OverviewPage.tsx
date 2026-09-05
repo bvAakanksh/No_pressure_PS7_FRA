@@ -133,6 +133,7 @@ export default function OverviewPage() {
           : result.interpretedFilters.riskLevel,
         minRiskScore: result.interpretedFilters.minRiskScore,
         claimType: result.interpretedFilters.claimType,
+        dateRange: { start: result.interpretedFilters.startDate, end: result.interpretedFilters.endDate },
       }, 1, Math.min(Math.max(result.matchedCount, 50), MAP_CLAIM_LIMIT));
       setClaims(matchingClaims);
     } catch (err) {

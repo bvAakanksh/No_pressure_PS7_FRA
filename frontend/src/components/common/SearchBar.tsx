@@ -28,8 +28,11 @@ export default function SearchBar({
 
   const sampleQueries = [
     'Show high-risk claims in Bastar',
-    'Show districts with rejection rate above 25%',
-    'Show pending claims in Chhattisgarh',
+    'Show pending claims in South India',
+    'Show approved claims in North India',
+    'Show rejected claims in East India in 2024',
+    'Show high-risk claims in Central India',
+    'Show claims in Odisha',
   ];
 
   return (

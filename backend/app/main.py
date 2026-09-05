@@ -40,6 +40,19 @@ REGION_ALIASES = {
     "west": ("west india", "western india", "west region", "western region", "west zone"),
     "central": ("central india", "central region", "central zone"),
 }
+STATE_ALIASES = {
+    "andhra-pradesh": ("andhra pradesh", "andhra", "ap"),
+    "assam": ("assam",), "bihar": ("bihar",),
+    "chhattisgarh": ("chhattisgarh", "chhatisgarh", "cg"),
+    "gujarat": ("gujarat",), "himachal-pradesh": ("himachal pradesh", "himachal", "hp"),
+    "jammu-and-kashmir": ("jammu and kashmir", "jammu kashmir", "j&k", "jk"),
+    "jharkhand": ("jharkhand",), "karnataka": ("karnataka",), "kerala": ("kerala",),
+    "madhya-pradesh": ("madhya pradesh", "madhya", "mp"), "maharashtra": ("maharashtra",),
+    "odisha": ("odisha", "orissa"), "rajasthan": ("rajasthan",),
+    "tamil-nadu": ("tamil nadu", "tamilnadu", "tn"), "telangana": ("telangana", "ts"),
+    "tripura": ("tripura",), "uttar-pradesh": ("uttar pradesh", "up"),
+    "uttarakhand": ("uttarakhand", "uttaranchal", "uk"),
+}
 
 class Base(DeclarativeBase): pass
 class State(Base):
@@ -469,28 +482,42 @@ def nlu(body:dict[str,str]):
             filters["region"] = region
             filters["stateIds"] = REGION_STATE_IDS[region]
             break
+    years=re.findall(r"\b(20\d{2})\b", lower)
+    if len(years)>=2:
+        filters["startDate"]=f"{min(years)}-01-01"; filters["endDate"]=f"{max(years)}-12-31"
+    elif len(years)==1:
+        filters["startDate"]=f"{years[0]}-01-01"; filters["endDate"]=f"{years[0]}-12-31"
     with SessionLocal() as db:
         states_list=db.scalars(select(State)).all(); units=db.scalars(select(Unit)).all()
         for s in states_list:
-            if s.name.lower() in lower:filters["state"]=s.id
+            aliases=STATE_ALIASES.get(s.id,(s.name.lower(),))
+            if any(re.search(rf"(?<!\w){re.escape(alias)}(?!\w)", lower) for alias in aliases):filters["state"]=s.id
         for u in units:
             if u.name.lower() in lower or u.name.lower().replace(" fra monitoring unit "," ") in lower:filters["district"]=u.id
-        if "critical" in lower: filters["minRiskScore"]=85
+        if "critical" in lower or "severe risk" in lower: filters["minRiskScore"]=85
         elif "high risk" in lower or "high-risk" in lower:filters["minRiskScore"]=70
         elif "medium risk" in lower or "medium-risk" in lower:filters["riskLevel"]="medium"
         elif "low risk" in lower or "low-risk" in lower:filters["riskLevel"]="low"
         if "pending" in lower:filters["status"]="Pending"
         if "rejected" in lower:filters["status"]="Rejected"
+        elif "approved" in lower:filters["status"]="Approved"
+        elif "field inspection" in lower or "field verification" in lower:filters["status"]="Under Field Inspection"
+        elif "committee review" in lower or "in committee" in lower:filters["status"]="In Committee Review"
         if any(term in lower for term in ("individual claim", "individual forest right", " ifr")): filters["claimType"]="Individual"
         elif any(term in lower for term in ("community claim", "community forest", " cfr", " crr")): filters["claimType"]="Community"
         q=select(Claim)
         if filters.get("stateIds"):q=q.where(Claim.state_id.in_(filters["stateIds"]))
         elif filters.get("state"):q=q.where(Claim.state_id==filters["state"])
         if filters.get("district"):q=q.where(Claim.district_id==filters["district"])
-        if filters.get("status"):q=q.where(Claim.status==filters["status"])
+        if filters.get("status") in ("Under Field Inspection", "In Committee Review"):
+            stage_filter={"Under Field Inspection":"Field Verification","In Committee Review":"SDLC"}
+            q=q.where(Claim.current_stage==stage_filter[filters["status"]])
+        elif filters.get("status"):q=q.where(Claim.status==filters["status"])
         if filters.get("minRiskScore"):q=q.where(Claim.risk_score>=filters["minRiskScore"])
         if filters.get("riskLevel"):q=q.where(Claim.risk_level==filters["riskLevel"])
         if filters.get("claimType"):q=q.where(Claim.claim_type==filters["claimType"])
+        if filters.get("startDate"):q=q.where(Claim.submission_date>=date.fromisoformat(filters["startDate"]))
+        if filters.get("endDate"):q=q.where(Claim.submission_date<=date.fromisoformat(filters["endDate"]))
         matching_count=db.scalar(select(func.count()).select_from(q.subquery())) or 0
         # A concise, deterministic answer based only on the filtered synthetic
         # records. It doubles as a map-filter explanation and stays under 50 words.
@@ -515,6 +542,7 @@ def nlu(body:dict[str,str]):
         statuses=Counter(c.status for c in summary_rows)
         avg_risk=sum(c.risk_score for c in summary_rows)/matching_count
         status_text=", ".join(f"{count} {label.lower()}" for label,count in statuses.most_common(3))
-        summary=(f"Found {matching_count:,} {' '.join(scope)}. Average risk is {avg_risk:.1f}/100; "
+        date_scope=f" from {filters['startDate'][:4]}" if filters.get("startDate") and filters.get("startDate","")[:4]==filters.get("endDate","")[:4] else ""
+        summary=(f"Found {matching_count:,} {' '.join(scope)}{date_scope}. Average risk is {avg_risk:.1f}/100; "
                  f"{status_text}. The map shows these matching locations.")
     return {"query":query,"interpretedFilters":filters,"matchedCount":matching_count,"matchingClaimIds":[c.id for c in rows],"summaryMessage":summary}

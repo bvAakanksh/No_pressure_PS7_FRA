@@ -240,6 +240,8 @@ export interface NaturalLanguageQueryResult {
     stateIds?: string[];
     district?: string;
     region?: string;
+    startDate?: string;
+    endDate?: string;
     minRiskScore?: number;
     riskLevel?: 'low' | 'medium' | 'high';
     maxRejectionRate?: number;
