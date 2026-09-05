@@ -251,8 +251,18 @@ export interface NaturalLanguageQueryResult {
     villageName?: string;
     countType?: string;
     claimType?: string;
+    anomalyType?: string;
   };
   matchedCount: number;
   matchingClaimIds: string[];
+  matchingClaims?: Claim[];
+  summaryMetrics?: {
+    totalClaims: number;
+    pendingClaims: number;
+    approvedClaims: number;
+    rejectedClaims: number;
+    highRiskClaims: number;
+  } | null;
   summaryMessage: string;
 }
+

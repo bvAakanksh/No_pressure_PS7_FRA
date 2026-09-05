@@ -1,6 +1,7 @@
 import React, { useEffect } from 'react';
 import { MapContainer, TileLayer, GeoJSON, Popup, useMap, CircleMarker } from 'react-leaflet';
 import L from 'leaflet';
+import { Sparkles, X } from 'lucide-react';
 import { INDIA_STATES_GEOJSON, CHHATTISGARH_DISTRICTS_GEOJSON } from '../../data/mockGeoJSON';
 import { StateData, DistrictData, Claim, AnomalyCluster } from '../../types/schemas';
 import MapLegend from './MapLegend';
@@ -30,6 +31,8 @@ interface FRAMapProps {
   onSelectClaim?: (claimId: string) => void;
   showClusters?: boolean;
   height?: number;
+  filterBadge?: string | null;
+  onResetFilter?: () => void;
 }
 
 // Controller component to invalidate size and smoothly update map view on state/district change
@@ -42,12 +45,23 @@ function MapController({ center, zoom, claims, fitClaims }: { center: [number, n
     }, 100);
     if (fitClaims && claims.length) {
       const bounds = L.latLngBounds(claims.map((claim) => claim.coordinates));
-      map.flyToBounds(bounds, { padding: [24, 24], maxZoom: Math.min(zoom, 8), duration: 1.2 });
+      if (bounds.isValid()) {
+        const sw = bounds.getSouthWest();
+        const ne = bounds.getNorthEast();
+        // If single point or tightly clustered in a village
+        if (Math.abs(sw.lat - ne.lat) < 0.005 && Math.abs(sw.lng - ne.lng) < 0.005) {
+          map.flyTo([sw.lat, sw.lng], Math.max(zoom, 9), { duration: 1.2 });
+        } else {
+          map.flyToBounds(bounds, { padding: [36, 36], maxZoom: 11, duration: 1.2 });
+        }
+      } else {
+        map.flyTo(center, zoom, { duration: 1.2 });
+      }
     } else {
       map.flyTo(center, zoom, { duration: 1.2 });
     }
     return () => clearTimeout(timer);
-  }, [center, zoom, claims.length, fitClaims, map]);
+  }, [center, zoom, claims, fitClaims, map]);
   return null;
 }
 
@@ -73,6 +87,8 @@ export default function FRAMap({
   onSelectClaim,
   showClusters = false,
   height = 580,
+  filterBadge,
+  onResetFilter,
 }: FRAMapProps) {
   // Center defaults to India national view
   const defaultCenter: [number, number] = [21.5000, 80.0000];
@@ -138,6 +154,23 @@ export default function FRAMap({
 
   return (
     <div className="relative w-full h-[580px] rounded-xl overflow-hidden border border-slate-200 shadow-xs bg-slate-100 z-10" style={{ height }}>
+      {/* Floating Filter Overlay */}
+      {filterBadge && (
+        <div className="absolute top-3 left-3 z-[1000] bg-slate-900/90 text-white backdrop-blur-md px-3 py-1.5 rounded-lg border border-slate-700 shadow-md flex items-center gap-2 text-xs">
+          <Sparkles className="size-3.5 text-indigo-400 shrink-0" />
+          <span className="font-medium truncate max-w-xs">{filterBadge}</span>
+          {onResetFilter && (
+            <button
+              onClick={onResetFilter}
+              className="ml-1 p-0.5 hover:bg-slate-800 text-slate-400 hover:text-white rounded transition cursor-pointer"
+              title="Reset filter"
+            >
+              <X className="size-3" />
+            </button>
+          )}
+        </div>
+      )}
+
       <MapContainer
         center={defaultCenter}
         zoom={defaultZoom}
@@ -148,7 +181,12 @@ export default function FRAMap({
         className="w-full h-full"
         style={{ height: `${height}px`, width: '100%' }}
       >
-        <MapController center={currentCenter} zoom={currentZoom} claims={claims} fitClaims={Boolean(selectedState || selectedDistrict || viewCenter)} />
+        <MapController
+          center={currentCenter}
+          zoom={currentZoom}
+          claims={claims}
+          fitClaims={Boolean(selectedState || selectedDistrict || viewCenter || filterBadge)}
+        />
 
         {/* Standard clean topographic map tiles */}
         <TileLayer

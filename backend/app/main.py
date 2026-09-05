@@ -229,8 +229,16 @@ def nearby(c: Claim) -> list[dict[str,Any]]:
     return sorted(rows,key=lambda x:x["distanceKm"])[:8]
 
 app=FastAPI(title="FRA Monitoring API",version="1.0.0",description="Synthetic-data decision support API. Risk scoring is deterministic.")
-origins=[x.strip() for x in os.getenv("FRONTEND_ORIGIN","http://localhost:5173,http://127.0.0.1:5173,http://localhost:8443,http://127.0.0.1:8443,http://127.0.0.1:5180").split(",")]
-app.add_middleware(CORSMiddleware,allow_origins=origins,allow_credentials=True,allow_methods=["*"],allow_headers=["*"],expose_headers=["X-Total-Count","X-Page","X-Page-Size"])
+origins=[x.strip() for x in os.getenv("FRONTEND_ORIGIN","http://localhost:5173,http://127.0.0.1:5173,http://localhost:8443,http://127.0.0.1:8443,http://127.0.0.1:5180").split(",") if x.strip()]
+app.add_middleware(
+    CORSMiddleware,
+    allow_origins=origins,
+    allow_origin_regex=r"https://.*\.vercel\.app",
+    allow_credentials=True,
+    allow_methods=["*"],
+    allow_headers=["*"],
+    expose_headers=["X-Total-Count","X-Page","X-Page-Size"]
+)
 @app.on_event("startup")
 def startup(): ensure_db()
 
@@ -492,41 +500,71 @@ def nlu(body:dict[str,str]):
     with SessionLocal() as db:
         states_list=db.scalars(select(State)).all(); units=db.scalars(select(Unit)).all()
         count_request=any(term in lower for term in ("how many", "number of", "count of", "total number"))
-        count_type="claims" if "claim" in lower or "case" in lower else "states" if "state" in lower else "districts" if "district" in lower else "villages" if any(term in lower for term in ("village", "sub-level", "sub level", "sublevel")) else None
-        if count_request and count_type:
-            if count_type=="states": entity_count=len(states_list)
-            elif count_type=="districts": entity_count=len(units)
-            elif count_type=="villages": entity_count=db.scalar(select(func.count(func.distinct(Claim.village)))) or 0
-            else: entity_count=db.scalar(select(func.count()).select_from(Claim)) or 0
-            return {"query":query,"interpretedFilters":{"countType":count_type},"matchedCount":entity_count,"matchingClaimIds":[],"summaryMessage":f"The synthetic FRA dataset contains {entity_count:,} {count_type}."}
+        count_type="claims" if ("claim" in lower or "case" in lower) else "states" if "state" in lower else "districts" if "district" in lower else "villages" if any(term in lower for term in ("village", "sub-level", "sub level", "sublevel")) else None
+        
         village_match=re.search(r"(FRA-[A-Z]{2}-\d{3}-Village-\d{2})", query, re.IGNORECASE)
         claim_match=re.search(r"\b(FRA-\d{7})\b", query, re.IGNORECASE)
         if village_match: filters["villageName"]=village_match.group(1).upper()
         elif claim_match: filters["claimId"]=claim_match.group(1).upper()
         if filters.get("villageName"):
             sample=db.scalar(select(Claim).where(func.lower(Claim.village)==filters["villageName"].lower()).limit(1))
-            if sample: filters["district"]=sample.district_id
+            if sample:
+                filters["district"]=sample.district_id
+                filters["state"]=sample.state_id
         elif filters.get("claimId"):
             sample=db.scalar(select(Claim).where(Claim.id==filters["claimId"]).limit(1))
-            if sample: filters["district"]=sample.district_id
+            if sample:
+                filters["district"]=sample.district_id
+                filters["state"]=sample.state_id
         for s in states_list:
             aliases=STATE_ALIASES.get(s.id,(s.name.lower(),))
-            if not filters.get("villageName") and not filters.get("claimId") and any(re.search(rf"(?<!\w){re.escape(alias)}(?!\w)", lower) for alias in aliases):filters["state"]=s.id
+            if not filters.get("villageName") and not filters.get("claimId") and any(re.search(rf"(?<!\w){re.escape(alias)}(?!\w)", lower) for alias in aliases):
+                filters["state"]=s.id
         for u in units:
             district_alias=u.name.lower()
-            if not filters.get("villageName") and not filters.get("claimId") and (re.search(rf"(?<!\w){re.escape(district_alias)}(?!\w)", lower) or re.search(rf"(?<!\w){re.escape(u.id.lower())}(?!\w)", lower)):filters["district"]=u.id
+            if not filters.get("villageName") and not filters.get("claimId") and (re.search(rf"(?<!\w){re.escape(district_alias)}(?!\w)", lower) or re.search(rf"(?<!\w){re.escape(u.id.lower())}(?!\w)", lower)):
+                filters["district"]=u.id
+                if not filters.get("state"):
+                    filters["state"]=u.state_id
         if "critical" in lower or "severe risk" in lower: filters["minRiskScore"]=85
-        elif "high risk" in lower or "high-risk" in lower:filters["minRiskScore"]=70
-        elif "medium risk" in lower or "medium-risk" in lower:filters["riskLevel"]="medium"
-        elif "low risk" in lower or "low-risk" in lower:filters["riskLevel"]="low"
-        if "pending" in lower:filters["status"]="Pending"
-        if "rejected" in lower:filters["status"]="Rejected"
-        elif "approved" in lower:filters["status"]="Approved"
+        elif "high risk" in lower or "high-risk" in lower or "red flag" in lower or "dangerous" in lower:filters["minRiskScore"]=70
+        elif "medium risk" in lower or "medium-risk" in lower or "moderate risk" in lower:filters["riskLevel"]="medium"
+        elif "low risk" in lower or "low-risk" in lower or "safe" in lower:filters["riskLevel"]="low"
+        
+        # Anomaly types
+        if any(term in lower for term in ("boundary overlap", "forest overlap", "buffer overlap", "protected area overlap")):
+            filters["anomalyType"]="Boundary Overlap"
+        elif any(term in lower for term in ("land mismatch", "area mismatch", "revenue mismatch", "record discrepancy")):
+            filters["anomalyType"]="Minor Mismatch"
+        elif any(term in lower for term in ("duplicate", "clone")):
+            filters["anomalyType"]="Duplicate Suspect"
+        elif "severe anomaly" in lower:
+            filters["anomalyType"]="Severe Anomaly"
+        elif "clean" in lower or "no anomaly" in lower:
+            filters["anomalyType"]="Clean"
+            
+        if "pending" in lower or "awaiting" in lower or "unresolved" in lower:filters["status"]="Pending"
+        if "rejected" in lower or "denied" in lower:filters["status"]="Rejected"
+        elif "approved" in lower or "sanctioned" in lower or "granted" in lower:filters["status"]="Approved"
         elif "field inspection" in lower or "field verification" in lower:filters["status"]="Under Field Inspection"
-        elif "committee review" in lower or "in committee" in lower:filters["status"]="In Committee Review"
-        if "processing" in lower or "in process" in lower:filters["workflow"]="processing"
+        elif "committee review" in lower or "in committee" in lower or "sdlc" in lower or "dlc" in lower:filters["status"]="In Committee Review"
+        if "processing" in lower or "in process" in lower or "workflow" in lower:filters["workflow"]="processing"
         if any(term in lower for term in ("individual claim", "individual forest right", " ifr")): filters["claimType"]="Individual"
         elif any(term in lower for term in ("community claim", "community forest", " cfr", " crr")): filters["claimType"]="Community"
+        
+        # Check if this is a general entity count request for states, districts, or villages
+        if count_request and count_type in ("states", "districts", "villages") and not filters.get("state") and not filters.get("district") and not filters.get("villageName") and not filters.get("status") and not filters.get("minRiskScore"):
+            if count_type=="states": entity_count=len(states_list)
+            elif count_type=="districts": entity_count=len(units)
+            elif count_type=="villages": entity_count=db.scalar(select(func.count(func.distinct(Claim.village)))) or 0
+            all_claims=db.scalars(select(Claim)).all()
+            all_counts=Counter(c.status for c in all_claims)
+            dataset_metrics={"totalClaims":len(all_claims),"pendingClaims":all_counts["Pending"],"approvedClaims":all_counts["Approved"],"rejectedClaims":all_counts["Rejected"],"highRiskClaims":sum(c.risk_level=="high" for c in all_claims)}
+            return {"query":query,"interpretedFilters":{"countType":count_type},"matchedCount":entity_count,"matchingClaimIds":[c.id for c in all_claims[:500]],"matchingClaims":[claim_out(c,False) for c in all_claims[:500]],"summaryMetrics":dataset_metrics,"summaryMessage":f"The synthetic FRA dataset contains {entity_count:,} {count_type} across India. Map and KPI cards reflect all-India context."}
+        
+        if count_request and count_type=="claims":
+            filters["countType"]="claims"
+
         q=select(Claim)
         if filters.get("stateIds"):q=q.where(Claim.state_id.in_(filters["stateIds"]))
         elif filters.get("state"):q=q.where(Claim.state_id==filters["state"])
@@ -543,19 +581,29 @@ def nlu(body:dict[str,str]):
         if filters.get("claimType"):q=q.where(Claim.claim_type==filters["claimType"])
         if filters.get("startDate"):q=q.where(Claim.submission_date>=date.fromisoformat(filters["startDate"]))
         if filters.get("endDate"):q=q.where(Claim.submission_date<=date.fromisoformat(filters["endDate"]))
-        matching_count=db.scalar(select(func.count()).select_from(q.subquery())) or 0
-        # A concise, deterministic answer based only on the filtered synthetic
-        # records. It doubles as a map-filter explanation and stays under 50 words.
-        summary_rows=db.scalars(q).all()
-        rows=summary_rows[:1000]
+        if filters.get("anomalyType"):
+            atype=filters["anomalyType"]
+            if atype=="Severe Anomaly": q=q.where(Claim.risk_score>=70)
+            elif atype=="Boundary Overlap": q=q.where(or_(Claim.forest_overlap>=20,Claim.protected_overlap>=10))
+            elif atype=="Duplicate Suspect": q=q.where(Claim.duplicate_score>=70)
+            elif atype=="Minor Mismatch": q=q.where(Claim.risk_score<70,Claim.status!="Rejected",Claim.forest_overlap<20,Claim.protected_overlap<10,Claim.duplicate_score<70,func.abs(Claim.claimed_area-Claim.revenue_area)/func.max(Claim.revenue_area,0.01)>=0.3)
+            elif atype=="Clean": q=q.where(Claim.risk_score<40,Claim.status!="Rejected",Claim.forest_overlap<20,Claim.protected_overlap<10,Claim.duplicate_score<70,func.abs(Claim.claimed_area-Claim.revenue_area)/func.max(Claim.revenue_area,0.01)<0.3,or_(Claim.status!="Pending",Claim.submission_date>=AS_OF-timedelta(days=365)))
+            
+        summary_rows=db.scalars(q.order_by(Claim.risk_score.desc())).all()
+        matching_count=len(summary_rows)
+        rows=summary_rows[:500]
+        status_counts=Counter(c.status for c in summary_rows)
+        summary_metrics={"totalClaims":matching_count,"pendingClaims":status_counts["Pending"],"approvedClaims":status_counts["Approved"],"rejectedClaims":status_counts["Rejected"],"highRiskClaims":sum(c.risk_level=="high" for c in summary_rows)}
         state_name = next((s.name for s in states_list if s.id == filters.get("state")), None)
         district_name = next((u.name for u in units if u.id == filters.get("district")), None)
-    if not filters:
-        summary = f"This synthetic FRA dataset contains {matching_count:,} claims. Ask for a state, district, status, risk level, individual claim, or community claim to receive a focused summary and map view."
+    
+    if not filters or (len(filters) == 1 and "countType" in filters and not filters.get("state") and not filters.get("district")):
+        summary = f"This synthetic FRA dataset contains {matching_count:,} claims across 19 states and 443 districts. Both KPI cards and map reflect the complete dataset."
     elif not summary_rows:
-        summary = "No synthetic FRA claims match that request. Try a different state, district, status, claim type, or risk level."
+        summary = "No synthetic FRA claims match that query. Both KPI cards and map show 0 matching records. Try a different state, district, status, claim type, or risk level."
     else:
         scope=[]
+        if filters.get("anomalyType"): scope.append(f"{filters['anomalyType'].lower()}")
         if filters.get("minRiskScore") == 85: scope.append("critical-risk")
         elif filters.get("minRiskScore") == 70: scope.append("high-risk")
         elif filters.get("riskLevel"): scope.append(f"{filters['riskLevel']}-risk")
@@ -564,10 +612,9 @@ def nlu(body:dict[str,str]):
         scope.append("claims")
         location = district_name or state_name or (f"{filters['region'].title()} India" if filters.get("region") else None)
         if location: scope.append(f"in {location}")
-        statuses=Counter(c.status for c in summary_rows)
-        avg_risk=sum(c.risk_score for c in summary_rows)/matching_count
-        status_text=", ".join(f"{count} {label.lower()}" for label,count in statuses.most_common(3))
+        avg_risk=sum(c.risk_score for c in summary_rows)/matching_count if matching_count else 0
+        status_text=", ".join(f"{count} {label.lower()}" for label,count in status_counts.most_common(3))
         date_scope=f" from {filters['startDate'][:4]}" if filters.get("startDate") and filters.get("startDate","")[:4]==filters.get("endDate","")[:4] else ""
-        summary=(f"Found {matching_count:,} {' '.join(scope)}{date_scope}. Average risk is {avg_risk:.1f}/100; "
-                 f"{status_text}. The map shows these matching locations.")
-    return {"query":query,"interpretedFilters":filters,"matchedCount":matching_count,"matchingClaimIds":[c.id for c in rows],"summaryMessage":summary}
+        summary=(f"Found {matching_count:,} {' '.join(scope)}{date_scope}. Average risk score: {avg_risk:.1f}/100; "
+                 f"{status_text}. Both KPI cards and map have been updated to reflect these matching locations.")
+    return {"query":query,"interpretedFilters":filters,"matchedCount":matching_count,"matchingClaimIds":[c.id for c in rows],"matchingClaims":[claim_out(c,False) for c in rows],"summaryMetrics":summary_metrics,"summaryMessage":summary}

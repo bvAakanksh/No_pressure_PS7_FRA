@@ -63,3 +63,27 @@ def test_natural_language_entity_counts():
         result = client.post('/api/natural-language-query', json={'query': prompt}).json()
         assert result['interpretedFilters']['countType'] == count_type
         assert result['matchedCount'] == expected
+        assert result['summaryMetrics'] is not None
+        assert len(result['matchingClaims']) > 0
+
+def test_natural_language_filtered_counts_and_anomalies():
+    # Filtered count with district and status
+    res = client.post('/api/natural-language-query', json={'query': 'How many pending claims in Bastar?'}).json()
+    assert res['interpretedFilters']['district'] == 'FRA-CG-004'
+    assert res['interpretedFilters']['status'] == 'Pending'
+    assert res['matchedCount'] > 0
+    assert res['summaryMetrics']['totalClaims'] == res['matchedCount']
+    assert res['summaryMetrics']['pendingClaims'] == res['matchedCount']
+    assert len(res['matchingClaims']) > 0
+
+    # Boundary overlap
+    res_boundary = client.post('/api/natural-language-query', json={'query': 'Show boundary overlap claims'}).json()
+    assert res_boundary['interpretedFilters']['anomalyType'] == 'Boundary Overlap'
+    assert res_boundary['matchedCount'] > 0
+    assert len(res_boundary['matchingClaims']) > 0
+
+    # Land mismatch
+    res_mismatch = client.post('/api/natural-language-query', json={'query': 'Show claims with land mismatch'}).json()
+    assert res_mismatch['interpretedFilters']['anomalyType'] == 'Minor Mismatch'
+    assert res_mismatch['matchedCount'] > 0
+
