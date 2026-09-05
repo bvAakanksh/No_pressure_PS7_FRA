@@ -28,3 +28,10 @@ def test_seed_is_idempotent_and_ids_are_unique():
 def test_risk_weight_validation():
     bad = {'processingDelay':20,'rejectionPattern':10,'landAreaMismatch':25,'duplicateProbability':15,'boundaryOverlap':20,'satelliteDiscrepancy':9}
     assert client.post('/api/risk-weights', json=bad).status_code == 422
+
+def test_natural_language_regions_feed_multi_state_filters():
+    result = client.post('/api/natural-language-query', json={'query': 'Show pending claims in South India'}).json()
+    assert result['interpretedFilters']['region'] == 'south'
+    assert len(result['interpretedFilters']['stateIds']) == 5
+    claims = client.get('/api/claims?stateIds=' + ','.join(result['interpretedFilters']['stateIds']) + '&status=Pending&pageSize=50').json()
+    assert len(claims) == 50

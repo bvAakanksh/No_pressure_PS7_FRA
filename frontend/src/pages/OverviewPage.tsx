@@ -26,6 +26,14 @@ import {
 } from 'lucide-react';
 
 const MAP_CLAIM_LIMIT = 500;
+const REGION_VIEWPORTS: Record<string, { center: [number, number]; zoom: number; label: string }> = {
+  north: { center: [29, 79], zoom: 5.5, label: 'North India Region' },
+  south: { center: [15, 78], zoom: 5.5, label: 'South India Region' },
+  east: { center: [24, 85], zoom: 5.5, label: 'East India Region' },
+  west: { center: [20.5, 73], zoom: 5.5, label: 'West India Region' },
+  central: { center: [23, 79], zoom: 5.5, label: 'Central India Region' },
+  northeast: { center: [25.5, 92], zoom: 5.5, label: 'Northeast India Region' },
+};
 
 export default function OverviewPage() {
   const [loading, setLoading] = useState(true);
@@ -37,6 +45,7 @@ export default function OverviewPage() {
 
   const [selectedState, setSelectedState] = useState<StateData | null>(null);
   const [selectedDistrict, setSelectedDistrict] = useState<DistrictData | null>(null);
+  const [selectedRegion, setSelectedRegion] = useState<string | null>(null);
   const [searchSummary, setSearchSummary] = useState<string | null>(null);
   const [searchQuestion, setSearchQuestion] = useState<string | null>(null);
   const [isAnswering, setIsAnswering] = useState(false);
@@ -66,11 +75,13 @@ export default function OverviewPage() {
 
   const handleSelectState = async (stateId: string) => {
     if (!stateId) {
+      setSelectedRegion(null);
       setSelectedState(null);
       setSelectedDistrict(null);
       return;
     }
     const st = states.find((s) => s.id === stateId || s.code === stateId) || null;
+    setSelectedRegion(null);
     setSelectedState(st);
     setSelectedDistrict(null);
   };
@@ -80,6 +91,7 @@ export default function OverviewPage() {
       setSelectedDistrict(null);
       return;
     }
+    setSelectedRegion(null);
     const dt = await getDistrictSummary(districtId);
     setSelectedDistrict(dt);
   };
@@ -101,16 +113,19 @@ export default function OverviewPage() {
       setSearchSummary(mapSummary);
 
       const stateId = result.interpretedFilters.state;
+      const stateIds = result.interpretedFilters.stateIds;
       const districtId = result.interpretedFilters.district;
       const district = districtId ? districts.find((d) => d.id === districtId) || null : null;
-      const resolvedStateId = stateId || district?.stateId;
+      const resolvedStateId = stateIds?.length === 1 ? stateIds[0] : stateId || district?.stateId;
       setSelectedState(resolvedStateId ? states.find((s) => s.id === resolvedStateId) || null : null);
       setSelectedDistrict(district);
+      setSelectedRegion(result.interpretedFilters.region || null);
 
       // The same backend interpretation drives the visible markers, rather
       // than merely changing the map camera.
       const matchingClaims = await getClaims({
         stateId: resolvedStateId,
+        stateIds,
         districtId,
         status: result.interpretedFilters.status,
         riskLevel: result.interpretedFilters.minRiskScore && result.interpretedFilters.minRiskScore >= 70
@@ -174,6 +189,7 @@ export default function OverviewPage() {
               onClick={() => {
                 setSearchSummary(null);
                 setSearchQuestion(null);
+                setSelectedRegion(null);
                 setSelectedState(null);
                 setSelectedDistrict(null);
                 loadInitialData();
@@ -234,14 +250,17 @@ export default function OverviewPage() {
               ? `${selectedState?.name || 'State'} → ${selectedDistrict.name} District`
               : selectedState
               ? `${selectedState.name} State`
-              : 'All India View'}
+                : selectedRegion && REGION_VIEWPORTS[selectedRegion]
+                ? REGION_VIEWPORTS[selectedRegion].label
+                : 'All India View'}
           </span>
         </div>
-        {(selectedState || selectedDistrict) && (
+        {(selectedState || selectedDistrict || selectedRegion) && (
           <button
             onClick={() => {
               setSelectedState(null);
               setSelectedDistrict(null);
+              setSelectedRegion(null);
             }}
             className="text-xs text-indigo-600 hover:text-indigo-800 font-semibold cursor-pointer flex items-center gap-1"
           >
@@ -258,6 +277,8 @@ export default function OverviewPage() {
           <FRAMap
             selectedState={selectedState}
             selectedDistrict={selectedDistrict}
+            viewCenter={selectedRegion ? REGION_VIEWPORTS[selectedRegion]?.center : undefined}
+            viewZoom={selectedRegion ? REGION_VIEWPORTS[selectedRegion]?.zoom : undefined}
             claims={claims}
             onSelectState={(stId) => handleSelectState(stId)}
             onSelectDistrict={(dtId) => handleSelectDistrict(dtId)}

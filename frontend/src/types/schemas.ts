@@ -237,7 +237,9 @@ export interface NaturalLanguageQueryResult {
   query: string;
   interpretedFilters: {
     state?: string;
+    stateIds?: string[];
     district?: string;
+    region?: string;
     minRiskScore?: number;
     riskLevel?: 'low' | 'medium' | 'high';
     maxRejectionRate?: number;

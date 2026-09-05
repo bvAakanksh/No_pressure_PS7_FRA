@@ -24,6 +24,22 @@ DATA_DIR = ROOT / "data"
 DB_URL = os.getenv("DATABASE_URL", f"sqlite:///{ROOT / 'fra.db'}")
 AS_OF = date.fromisoformat(os.getenv("DATA_AS_OF_DATE", "2026-09-04"))
 DEFAULT_WEIGHTS = {"processingDelay": 20, "rejectionPattern": 10, "landAreaMismatch": 25, "duplicateProbability": 15, "boundaryOverlap": 20, "satelliteDiscrepancy": 10}
+REGION_STATE_IDS = {
+    "north": ["jammu-and-kashmir", "himachal-pradesh", "uttarakhand", "rajasthan", "uttar-pradesh"],
+    "south": ["andhra-pradesh", "karnataka", "kerala", "tamil-nadu", "telangana"],
+    "east": ["bihar", "jharkhand", "odisha"],
+    "west": ["gujarat", "maharashtra"],
+    "central": ["chhattisgarh", "madhya-pradesh"],
+    "northeast": ["assam", "tripura"],
+}
+REGION_ALIASES = {
+    "northeast": ("northeast", "north east", "north-eastern", "north eastern"),
+    "north": ("north india", "northern india", "north region", "northern region", "north zone"),
+    "south": ("south india", "southern india", "south region", "southern region", "south zone"),
+    "east": ("east india", "eastern india", "east region", "eastern region", "east zone"),
+    "west": ("west india", "western india", "west region", "western region", "west zone"),
+    "central": ("central india", "central region", "central zone"),
+}
 
 class Base(DeclarativeBase): pass
 class State(Base):
@@ -258,11 +274,13 @@ def district(district_id: str):
         if not u: raise HTTPException(404,"District not found")
         return cache_set(cache_key, district_out(db,u))
 @app.get("/api/claims")
-def claims(response: Response, claimId:str|None=None,stateId:str|None=None,districtId:str|None=None,villageName:str|None=None,status:str|None=None,riskLevel:str|None=None,minRiskScore:float|None=Query(None,ge=0,le=100),anomalyType:str|None=None,claimType:str|None=None,startDate:str|None=None,endDate:str|None=None,page:int=Query(1,ge=1),pageSize:int=Query(50,alias="pageSize",ge=1,le=500),limit:int|None=Query(None,ge=1,le=500)):
+def claims(response: Response, claimId:str|None=None,stateId:str|None=None,stateIds:str|None=None,districtId:str|None=None,villageName:str|None=None,status:str|None=None,riskLevel:str|None=None,minRiskScore:float|None=Query(None,ge=0,le=100),anomalyType:str|None=None,claimType:str|None=None,startDate:str|None=None,endDate:str|None=None,page:int=Query(1,ge=1),pageSize:int=Query(50,alias="pageSize",ge=1,le=500),limit:int|None=Query(None,ge=1,le=500)):
     with SessionLocal() as db:
         q=select(Claim)
         if claimId:q=q.where(Claim.id.contains(claimId))
-        if stateId:q=q.where(Claim.state_id==stateId)
+        requested_state_ids=[value for value in (stateIds or "").split(",") if value]
+        if requested_state_ids:q=q.where(Claim.state_id.in_(requested_state_ids))
+        elif stateId:q=q.where(Claim.state_id==stateId)
         if districtId:q=q.where(Claim.district_id==districtId)
         if villageName:q=q.where(Claim.village.contains(villageName))
         # The Claims-page labels include two workflow stages.  The source CSV
@@ -446,6 +464,11 @@ def update_weights(weights:RiskWeights):
 @app.post("/api/natural-language-query")
 def nlu(body:dict[str,str]):
     query=body.get("query","").strip(); lower=query.lower(); filters={}
+    for region, aliases in REGION_ALIASES.items():
+        if any(alias in lower for alias in aliases):
+            filters["region"] = region
+            filters["stateIds"] = REGION_STATE_IDS[region]
+            break
     with SessionLocal() as db:
         states_list=db.scalars(select(State)).all(); units=db.scalars(select(Unit)).all()
         for s in states_list:
@@ -461,7 +484,8 @@ def nlu(body:dict[str,str]):
         if any(term in lower for term in ("individual claim", "individual forest right", " ifr")): filters["claimType"]="Individual"
         elif any(term in lower for term in ("community claim", "community forest", " cfr", " crr")): filters["claimType"]="Community"
         q=select(Claim)
-        if filters.get("state"):q=q.where(Claim.state_id==filters["state"])
+        if filters.get("stateIds"):q=q.where(Claim.state_id.in_(filters["stateIds"]))
+        elif filters.get("state"):q=q.where(Claim.state_id==filters["state"])
         if filters.get("district"):q=q.where(Claim.district_id==filters["district"])
         if filters.get("status"):q=q.where(Claim.status==filters["status"])
         if filters.get("minRiskScore"):q=q.where(Claim.risk_score>=filters["minRiskScore"])
@@ -486,7 +510,7 @@ def nlu(body:dict[str,str]):
         if filters.get("status"): scope.append(filters["status"].lower())
         if filters.get("claimType"): scope.append(filters["claimType"].lower())
         scope.append("claims")
-        location = district_name or state_name
+        location = district_name or state_name or (f"{filters['region'].title()} India" if filters.get("region") else None)
         if location: scope.append(f"in {location}")
         statuses=Counter(c.status for c in summary_rows)
         avg_risk=sum(c.risk_score for c in summary_rows)/matching_count

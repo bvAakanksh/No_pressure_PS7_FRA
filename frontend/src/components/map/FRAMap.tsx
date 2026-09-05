@@ -20,6 +20,8 @@ L.Icon.Default.mergeOptions({
 interface FRAMapProps {
   selectedState?: StateData | null;
   selectedDistrict?: DistrictData | null;
+  viewCenter?: [number, number];
+  viewZoom?: number;
   selectedClaimId?: string | null;
   claims?: Claim[];
   clusters?: AnomalyCluster[];
@@ -56,6 +58,8 @@ const GEOJSON_STATE_IDS: Record<string, string> = {
 export default function FRAMap({
   selectedState,
   selectedDistrict,
+  viewCenter,
+  viewZoom,
   selectedClaimId,
   claims = [],
   clusters = [],
@@ -73,9 +77,9 @@ export default function FRAMap({
     ? selectedDistrict.center
     : selectedState
     ? selectedState.center
-    : defaultCenter;
+    : viewCenter || defaultCenter;
 
-  const currentZoom = selectedDistrict ? 9 : selectedState ? selectedState.zoom : defaultZoom;
+  const currentZoom = selectedDistrict ? 9 : selectedState ? selectedState.zoom : viewZoom || defaultZoom;
 
   const getRiskColor = (score: number) => {
     if (score >= 85) return '#7e22ce'; // purple
@@ -252,7 +256,7 @@ export default function FRAMap({
       </div>
 
       {/* Re-center / Reset View Button */}
-      {(selectedState || selectedDistrict) && (
+      {(selectedState || selectedDistrict || viewCenter) && (
         <button
           onClick={() => {
             if (selectedDistrict && onSelectState && selectedState) {
