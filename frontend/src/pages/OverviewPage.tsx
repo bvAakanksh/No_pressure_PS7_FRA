@@ -34,6 +34,15 @@ const REGION_VIEWPORTS: Record<string, { center: [number, number]; zoom: number;
   central: { center: [23, 79], zoom: 5.5, label: 'Central India Region' },
   northeast: { center: [25.5, 92], zoom: 5.5, label: 'Northeast India Region' },
 };
+const REGION_STATE_IDS: Record<string, string[]> = {
+  north: ['jammu-and-kashmir', 'himachal-pradesh', 'uttarakhand', 'rajasthan', 'uttar-pradesh'],
+  south: ['andhra-pradesh', 'karnataka', 'kerala', 'tamil-nadu', 'telangana'],
+  east: ['bihar', 'jharkhand', 'odisha'],
+  west: ['gujarat', 'maharashtra'],
+  central: ['chhattisgarh', 'madhya-pradesh'],
+  northeast: ['assam', 'tripura'],
+};
+const resultStateIds = (region: string) => REGION_STATE_IDS[region] || [];
 
 export default function OverviewPage() {
   const [loading, setLoading] = useState(true);
@@ -147,22 +156,32 @@ export default function OverviewPage() {
   // Calculate aggregated top KPIs based on selected state or national total
   const aggregateTotalClaims = selectedState
     ? selectedState.totalClaims
+    : selectedRegion
+    ? states.filter((state) => REGION_VIEWPORTS[selectedRegion] && resultStateIds(selectedRegion).includes(state.id)).reduce((acc, state) => acc + state.totalClaims, 0)
     : states.reduce((acc, s) => acc + s.totalClaims, 0);
 
   const aggregatePendingClaims = selectedState
     ? selectedState.pendingClaims
+    : selectedRegion
+    ? states.filter((state) => resultStateIds(selectedRegion).includes(state.id)).reduce((acc, state) => acc + state.pendingClaims, 0)
     : states.reduce((acc, s) => acc + s.pendingClaims, 0);
 
   const aggregateApprovedClaims = selectedState
     ? selectedState.approvedClaims
+    : selectedRegion
+    ? states.filter((state) => resultStateIds(selectedRegion).includes(state.id)).reduce((acc, state) => acc + state.approvedClaims, 0)
     : states.reduce((acc, s) => acc + s.approvedClaims, 0);
 
   const aggregateRejectedClaims = selectedState
     ? selectedState.rejectedClaims
+    : selectedRegion
+    ? states.filter((state) => resultStateIds(selectedRegion).includes(state.id)).reduce((acc, state) => acc + state.rejectedClaims, 0)
     : states.reduce((acc, s) => acc + s.rejectedClaims, 0);
 
   const aggregateHighRiskClaims = selectedState
     ? selectedState.highRiskClaims
+    : selectedRegion
+    ? states.filter((state) => resultStateIds(selectedRegion).includes(state.id)).reduce((acc, state) => acc + state.highRiskClaims, 0)
     : states.reduce((acc, s) => acc + s.highRiskClaims, 0);
 
   if (loading) return <LoadingState message="Initializing India FRA GIS Map and Decision Models..." />;
@@ -209,7 +228,7 @@ export default function OverviewPage() {
           title="Total Claims"
           value={aggregateTotalClaims}
           icon={FileText}
-          subtitle={selectedState ? selectedState.name : 'National Total'}
+          subtitle={selectedDistrict ? selectedDistrict.name : selectedState ? selectedState.name : selectedRegion ? REGION_VIEWPORTS[selectedRegion]?.label : 'National Total'}
         />
         <KpiCard
           title="Pending Claims"
