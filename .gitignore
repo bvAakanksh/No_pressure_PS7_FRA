@@ -4,7 +4,6 @@ frontend/node_modules/
 frontend/dist/
 backend/.deps/
 backend/.venv/
-backend/fra.db
 backend/__pycache__/
 backend/app/__pycache__/
 backend/tests/__pycache__/
