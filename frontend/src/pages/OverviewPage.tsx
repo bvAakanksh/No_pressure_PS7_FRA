@@ -1,4 +1,4 @@
-import React, { useEffect, useState, useMemo } from 'react';
+import React, { useEffect, useState, useMemo, useCallback } from 'react';
 import TemporalPlayback from '../components/dashboard/TemporalPlayback';
 import FRAMap from '../components/map/FRAMap';
 import KpiCard from '../components/common/KpiCard';
@@ -8,10 +8,10 @@ import ClaimDetailPanel from '../components/dashboard/ClaimDetailPanel';
 import LoadingState from '../components/common/LoadingState';
 import ErrorState from '../components/common/ErrorState';
 import { StateData, DistrictData, Claim, NaturalLanguageQueryResult } from '../types/schemas';
-import { getStates, getDistricts, getDistrictSummary, getClaims, getClaim, naturalLanguageQuery } from '../services/api';
+import { getStates, getDistricts, getDistrictSummary, getClaims, getClaim, naturalLanguageQuery, pingBackend } from '../services/api';
 import { FileText, Clock, CheckCircle2, XCircle, AlertTriangle, MapPin, RefreshCw, X } from 'lucide-react';
 
-const MAP_CLAIM_LIMIT = 500;
+const MAP_CLAIM_LIMIT = 200;
 const REGION_VIEWPORTS: Record<string, { center: [number, number]; zoom: number; label: string }> = {
   north: { center: [29, 79], zoom: 5.5, label: 'North India Region' },
   south: { center: [15, 78], zoom: 5.5, label: 'South India Region' },
@@ -32,6 +32,7 @@ const resultStateIds = (region: string) => REGION_STATE_IDS[region] || [];
 
 export default function OverviewPage() {
   const [loading, setLoading] = useState(true);
+  const [loadingStage, setLoadingStage] = useState<'waking' | 'data' | null>('waking');
   const [error, setError] = useState<string | null>(null);
 
   const [states, setStates] = useState<StateData[]>([]);
@@ -111,19 +112,27 @@ export default function OverviewPage() {
   const loadInitialData = async () => {
     setLoading(true);
     setError(null);
+
+    // Step 1: wake the Render instance (free tier sleeps after inactivity)
+    setLoadingStage('waking');
+    await pingBackend();
+
+    // Step 2: load critical data (districts are lazy-loaded on first click)
+    setLoadingStage('data');
     try {
-      const [fetchedStates, fetchedDistricts, fetchedClaims] = await Promise.all([
+      const [fetchedStates, fetchedClaims] = await Promise.all([
         getStates(),
-        getDistricts(),
         getClaims({}, 1, MAP_CLAIM_LIMIT),
       ]);
       setStates(fetchedStates);
-      setDistricts(fetchedDistricts);
       setClaims(fetchedClaims);
+      // Pre-warm district cache in the background — non-blocking
+      getDistricts().then(setDistricts).catch(() => {});
     } catch (err: any) {
       setError(err.message || 'Failed to connect to API service');
     } finally {
       setLoading(false);
+      setLoadingStage(null);
     }
   };
 
@@ -292,7 +301,14 @@ export default function OverviewPage() {
     ? REGION_VIEWPORTS[selectedRegion].label
     : 'National Total';
 
-  if (loading) return <LoadingState message="Initializing India FRA GIS Map and Decision Models..." />;
+  if (loading) return (
+    <LoadingState
+      waking={loadingStage === 'waking'}
+      message={loadingStage === 'waking' ? 'Waking up server…' : 'Loading FRA GIS Map & Decision Models…'}
+      subMessage={loadingStage === 'waking' ? 'The backend is starting up on Render free tier. This only happens once and takes ~30 seconds.' : undefined}
+      height="h-[60vh]"
+    />
+  );
   if (error) return <ErrorState message={error} onRetry={loadInitialData} />;
 
   return (

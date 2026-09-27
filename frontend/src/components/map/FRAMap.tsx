@@ -108,10 +108,22 @@ export default function FRAMap({
 }: FRAMapProps) {
   const mapRef = useRef<MapRef>(null);
   const fsMapRef = useRef<MapRef>(null);
+  const containerRef = useRef<HTMLDivElement>(null);
   const [popupInfo, setPopupInfo] = useState<PopupInfo | null>(null);
   const [mapLoaded, setMapLoaded] = useState(false);
   const [isFullscreen, setIsFullscreen] = useState(false);
   const [isChoropleth, setIsChoropleth] = useState(false);
+
+  // Fix blank map on Vercel: MapLibre needs resize() when container paints
+  useEffect(() => {
+    const container = containerRef.current;
+    if (!container) return;
+    const observer = new ResizeObserver(() => {
+      mapRef.current?.getMap()?.resize();
+    });
+    observer.observe(container);
+    return () => observer.disconnect();
+  }, []);
 
   // ---- Fullscreen side panel state ----
   type PanelData =
@@ -507,7 +519,11 @@ export default function FRAMap({
       scrollZoom={{ around: 'center' }}
       cooperativeGestures={!fsMode}          // In fullscreen scroll always zooms
       style={{ width: '100%', height: '100%' }}
-      onLoad={() => { if (!fsMode) setMapLoaded(true); }}
+      onLoad={(e) => {
+        // resize() immediately after load ensures correct render on Vercel/CDN
+        e.target.resize();
+        if (!fsMode) setMapLoaded(true);
+      }}
       onDblClick={() => { if (!fsMode) setIsFullscreen(true); }}
       interactiveLayerIds={[
         'claims-circle',
@@ -585,6 +601,7 @@ export default function FRAMap({
   return (
     <>
     <div
+      ref={containerRef}
       className="relative w-full rounded-xl overflow-hidden border border-slate-700 shadow-xs bg-slate-900 z-10 group"
       style={{ height }}
     >

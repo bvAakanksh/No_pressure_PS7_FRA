@@ -37,6 +37,20 @@ async function requestWithMeta<T>(path: string): Promise<{ data: T; total: numbe
 function params(values: object) { const p = new URLSearchParams(); Object.entries(values as Record<string, string | undefined>).forEach(([k,v]) => v && p.set(k,v)); const q=p.toString(); return q ? `?${q}` : ''; }
 
 export interface ClaimFilters { claimId?: string; stateId?: string; stateIds?: string[]; districtId?: string; villageName?: string; status?: string; workflow?: string; riskLevel?: 'low' | 'medium' | 'high'; minRiskScore?: number; anomalyType?: string; claimType?: string; dateRange?: { start?: string; end?: string }; }
+/** Ping /health to wake a sleeping Render instance. Resolves when the backend responds (or times out after 70s). */
+export async function pingBackend(): Promise<boolean> {
+  const controller = new AbortController();
+  const timeout = setTimeout(() => controller.abort(), 70_000);
+  try {
+    const res = await fetch(`${API_BASE_URL.replace(/\/api$/, '')}/health`, { signal: controller.signal });
+    return res.ok;
+  } catch {
+    return false;
+  } finally {
+    clearTimeout(timeout);
+  }
+}
+
 let statesRequest: Promise<StateData[]> | null = null;
 const districtRequests = new Map<string, Promise<DistrictData[]>>();
 const districtSummaryRequests = new Map<string, Promise<DistrictData | null>>();
