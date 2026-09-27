@@ -23,7 +23,7 @@ import MapLegend from './MapLegend';
 const MAPTILER_KEY = import.meta.env.VITE_MAPTILER_KEY || '';
 const MAP_STYLE = MAPTILER_KEY
   ? `https://api.maptiler.com/maps/dataviz-dark/style.json?key=${MAPTILER_KEY}`
-  : 'https://tiles.openfreemap.org/styles/dark';
+  : 'https://basemaps.cartocdn.com/gl/dark-matter-gl-style/style.json';
 
 // [west, south, east, north] — kept as reference but not applied as maxBounds
 // (maxBounds prevents zoom-out needed to see all of India in small containers)
