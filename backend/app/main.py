@@ -2,6 +2,8 @@
 from __future__ import annotations
 
 import csv
+import json
+import logging
 import math
 import os
 import re
@@ -20,6 +22,36 @@ from sqlalchemy.orm import DeclarativeBase, Mapped, Session, mapped_column, sess
 
 ROOT = Path(__file__).resolve().parents[1]
 load_dotenv(ROOT / ".env")
+
+# ---------------------------------------------------------------------------
+# Gemini AI client (optional — falls back gracefully if key is missing)
+# ---------------------------------------------------------------------------
+try:
+    from google import genai as _genai_module
+    _GEMINI_KEY = os.getenv("GEMINI_API_KEY", "").strip()
+    if _GEMINI_KEY:
+        _gemini_client = _genai_module.Client(api_key=_GEMINI_KEY)
+        _GEMINI_MODEL = "gemini-2.0-flash"
+        logging.info("Gemini AI: connected (%s)", _GEMINI_MODEL)
+    else:
+        _gemini_client = None
+        _GEMINI_MODEL = ""
+        logging.warning("Gemini AI: GEMINI_API_KEY not set — AI features will use rule-based fallback")
+except ImportError:
+    _gemini_client = None
+    _GEMINI_MODEL = ""
+    logging.warning("Gemini AI: google-genai not installed — run pip install google-genai")
+
+def _gemini_generate(prompt: str) -> str | None:
+    """Call Gemini and return the text response, or None on any error."""
+    if _gemini_client is None:
+        return None
+    try:
+        resp = _gemini_client.models.generate_content(model=_GEMINI_MODEL, contents=prompt)
+        return resp.text.strip()
+    except Exception as exc:
+        logging.warning("Gemini call failed: %s", exc)
+        return None
 DATA_DIR = ROOT / "data"
 DB_URL = os.getenv("DATABASE_URL", f"sqlite:///{ROOT / 'fra.db'}")
 AS_OF = date.fromisoformat(os.getenv("DATA_AS_OF_DATE", "2026-09-04"))
@@ -143,7 +175,9 @@ def haversine(a: Claim, b: Claim) -> float:
     r=6371; p1,p2=math.radians(a.latitude),math.radians(b.latitude); dp=math.radians(b.latitude-a.latitude); dl=math.radians(b.longitude-a.longitude)
     return 2*r*math.asin(math.sqrt(math.sin(dp/2)**2+math.cos(p1)*math.cos(p2)*math.sin(dl/2)**2))
 def calc_score(claim: Claim, weights: dict[str,int] = DEFAULT_WEIGHTS) -> float:
-    values = {"processingDelay": min(age(claim)/365,1)*100, "rejectionPattern": 100 if claim.status == "Rejected" else 30 if claim.status == "Pending" else 5,
+    # rejectionPattern: Rejected=100 (genuine risk signal), Approved/Pending/others=0
+    # Pending delay is already captured by processingDelay — avoid double-counting.
+    values = {"processingDelay": min(age(claim)/365,1)*100, "rejectionPattern": 100 if claim.status == "Rejected" else 0,
       "landAreaMismatch": min(ratio(claim),100), "duplicateProbability": claim.duplicate_score,
       "boundaryOverlap": min(max(claim.forest_overlap,claim.protected_overlap),100), "satelliteDiscrepancy": min(abs(claim.forest_area-claim.revenue_area)/max(claim.revenue_area,.01)*100,100)}
     return round(sum(values[k]*weights[k]/100 for k in weights),1)
@@ -215,11 +249,81 @@ def timeline(c: Claim) -> list[dict[str,Any]]:
     return [{"stage":stage,"date":d.isoformat() if d else c.last_updated_date.isoformat(),"completed":bool(d),"current":stage==current,"notes":c.pending_reason if stage==current else None,"durationDays":(d-c.submission_date).days if d else age(c),"isDelayed":stage==current and age(c)>365,"delayReason":c.pending_reason if stage==current and age(c)>365 else None} for stage,d in stages]
 def claim_out(c: Claim, include_detail: bool=True) -> dict[str,Any]:
     kinds=anomaly_types(c); ref=c.revenue_area
-    output={"id":c.id,"stateId":c.state_id,"districtId":c.district_id,"districtName":c.district_name,"villageName":c.village,"applicantName":f"Synthetic applicant {c.applicant_hash[-4:]}","claimType":claim_type(c),"status":c.status,"riskScore":c.risk_score,"riskLevel":c.risk_level,"claimedAreaHectares":c.claimed_area,"referenceAreaHectares":ref,"areaMismatchPercentage":round(ratio(c),1),"forestBoundaryOverlapPercentage":c.forest_overlap,"submissionDate":c.submission_date.isoformat(),"lastUpdatedDate":c.last_updated_date.isoformat(),"anomalyStatus":"Severe Anomaly" if c.risk_score>=70 else "Boundary Overlap" if "Boundary Overlap" in kinds else "Duplicate Suspect" if "Duplicate Suspect" in kinds else "Minor Mismatch" if kinds else "Clean","coordinates":[c.latitude,c.longitude]}
+    # Anomaly tag is score-driven with thresholds, falling back to rule-based signals:
+    #   >= 75 → Severe Anomaly  |  30-74 → rule-based label or Minor Mismatch  |  < 30 → Clean
+    if c.risk_score >= 75:
+        anomaly_tag = "Severe Anomaly"
+    elif c.risk_score >= 30:
+        if "Boundary Overlap" in kinds or "Protected Area Overlap" in kinds:
+            anomaly_tag = "Boundary Overlap"
+        elif "Duplicate Suspect" in kinds:
+            anomaly_tag = "Duplicate Suspect"
+        else:
+            anomaly_tag = "Minor Mismatch"
+    else:
+        anomaly_tag = "Clean"
+    output={"id":c.id,"stateId":c.state_id,"districtId":c.district_id,"districtName":c.district_name,"villageName":c.village,"applicantName":f"Synthetic applicant {c.applicant_hash[-4:]}","claimType":claim_type(c),"status":c.status,"riskScore":c.risk_score,"riskLevel":c.risk_level,"claimedAreaHectares":c.claimed_area,"referenceAreaHectares":ref,"areaMismatchPercentage":round(ratio(c),1),"forestBoundaryOverlapPercentage":c.forest_overlap,"submissionDate":c.submission_date.isoformat(),"lastUpdatedDate":c.last_updated_date.isoformat(),"anomalyStatus":anomaly_tag,"coordinates":[c.latitude,c.longitude]}
     if include_detail:
-        factors=kinds or ["No significant rule-based anomaly"]
-        output.update({"riskFactorBreakdown":breakdown(c),"aiExplanation":{"summary":f"{c.risk_level.title()} risk based on {', '.join(factors).lower()}.","suspiciousFactors":factors,"flagReason":"Deterministic rule-based assessment of synthetic demonstration data.","confidenceScore":90},"journeyTimeline":timeline(c),"nearbyAnomalies":nearby(c)})
+        factors = kinds or ["No significant anomaly detected"]
+        ai_explanation = _gemini_claim_explanation(c, factors)
+        output.update({"riskFactorBreakdown": breakdown(c), "aiExplanation": ai_explanation, "journeyTimeline": timeline(c), "nearbyAnomalies": nearby(c)})
     return output
+
+def _gemini_claim_explanation(c: Claim, factors: list[str]) -> dict[str, Any]:
+    """Generate a per-claim AI explanation using Gemini. Falls back to a deterministic template."""
+    fallback = {
+        "summary": (
+            f"This {c.claim_type.lower()} claim in {c.district_name} ({c.village}) carries a "
+            f"{c.risk_level}-risk score of {c.risk_score:.1f}/100. "
+            f"Key signals: {', '.join(factors).lower()}. "
+            f"The claim has been {'pending for an extended period' if c.status == 'Pending' else c.status.lower()}."
+        ),
+        "suspiciousFactors": factors,
+        "flagReason": "Deterministic multi-factor risk assessment across area mismatch, boundary overlap, duplicate probability, and processing delay.",
+        "confidenceScore": 90,
+    }
+    prompt = f"""You are an expert analyst reviewing a Forest Rights Act (FRA) claim in India. \
+Provide a concise, factual risk explanation for an officer dashboard. \
+Respond ONLY with a JSON object — no markdown, no extra text.
+
+Claim data:
+- Claim ID: {c.id}
+- District: {c.district_name}, Village: {c.village}
+- Claim type: {c.claim_type} ({c.rights_subtype})
+- Status: {c.status}, Current stage: {c.current_stage}
+- Risk score: {c.risk_score:.1f}/100 ({c.risk_level} risk)
+- Claimed area: {c.claimed_area:.2f} ha | Revenue record area: {c.revenue_area:.2f} ha | Area mismatch: {ratio(c):.1f}%
+- Forest boundary overlap: {c.forest_overlap:.1f}% | Protected area overlap: {c.protected_overlap:.1f}%
+- Duplicate probability score: {c.duplicate_score:.1f}/100
+- Processing age: {age(c)} days
+- Rejection reason (if any): {c.rejection_reason or 'N/A'}
+- Pending reason (if any): {c.pending_reason or 'N/A'}
+- Flagged anomalies: {', '.join(factors)}
+
+Return this exact JSON structure:
+{{
+  "summary": "<2-3 sentence plain-English explanation of the risk profile suitable for a reviewing officer>",
+  "suspiciousFactors": ["<factor 1>", "<factor 2>"],
+  "flagReason": "<one sentence describing the primary reason this claim was flagged>",
+  "confidenceScore": <integer 70-99>
+}}"""
+    raw = _gemini_generate(prompt)
+    if raw is None:
+        return fallback
+    # Strip markdown code fences if Gemini wraps the JSON
+    raw = re.sub(r"^```[a-z]*\n?", "", raw.strip(), flags=re.IGNORECASE)
+    raw = re.sub(r"\n?```$", "", raw.strip())
+    try:
+        parsed = json.loads(raw)
+        return {
+            "summary": str(parsed.get("summary", fallback["summary"])),
+            "suspiciousFactors": list(parsed.get("suspiciousFactors", factors)),
+            "flagReason": str(parsed.get("flagReason", fallback["flagReason"])),
+            "confidenceScore": int(parsed.get("confidenceScore", 90)),
+        }
+    except (json.JSONDecodeError, ValueError):
+        logging.warning("Gemini claim explanation: could not parse JSON — using fallback")
+        return fallback
 def nearby(c: Claim) -> list[dict[str,Any]]:
     with SessionLocal() as db: candidates=db.scalars(select(Claim).where(Claim.district_id==c.district_id,Claim.id!=c.id,Claim.risk_score>=40).limit(100)).all()
     rows=[]
@@ -329,11 +433,11 @@ def claims(response: Response, claimId:str|None=None,stateId:str|None=None,state
         if startDate:q=q.where(Claim.submission_date>=date.fromisoformat(startDate))
         if endDate:q=q.where(Claim.submission_date<=date.fromisoformat(endDate))
         if anomalyType and anomalyType!="All":
-            if anomalyType=="Severe Anomaly": q=q.where(Claim.risk_score>=70)
-            elif anomalyType=="Boundary Overlap": q=q.where(or_(Claim.forest_overlap>=20,Claim.protected_overlap>=10))
-            elif anomalyType=="Duplicate Suspect": q=q.where(Claim.duplicate_score>=70)
-            elif anomalyType=="Minor Mismatch": q=q.where(Claim.risk_score<70,Claim.status!="Rejected",Claim.forest_overlap<20,Claim.protected_overlap<10,Claim.duplicate_score<70,func.abs(Claim.claimed_area-Claim.revenue_area)/func.max(Claim.revenue_area,0.01)>=0.3)
-            elif anomalyType=="Clean": q=q.where(Claim.risk_score<40,Claim.status!="Rejected",Claim.forest_overlap<20,Claim.protected_overlap<10,Claim.duplicate_score<70,func.abs(Claim.claimed_area-Claim.revenue_area)/func.max(Claim.revenue_area,0.01)<0.3,or_(Claim.status!="Pending",Claim.submission_date>=AS_OF-timedelta(days=365)))
+            if anomalyType=="Severe Anomaly": q=q.where(Claim.risk_score>=75)
+            elif anomalyType=="Boundary Overlap": q=q.where(Claim.risk_score>=30,Claim.risk_score<75,or_(Claim.forest_overlap>=20,Claim.protected_overlap>=10))
+            elif anomalyType=="Duplicate Suspect": q=q.where(Claim.risk_score>=30,Claim.risk_score<75,Claim.duplicate_score>=70)
+            elif anomalyType=="Minor Mismatch": q=q.where(Claim.risk_score>=30,Claim.risk_score<75,Claim.forest_overlap<20,Claim.protected_overlap<10,Claim.duplicate_score<70)
+            elif anomalyType=="Clean": q=q.where(Claim.risk_score<30)
         total=db.scalar(select(func.count()).select_from(q.subquery())) or 0
         effective_page_size=limit or pageSize
         effective_page=1 if limit else page
@@ -505,7 +609,189 @@ def update_weights(weights:RiskWeights):
     return {"success":True,"updatedWeights":DEFAULT_WEIGHTS}
 @app.post("/natural-language-query")
 @app.post("/api/natural-language-query")
-def nlu(body:dict[str,str]):
+def nlu(body: dict[str, str]):
+    """Natural-language query endpoint — powered by Gemini AI with rule-based fallback."""
+    # Check for analytical ranking queries before passing to NLU parser
+    analytical = _try_analytical_query(body)
+    if analytical is not None:
+        return analytical
+    return _nlu_gemini(body) if _gemini_client else _nlu_fallback(body)
+
+
+def _try_analytical_query(body: dict[str, str]) -> dict[str, Any] | None:
+    """Handle 'lowest/highest rejected/approved/pending state/region' ranking queries."""
+    query = body.get("query", "").strip()
+    lower = query.lower()
+
+    # Detect ranking intent
+    is_lowest = any(w in lower for w in ("lowest", "least", "fewest", "minimum", "min ", "minimum "))
+    is_highest = any(w in lower for w in ("highest", "most", "maximum", "max ", "most "))
+    if not is_lowest and not is_highest:
+        return None
+
+    # Detect what status to rank by
+    target_status: str | None = None
+    if any(w in lower for w in ("reject", "denied", "denial")):
+        target_status = "Rejected"
+    elif any(w in lower for w in ("approv", "sanction", "granted")):
+        target_status = "Approved"
+    elif any(w in lower for w in ("pend", "awaiting", "unresolved")):
+        target_status = "Pending"
+    elif any(w in lower for w in ("high risk", "high-risk", "risk")):
+        target_status = "HighRisk"
+
+    if not target_status:
+        return None
+
+    by_district = any(w in lower for w in ("district", "city", "town", "village"))
+
+    with SessionLocal() as db:
+        states_list = db.scalars(select(State)).all()
+        all_claims = db.scalars(select(Claim)).all()
+
+    if by_district:
+        units_map: dict[str, list[Claim]] = defaultdict(list)
+        for c in all_claims:
+            units_map[c.district_id].append(c)
+        rows_data = []
+        for did, claims in units_map.items():
+            total = len(claims)
+            if total == 0:
+                continue
+            if target_status == "HighRisk":
+                count = sum(c.risk_level == "high" for c in claims)
+            else:
+                count = sum(c.status == target_status for c in claims)
+            rows_data.append({"id": did, "name": did, "total": total, "count": count, "rate": round(count / total * 100, 1)})
+        noun = "district"
+    else:
+        state_map: dict[str, list[Claim]] = defaultdict(list)
+        for c in all_claims:
+            state_map[c.state_id].append(c)
+        state_name_lookup = {s.id: s.name for s in states_list}
+        rows_data = []
+        for sid, claims in state_map.items():
+            total = len(claims)
+            if total == 0:
+                continue
+            if target_status == "HighRisk":
+                count = sum(c.risk_level == "high" for c in claims)
+            else:
+                count = sum(c.status == target_status for c in claims)
+            rows_data.append({"id": sid, "name": state_name_lookup.get(sid, sid), "total": total, "count": count, "rate": round(count / total * 100, 1)})
+        noun = "state"
+
+    # Sort ascending for lowest, descending for highest
+    rows_data.sort(key=lambda x: x["count"], reverse=is_highest)
+    top5 = rows_data[:5]
+    bottom5 = rows_data[-5:] if is_lowest else []
+    display = top5  # top5 already sorted correctly
+
+    label = target_status.replace("HighRisk", "high-risk").lower()
+    order_word = "lowest" if is_lowest else "highest"
+
+    lines = [f"{order_word.title()} {label} claims by {noun}:"]
+    for i, r in enumerate(display, 1):
+        lines.append(f"{i}. {r['name']}: {r['count']:,} {label} out of {r['total']:,} total ({r['rate']}%)")
+    summary = "\n".join(lines)
+
+    # Collect matching claim IDs for the top state/district result
+    top_id = display[0]["id"] if display else None
+    if top_id:
+        if by_district:
+            matching = [c for c in all_claims if c.district_id == top_id and (c.status == target_status if target_status != "HighRisk" else c.risk_level == "high")]
+        else:
+            matching = [c for c in all_claims if c.state_id == top_id and (c.status == target_status if target_status != "HighRisk" else c.risk_level == "high")]
+    else:
+        matching = []
+
+    status_counts = Counter(c.status for c in all_claims)
+    return {
+        "query": query,
+        "interpretedFilters": {"analyticalRanking": True, "targetStatus": target_status, "order": order_word},
+        "matchedCount": len(matching),
+        "matchingClaimIds": [c.id for c in matching[:500]],
+        "matchingClaims": [claim_out(c, False) for c in matching[:500]],
+        "summaryMetrics": {"totalClaims": len(all_claims), "pendingClaims": status_counts["Pending"], "approvedClaims": status_counts["Approved"], "rejectedClaims": status_counts["Rejected"], "highRiskClaims": sum(c.risk_level == "high" for c in all_claims)},
+        "summaryMessage": summary,
+    }
+
+
+
+def _nlu_gemini(body: dict[str, str]) -> dict[str, Any]:
+    """Parse the user query with Gemini and resolve results from the DB."""
+    query = body.get("query", "").strip()
+    if not query:
+        return _nlu_fallback(body)
+
+    with SessionLocal() as db:
+        states_list = db.scalars(select(State)).all()
+        units = db.scalars(select(Unit)).all()
+
+    state_names = [s.name for s in states_list]
+    district_names = [f"{u.name} (ID: {u.id}, state: {u.state_id})" for u in units[:80]]  # first 80 to keep prompt manageable
+    region_info = json.dumps(REGION_STATE_IDS, indent=2)
+
+    prompt = f"""You are an intelligent query parser for an Indian Forest Rights Act (FRA) claims monitoring system.
+Extract structured filters from the user's natural-language query and return ONLY a JSON object — no markdown, no extra text.
+
+Available filters:
+- stateId: one of {json.dumps([s.id for s in states_list][:19])}
+- stateIds: list of stateIds (use for region queries)
+- districtId: unit ID string (e.g. 'MP-032')
+- villageName: exact village name string
+- status: one of 'Pending', 'Approved', 'Rejected'
+- riskLevel: one of 'low', 'medium', 'high'
+- minRiskScore: float (use 70 for 'high risk', 85 for 'critical')
+- anomalyType: one of 'Severe Anomaly', 'Boundary Overlap', 'Duplicate Suspect', 'Minor Mismatch', 'Clean'
+- claimType: one of 'Individual', 'Community'
+- startDate: ISO date string YYYY-MM-DD
+- endDate: ISO date string YYYY-MM-DD
+- countType: 'claims', 'states', 'districts', or 'villages' (only for count/how-many questions)
+- region: one of 'north', 'south', 'east', 'west', 'central', 'northeast'
+
+Region→state mapping:
+{region_info}
+
+Some known states: {', '.join(state_names)}
+Some known districts (first 80): {', '.join(district_names)}
+
+If the user asks 'how many X', set countType to the entity they ask about.
+If a region is mentioned (e.g. 'South India'), set stateIds to all states in that region and set region.
+Omit any filter you cannot confidently extract. Return only the filters that apply.
+
+User query: "{query}"
+
+Return JSON:
+{{
+  "filters": {{ <only the applicable filter keys from the list above> }},
+  "geminiSummaryHint": "<one sentence describing what the user is looking for, to help craft the response>"
+}}"""
+
+    raw = _gemini_generate(prompt)
+    filters: dict[str, Any] = {}
+    gemini_hint = ""
+
+    if raw:
+        raw = re.sub(r"^```[a-z]*\n?", "", raw.strip(), flags=re.IGNORECASE)
+        raw = re.sub(r"\n?```$", "", raw.strip())
+        try:
+            parsed = json.loads(raw)
+            filters = parsed.get("filters", {})
+            gemini_hint = parsed.get("geminiSummaryHint", "")
+        except (json.JSONDecodeError, ValueError):
+            logging.warning("Gemini NLQ: JSON parse failed, falling back to rule-based")
+            return _nlu_fallback(body)
+    else:
+        return _nlu_fallback(body)
+
+    # Execute DB query with Gemini-extracted filters
+    result = _execute_nlu_filters(query, filters, gemini_hint, gemini_powered=True)
+    return result
+
+
+def _nlu_fallback(body: dict[str, str]) -> dict[str, Any]:
+    """Original rule-based regex NLQ parser (used when Gemini is unavailable)."""
     query=body.get("query","").strip(); lower=query.lower(); filters={}
     for region, aliases in REGION_ALIASES.items():
         if any(alias in lower for alias in aliases):
@@ -521,21 +807,16 @@ def nlu(body:dict[str,str]):
         states_list=db.scalars(select(State)).all(); units=db.scalars(select(Unit)).all()
         count_request=any(term in lower for term in ("how many", "number of", "count of", "total number"))
         count_type="claims" if ("claim" in lower or "case" in lower) else "states" if "state" in lower else "districts" if "district" in lower else "villages" if any(term in lower for term in ("village", "sub-level", "sub level", "sublevel")) else None
-        
         village_match=re.search(r"(FRA-[A-Z]{2}-\d{3}-Village-\d{2})", query, re.IGNORECASE)
-        claim_match=re.search(r"\b(FRA-\d{7})\b", query, re.IGNORECASE)
-        if village_match: filters["villageName"]=village_match.group(1).upper()
-        elif claim_match: filters["claimId"]=claim_match.group(1).upper()
-        if filters.get("villageName"):
-            sample=db.scalar(select(Claim).where(func.lower(Claim.village)==filters["villageName"].lower()).limit(1))
-            if sample:
-                filters["district"]=sample.district_id
-                filters["state"]=sample.state_id
-        elif filters.get("claimId"):
-            sample=db.scalar(select(Claim).where(Claim.id==filters["claimId"]).limit(1))
-            if sample:
-                filters["district"]=sample.district_id
-                filters["state"]=sample.state_id
+        if village_match: filters["villageName"]=village_match.group(1)
+        claim_match=re.search(r"(FRA-[A-Z]{2}-\d{3}-\d{5})", query, re.IGNORECASE)
+        if claim_match:
+            filters["claimId"]=claim_match.group(1)
+            with SessionLocal() as db2:
+                sample=db2.scalar(select(Claim).where(Claim.id==filters["claimId"]).limit(1))
+                if sample:
+                    filters["district"]=sample.district_id
+                    filters["state"]=sample.state_id
         for s in states_list:
             aliases=STATE_ALIASES.get(s.id,(s.name.lower(),))
             if not filters.get("villageName") and not filters.get("claimId") and any(re.search(rf"(?<!\w){re.escape(alias)}(?!\w)", lower) for alias in aliases):
@@ -550,8 +831,6 @@ def nlu(body:dict[str,str]):
         elif "high risk" in lower or "high-risk" in lower or "red flag" in lower or "dangerous" in lower:filters["minRiskScore"]=70
         elif "medium risk" in lower or "medium-risk" in lower or "moderate risk" in lower:filters["riskLevel"]="medium"
         elif "low risk" in lower or "low-risk" in lower or "safe" in lower:filters["riskLevel"]="low"
-        
-        # Anomaly types
         if any(term in lower for term in ("boundary overlap", "forest overlap", "buffer overlap", "protected area overlap")):
             filters["anomalyType"]="Boundary Overlap"
         elif any(term in lower for term in ("land mismatch", "area mismatch", "revenue mismatch", "record discrepancy")):
@@ -562,7 +841,6 @@ def nlu(body:dict[str,str]):
             filters["anomalyType"]="Severe Anomaly"
         elif "clean" in lower or "no anomaly" in lower:
             filters["anomalyType"]="Clean"
-            
         if "pending" in lower or "awaiting" in lower or "unresolved" in lower:filters["status"]="Pending"
         if "rejected" in lower or "denied" in lower:filters["status"]="Rejected"
         elif "approved" in lower or "sanctioned" in lower or "granted" in lower:filters["status"]="Approved"
@@ -571,8 +849,6 @@ def nlu(body:dict[str,str]):
         if "processing" in lower or "in process" in lower or "workflow" in lower:filters["workflow"]="processing"
         if any(term in lower for term in ("individual claim", "individual forest right", " ifr")): filters["claimType"]="Individual"
         elif any(term in lower for term in ("community claim", "community forest", " cfr", " crr")): filters["claimType"]="Community"
-        
-        # Check if this is a general entity count request for states, districts, or villages
         if count_request and count_type in ("states", "districts", "villages") and not filters.get("state") and not filters.get("district") and not filters.get("villageName") and not filters.get("status") and not filters.get("minRiskScore"):
             if count_type=="states": entity_count=len(states_list)
             elif count_type=="districts": entity_count=len(units)
@@ -581,48 +857,77 @@ def nlu(body:dict[str,str]):
             all_counts=Counter(c.status for c in all_claims)
             dataset_metrics={"totalClaims":len(all_claims),"pendingClaims":all_counts["Pending"],"approvedClaims":all_counts["Approved"],"rejectedClaims":all_counts["Rejected"],"highRiskClaims":sum(c.risk_level=="high" for c in all_claims)}
             return {"query":query,"interpretedFilters":{"countType":count_type},"matchedCount":entity_count,"matchingClaimIds":[c.id for c in all_claims[:500]],"matchingClaims":[claim_out(c,False) for c in all_claims[:500]],"summaryMetrics":dataset_metrics,"summaryMessage":f"The synthetic FRA dataset contains {entity_count:,} {count_type} across India. Map and KPI cards reflect all-India context."}
-        
         if count_request and count_type=="claims":
             filters["countType"]="claims"
+    return _execute_nlu_filters(query, filters, "", gemini_powered=False)
 
-        q=select(Claim)
-        if filters.get("stateIds"):q=q.where(Claim.state_id.in_(filters["stateIds"]))
-        elif filters.get("state"):q=q.where(Claim.state_id==filters["state"])
-        if filters.get("district"):q=q.where(Claim.district_id==filters["district"])
-        if filters.get("villageName"):q=q.where(func.lower(Claim.village)==filters["villageName"].lower())
-        if filters.get("claimId"):q=q.where(Claim.id.contains(filters["claimId"]))
-        if filters.get("workflow")=="processing":q=q.where(or_(Claim.status=="Pending",Claim.current_stage.in_(["Field Verification","SDLC"])))
+
+def _execute_nlu_filters(query: str, filters: dict[str, Any], gemini_hint: str, *, gemini_powered: bool) -> dict[str, Any]:
+    """Run the DB query from extracted filters and build the response (shared by Gemini & fallback paths)."""
+    matching_count = 0
+    summary_rows: list[Claim] = []
+    summary_metrics: dict[str, Any] = {"totalClaims": 0, "pendingClaims": 0, "approvedClaims": 0, "rejectedClaims": 0, "highRiskClaims": 0}
+
+    with SessionLocal() as db:
+        states_list = db.scalars(select(State)).all()
+        units = db.scalars(select(Unit)).all()
+
+        q = select(Claim)
+        if filters.get("stateIds"): q = q.where(Claim.state_id.in_(filters["stateIds"]))
+        elif filters.get("stateId"): q = q.where(Claim.state_id == filters["stateId"])
+        elif filters.get("state"): q = q.where(Claim.state_id == filters["state"])
+        if filters.get("districtId"): q = q.where(Claim.district_id == filters["districtId"])
+        elif filters.get("district"): q = q.where(Claim.district_id == filters["district"])
+        if filters.get("villageName"): q = q.where(func.lower(Claim.village) == filters["villageName"].lower())
+        if filters.get("claimId"): q = q.where(Claim.id.contains(filters["claimId"]))
+        if filters.get("workflow") == "processing": q = q.where(or_(Claim.status == "Pending", Claim.current_stage.in_(["Field Verification", "SDLC"])))
         if filters.get("status") in ("Under Field Inspection", "In Committee Review"):
-            stage_filter={"Under Field Inspection":"Field Verification","In Committee Review":"SDLC"}
-            q=q.where(Claim.current_stage==stage_filter[filters["status"]])
-        elif filters.get("status"):q=q.where(Claim.status==filters["status"])
-        if filters.get("minRiskScore"):q=q.where(Claim.risk_score>=filters["minRiskScore"])
-        if filters.get("riskLevel"):q=q.where(Claim.risk_level==filters["riskLevel"])
-        if filters.get("claimType"):q=q.where(Claim.claim_type==filters["claimType"])
-        if filters.get("startDate"):q=q.where(Claim.submission_date>=date.fromisoformat(filters["startDate"]))
-        if filters.get("endDate"):q=q.where(Claim.submission_date<=date.fromisoformat(filters["endDate"]))
+            stage_filter = {"Under Field Inspection": "Field Verification", "In Committee Review": "SDLC"}
+            q = q.where(Claim.current_stage == stage_filter[filters["status"]])
+        elif filters.get("status"): q = q.where(Claim.status == filters["status"])
+        if filters.get("minRiskScore"): q = q.where(Claim.risk_score >= float(filters["minRiskScore"]))
+        if filters.get("riskLevel"): q = q.where(Claim.risk_level == filters["riskLevel"])
+        if filters.get("claimType"): q = q.where(Claim.claim_type == filters["claimType"])
+        if filters.get("startDate"): q = q.where(Claim.submission_date >= date.fromisoformat(filters["startDate"]))
+        if filters.get("endDate"): q = q.where(Claim.submission_date <= date.fromisoformat(filters["endDate"]))
         if filters.get("anomalyType"):
-            atype=filters["anomalyType"]
-            if atype=="Severe Anomaly": q=q.where(Claim.risk_score>=70)
-            elif atype=="Boundary Overlap": q=q.where(or_(Claim.forest_overlap>=20,Claim.protected_overlap>=10))
-            elif atype=="Duplicate Suspect": q=q.where(Claim.duplicate_score>=70)
-            elif atype=="Minor Mismatch": q=q.where(Claim.risk_score<70,Claim.status!="Rejected",Claim.forest_overlap<20,Claim.protected_overlap<10,Claim.duplicate_score<70,func.abs(Claim.claimed_area-Claim.revenue_area)/func.max(Claim.revenue_area,0.01)>=0.3)
-            elif atype=="Clean": q=q.where(Claim.risk_score<40,Claim.status!="Rejected",Claim.forest_overlap<20,Claim.protected_overlap<10,Claim.duplicate_score<70,func.abs(Claim.claimed_area-Claim.revenue_area)/func.max(Claim.revenue_area,0.01)<0.3,or_(Claim.status!="Pending",Claim.submission_date>=AS_OF-timedelta(days=365)))
-            
-        summary_rows=db.scalars(q.order_by(Claim.risk_score.desc())).all()
-        matching_count=len(summary_rows)
-        rows=summary_rows[:500]
-        status_counts=Counter(c.status for c in summary_rows)
-        summary_metrics={"totalClaims":matching_count,"pendingClaims":status_counts["Pending"],"approvedClaims":status_counts["Approved"],"rejectedClaims":status_counts["Rejected"],"highRiskClaims":sum(c.risk_level=="high" for c in summary_rows)}
-        state_name = next((s.name for s in states_list if s.id == filters.get("state")), None)
-        district_name = next((u.name for u in units if u.id == filters.get("district")), None)
-    
-    if not filters or (len(filters) == 1 and "countType" in filters and not filters.get("state") and not filters.get("district")):
-        summary = f"This synthetic FRA dataset contains {matching_count:,} claims across 19 states and 443 districts. Both KPI cards and map reflect the complete dataset."
+            atype = filters["anomalyType"]
+            if atype == "Severe Anomaly": q = q.where(Claim.risk_score >= 75)
+            elif atype == "Boundary Overlap": q = q.where(Claim.risk_score >= 30, Claim.risk_score < 75, or_(Claim.forest_overlap >= 20, Claim.protected_overlap >= 10))
+            elif atype == "Duplicate Suspect": q = q.where(Claim.risk_score >= 30, Claim.risk_score < 75, Claim.duplicate_score >= 70)
+            elif atype == "Minor Mismatch": q = q.where(Claim.risk_score >= 30, Claim.risk_score < 75, Claim.forest_overlap < 20, Claim.protected_overlap < 10, Claim.duplicate_score < 70)
+            elif atype == "Clean": q = q.where(Claim.risk_score < 30)
+
+        summary_rows = db.scalars(q.order_by(Claim.risk_score.desc())).all()
+        matching_count = len(summary_rows)
+        rows = summary_rows[:500]
+        status_counts = Counter(c.status for c in summary_rows)
+        summary_metrics = {"totalClaims": matching_count, "pendingClaims": status_counts["Pending"], "approvedClaims": status_counts["Approved"], "rejectedClaims": status_counts["Rejected"], "highRiskClaims": sum(c.risk_level == "high" for c in summary_rows)}
+        state_name = next((s.name for s in states_list if s.id == (filters.get("stateId") or filters.get("state"))), None)
+        district_name = next((u.name for u in units if u.id == (filters.get("districtId") or filters.get("district"))), None)
+
+    # Build the summary message — data-only, no UI references
+    if not filters or (len(filters) == 1 and "countType" in filters):
+        summary = f"The FRA dataset contains {matching_count:,} claims across 19 states and 443 districts."
     elif not summary_rows:
-        summary = "No synthetic FRA claims match that query. Both KPI cards and map show 0 matching records. Try a different state, district, status, claim type, or risk level."
+        summary = "No FRA claims match that query. Try a different state, district, status, claim type, or risk level."
+    elif gemini_powered and _gemini_client:
+        avg_risk = sum(c.risk_score for c in summary_rows) / matching_count if matching_count else 0
+        status_text = ", ".join(f"{count} {label.lower()}" for label, count in status_counts.most_common(3))
+        location = district_name or state_name or (f"{filters.get('region','').title()} India" if filters.get("region") else "India")
+        summary_prompt = f"""You are a data analyst for an Indian Forest Rights Act (FRA) claims monitoring system.
+Write a 2-sentence plain-English factual summary for a government officer based on the query results below.
+Be concise and report only data facts — numbers, percentages, averages.
+Do NOT mention UI elements like KPI cards, dashboard, map markers, filters, or system updates.
+No markdown.
+
+User asked: "{query}"
+Hint: {gemini_hint}
+Results: {matching_count:,} claims in {location}. Average risk score: {avg_risk:.1f}/100. Status breakdown: {status_text}. High-risk claims: {summary_metrics['highRiskClaims']:,}."""
+        gemini_summary = _gemini_generate(summary_prompt)
+        summary = gemini_summary if gemini_summary else f"Found {matching_count:,} matching claims in {location}. Average risk: {avg_risk:.1f}/100. Status: {status_text}."
     else:
-        scope=[]
+        scope = []
         if filters.get("anomalyType"): scope.append(f"{filters['anomalyType'].lower()}")
         if filters.get("minRiskScore") == 85: scope.append("critical-risk")
         elif filters.get("minRiskScore") == 70: scope.append("high-risk")
@@ -630,11 +935,12 @@ def nlu(body:dict[str,str]):
         if filters.get("status"): scope.append(filters["status"].lower())
         if filters.get("claimType"): scope.append(filters["claimType"].lower())
         scope.append("claims")
-        location = district_name or state_name or (f"{filters['region'].title()} India" if filters.get("region") else None)
+        location = district_name or state_name or (f"{filters.get('region','').title()} India" if filters.get("region") else None)
         if location: scope.append(f"in {location}")
-        avg_risk=sum(c.risk_score for c in summary_rows)/matching_count if matching_count else 0
-        status_text=", ".join(f"{count} {label.lower()}" for label,count in status_counts.most_common(3))
-        date_scope=f" from {filters['startDate'][:4]}" if filters.get("startDate") and filters.get("startDate","")[:4]==filters.get("endDate","")[:4] else ""
-        summary=(f"Found {matching_count:,} {' '.join(scope)}{date_scope}. Average risk score: {avg_risk:.1f}/100; "
-                 f"{status_text}. Both KPI cards and map have been updated to reflect these matching locations.")
-    return {"query":query,"interpretedFilters":filters,"matchedCount":matching_count,"matchingClaimIds":[c.id for c in rows],"matchingClaims":[claim_out(c,False) for c in rows],"summaryMetrics":summary_metrics,"summaryMessage":summary}
+        avg_risk = sum(c.risk_score for c in summary_rows) / matching_count if matching_count else 0
+        status_text = ", ".join(f"{count} {label.lower()}" for label, count in status_counts.most_common(3))
+        date_scope = f" from {filters['startDate'][:4]}" if filters.get("startDate") and filters.get("startDate", "")[:4] == filters.get("endDate", "")[:4] else ""
+        summary = (f"Found {matching_count:,} {' '.join(scope)}{date_scope}. Average risk score: {avg_risk:.1f}/100. {status_text}.")
+
+    return {"query": query, "interpretedFilters": filters, "matchedCount": matching_count, "matchingClaimIds": [c.id for c in rows], "matchingClaims": [claim_out(c, False) for c in rows], "summaryMetrics": summary_metrics, "summaryMessage": summary}
+

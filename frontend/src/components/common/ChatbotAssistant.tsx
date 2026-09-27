@@ -1,5 +1,5 @@
 import React, { useState, useRef, useEffect } from 'react';
-import { Bot, Send, Sparkles, RefreshCw, CheckCircle2, ChevronDown, ChevronUp, Compass } from 'lucide-react';
+import { Bot, Send, Sparkles, RefreshCw, ChevronDown, ChevronUp } from 'lucide-react';
 
 interface ChatMessage {
   id: string;
@@ -114,24 +114,21 @@ export default function ChatbotAssistant({
   };
 
   return (
-    <div className="bg-white rounded-xl border border-slate-200/90 shadow-2xs overflow-hidden transition-all">
+    <div className="bg-slate-900/80 backdrop-blur-2xl rounded-2xl border border-slate-700/50 shadow-2xl overflow-hidden transition-all text-slate-200">
       {/* Header Bar */}
-      <div className="bg-gradient-to-r from-slate-900 via-indigo-950 to-slate-900 text-white px-4 py-3 flex items-center justify-between">
+      <div className="bg-slate-900/90 border-b border-slate-700/50 px-4 py-3 flex items-center justify-between">
         <div className="flex items-center gap-2.5">
           <div className="size-8 rounded-lg bg-indigo-600/80 border border-indigo-400/40 flex items-center justify-center text-white shadow-xs">
             <Bot className="size-4.5" />
           </div>
           <div>
             <div className="flex items-center gap-2">
-              <h2 className="text-xs font-bold tracking-wide">FRA AI Decision Chatbot</h2>
+              <h2 className="text-sm font-bold tracking-wide">FRA AI Decision Chatbot</h2>
               <span className="bg-emerald-500/20 text-emerald-300 border border-emerald-500/30 text-[10px] font-mono px-2 py-0.5 rounded-full flex items-center gap-1">
                 <span className="size-1.5 rounded-full bg-emerald-400 animate-pulse"></span>
-                Connected to KPIs & Map
+                Live
               </span>
             </div>
-            <p className="text-[11px] text-slate-300">
-              Ask questions to filter claims, recalculate KPI cards, and update GIS map markers in real-time
-            </p>
           </div>
         </div>
 
@@ -160,22 +157,16 @@ export default function ChatbotAssistant({
         <div className="p-4 space-y-3">
           {/* Active Synced Notification Banner when query is active */}
           {activeQuery && (
-            <div className="p-2.5 bg-indigo-50/90 border border-indigo-200/80 rounded-lg flex flex-wrap items-center justify-between gap-2 text-xs">
-              <div className="flex items-center gap-2 text-indigo-950">
-                <Sparkles className="size-4 text-indigo-600 shrink-0" />
-                <span>
-                  Active Scope: <strong className="text-indigo-900">"{activeQuery}"</strong>
+            <div className="p-2.5 bg-indigo-50/90 border border-indigo-200/80 rounded-lg flex flex-wrap items-center gap-2 text-xs">
+              <Sparkles className="size-4 text-indigo-600 shrink-0" />
+              <span className="text-indigo-950">
+                Active: <strong className="text-indigo-900">"{activeQuery}"</strong>
+              </span>
+              {matchedCount !== undefined && matchedCount !== null && (
+                <span className="bg-indigo-200 text-indigo-800 font-semibold px-2 py-0.5 rounded-md text-[11px]">
+                  {matchedCount.toLocaleString()} {matchedCount === 1 ? 'claim' : 'claims'}
                 </span>
-                {matchedCount !== undefined && matchedCount !== null && (
-                  <span className="bg-indigo-200 text-indigo-800 font-semibold px-2 py-0.5 rounded-md text-[11px]">
-                    {matchedCount.toLocaleString()} {matchedCount === 1 ? 'claim' : 'claims'} matched
-                  </span>
-                )}
-              </div>
-              <div className="flex items-center gap-1.5 text-[11px] text-indigo-700">
-                <CheckCircle2 className="size-3.5 text-emerald-600" />
-                <span>Reflected on KPI Cards & Map</span>
-              </div>
+              )}
             </div>
           )}
 
@@ -183,7 +174,7 @@ export default function ChatbotAssistant({
           {messages.length > 0 && (
             <div
               ref={scrollRef}
-              className="max-h-56 overflow-y-auto space-y-2.5 p-3 bg-slate-50/80 border border-slate-100 rounded-lg text-xs"
+              className="max-h-56 overflow-y-auto space-y-2.5 p-3 bg-slate-800/40 border border-slate-700/50 rounded-xl text-xs scrollbar-thin scrollbar-thumb-slate-700 scrollbar-track-transparent"
             >
               {messages.map((m) => (
                 <div
@@ -191,10 +182,10 @@ export default function ChatbotAssistant({
                   className={`flex flex-col ${m.sender === 'user' ? 'items-end' : 'items-start'}`}
                 >
                   <div
-                    className={`max-w-[88%] rounded-xl px-3.5 py-2 space-y-1.5 shadow-2xs ${
+                    className={`max-w-[88%] rounded-xl px-3.5 py-2 space-y-1.5 shadow-md ${
                       m.sender === 'user'
-                        ? 'bg-slate-900 text-white rounded-br-none'
-                        : 'bg-white border border-indigo-100 text-slate-800 rounded-bl-none'
+                        ? 'bg-indigo-600 text-white rounded-br-none'
+                        : 'bg-slate-800 border border-slate-700/50 text-slate-200 rounded-bl-none'
                     }`}
                   >
                     <div className="flex items-center justify-between gap-3 text-[10px] opacity-75">
@@ -244,46 +235,33 @@ export default function ChatbotAssistant({
             </div>
           )}
 
-          {/* Chat Input Form */}
-          <form onSubmit={handleSubmit} className="relative flex items-center">
-            <div className="absolute left-3.5 flex items-center gap-1 text-indigo-600 pointer-events-none">
-              <Sparkles className="size-4" />
-            </div>
-            <input
-              type="text"
-              value={input}
-              onChange={(e) => setInput(e.target.value)}
-              placeholder="Ask anything (e.g., 'Show high risk claims in Bastar', 'Pending claims in South India', 'Boundary overlap claims')..."
-              className="w-full pl-10 pr-24 py-2.5 bg-white border border-slate-200 rounded-xl text-xs font-medium text-slate-900 placeholder:text-slate-400 focus:outline-none focus:ring-2 focus:ring-indigo-600 focus:border-transparent shadow-2xs transition"
-              disabled={isLoading}
-            />
-            <button
-              type="submit"
-              disabled={!input.trim() || isLoading}
-              className="absolute right-1.5 px-3 py-1.5 bg-slate-900 hover:bg-slate-800 disabled:bg-slate-300 text-white text-xs font-semibold rounded-lg flex items-center gap-1 shadow-xs transition cursor-pointer disabled:cursor-not-allowed"
-            >
-              <span>Ask AI</span>
-              <Send className="size-3" />
-            </button>
-          </form>
-
-          {/* Quick AI Prompts */}
-          <div className="flex flex-wrap items-center gap-1.5 text-[11px] text-slate-500">
-            <span className="font-semibold text-slate-400 flex items-center gap-1">
-              <Compass className="size-3 text-indigo-500" />
-              Suggested Prompts:
-            </span>
-            {suggestedPrompts.map((item, idx) => (
+          {/* Chat Input Form — premium search bar */}
+          <form onSubmit={handleSubmit} className="relative group">
+            <div className="absolute inset-0 rounded-2xl bg-gradient-to-r from-indigo-500/20 via-purple-500/10 to-indigo-500/20 blur-sm group-focus-within:blur-md transition-all pointer-events-none" />
+            <div className="relative flex items-center gap-2 bg-slate-900 border border-slate-700 group-focus-within:border-indigo-500 rounded-2xl px-4 py-3 shadow-lg transition-all">
+              <Sparkles className="size-4 text-indigo-400 shrink-0" />
+              <input
+                type="text"
+                value={input}
+                onChange={(e) => setInput(e.target.value)}
+                placeholder="Ask the AI anything about FRA claims…"
+                className="flex-1 bg-transparent text-sm text-white placeholder:text-slate-500 outline-none font-medium"
+                disabled={isLoading}
+              />
               <button
-                key={idx}
-                type="button"
-                onClick={() => handlePromptClick(item.query)}
-                className="px-2 py-1 bg-slate-100 hover:bg-indigo-50 hover:text-indigo-700 hover:border-indigo-200 text-slate-700 rounded-md border border-slate-200 transition cursor-pointer text-[11px] font-medium"
+                type="submit"
+                disabled={!input.trim() || isLoading}
+                className="flex items-center gap-1.5 bg-indigo-600 hover:bg-indigo-500 disabled:opacity-30 text-white text-xs font-bold px-3.5 py-1.5 rounded-xl shadow transition cursor-pointer disabled:cursor-not-allowed shrink-0"
               >
-                {item.label}
+                {isLoading ? (
+                  <span className="size-3.5 border-2 border-white/30 border-t-white rounded-full animate-spin" />
+                ) : (
+                  <Send className="size-3.5" />
+                )}
+                <span>{isLoading ? 'Thinking…' : 'Ask AI'}</span>
               </button>
-            ))}
-          </div>
+            </div>
+          </form>
         </div>
       )}
     </div>

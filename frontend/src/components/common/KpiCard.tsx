@@ -1,5 +1,6 @@
 import React from 'react';
 import { LucideIcon } from 'lucide-react';
+import AnimatedNumber from './AnimatedNumber';
 
 interface KpiCardProps {
   title: string;
@@ -74,7 +75,11 @@ export default function KpiCard({
 
       <div className="mt-2 flex items-baseline justify-between">
         <span className="text-2xl font-bold text-slate-900 font-mono tracking-tight">
-          {typeof value === 'number' ? value.toLocaleString('en-IN') : value}
+          {typeof value === 'number' ? (
+            <AnimatedNumber value={value} format={(v) => v.toLocaleString('en-IN')} />
+          ) : (
+            value
+          )}
         </span>
         {trend && (
           <span

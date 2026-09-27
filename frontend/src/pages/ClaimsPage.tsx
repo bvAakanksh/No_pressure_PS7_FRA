@@ -191,6 +191,8 @@ export default function ClaimsPage() {
               claims={claims}
               selectedClaimId={selectedClaimId}
               onSelectClaim={handleSelectClaim}
+              anomalyType={anomalyType}
+              onAnomalyTypeChange={updateFilter(setAnomalyType)}
             />
             <div className="flex items-center justify-between border-t border-slate-200 px-3 py-2 text-xs text-slate-600">
               <span>Page {page} of {pageCount} ({pageSize} per page)</span>

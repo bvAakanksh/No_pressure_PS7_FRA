@@ -70,7 +70,7 @@ export default function FilterBar({
           <option value="">All Districts</option>
           {districts.map((d) => (
             <option key={d.id} value={d.id}>
-              {stateId ? d.name : `${d.name} — ${d.stateName}`}
+              {stateId ? d.name : `${d.name} — ${(d as any).stateName ?? ''}`}
             </option>
           ))}
         </select>

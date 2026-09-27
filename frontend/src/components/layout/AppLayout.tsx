@@ -28,19 +28,19 @@ export default function AppLayout() {
       <header className="bg-slate-900 text-white border-b border-slate-800 sticky top-0 z-50">
         <div className="max-w-[1600px] mx-auto px-4 py-2.5 flex items-center justify-between">
           <div className="flex items-center gap-3">
-            <div className="size-9 rounded-xl bg-gradient-to-tr from-emerald-600 to-teal-500 flex items-center justify-center text-white shadow-xs">
-              <TreePine className="size-5" />
+            <div className="size-12 rounded-2xl bg-gradient-to-tr from-emerald-600 to-teal-500 flex items-center justify-center text-white shadow-md">
+              <TreePine className="size-7" />
             </div>
             <div>
-              <div className="flex items-center gap-2">
-                <h1 className="text-sm font-bold tracking-tight">Forest Rights Act (FRA) Decision Support System</h1>
-                <span className="bg-indigo-900/90 text-indigo-200 border border-indigo-700/60 text-[10px] font-mono font-semibold px-2 py-0.5 rounded-full flex items-center gap-1">
-                  <Bot className="size-3 text-indigo-400" />
+              <div className="flex items-center gap-2.5">
+                <h1 className="text-base font-extrabold tracking-tight">Forest Rights Act (FRA) Decision Support System</h1>
+                <span className="bg-indigo-900/90 text-indigo-200 border border-indigo-700/60 text-[10px] font-mono font-semibold px-2.5 py-1 rounded-full flex items-center gap-1">
+                  <Bot className="size-3.5 text-indigo-400" />
                   AI Portal
                 </span>
               </div>
-              <p className="text-[11px] text-slate-400">
-                Ministry of Tribal Affairs / State Forest Department Decision Intelligence
+              <p className="text-xs text-slate-400 font-medium mt-0.5">
+                Ministry of Tribal Affairs · State Forest Department Decision Intelligence
               </p>
             </div>
           </div>
