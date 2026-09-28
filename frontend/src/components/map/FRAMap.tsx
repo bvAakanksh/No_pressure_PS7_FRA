@@ -15,13 +15,14 @@ import { getStates, getDistricts, getClaim, naturalLanguageQuery } from '../../s
 import { StateData, DistrictData, Claim, AnomalyCluster, NaturalLanguageQueryResult } from '../../types/schemas';
 import { INDIA_STATES_GEOJSON, CHHATTISGARH_DISTRICTS_GEOJSON } from '../../data/mockGeoJSON';
 import MapLegend from './MapLegend';
-import MaplibreWorker from 'maplibre-gl/dist/maplibre-gl-csp-worker?worker';
 
 // ---------------------------------------------------------------------------
 // FIX FOR PRODUCTION (RENDER/VERCEL) VITE WORKER BUG
+// Setting workerCount = 0 forces MapLibre to use the main thread instead of
+// failing to load an external Web Worker file from the deployed CDN.
 // ---------------------------------------------------------------------------
 if (typeof maplibregl !== 'undefined') {
-  maplibregl.workerClass = MaplibreWorker;
+  maplibregl.workerCount = 0;
 }
 
 
