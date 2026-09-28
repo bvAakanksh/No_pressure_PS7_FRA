@@ -7,7 +7,7 @@ import Map, {
   NavigationControl,
   MapRef,
 } from 'react-map-gl/maplibre';
-import * as maplibregl from 'maplibre-gl';
+import maplibregl from 'maplibre-gl';
 import type { FeatureCollection, Feature, Point } from 'geojson';
 import 'maplibre-gl/dist/maplibre-gl.css';
 import { Sparkles, X, Maximize2, Minimize2, MapPin, AlertTriangle, CheckCircle, Clock, Search, Loader2, BarChart3, Users } from 'lucide-react';
@@ -15,12 +15,13 @@ import { getStates, getDistricts, getClaim, naturalLanguageQuery } from '../../s
 import { StateData, DistrictData, Claim, AnomalyCluster, NaturalLanguageQueryResult } from '../../types/schemas';
 import { INDIA_STATES_GEOJSON, CHHATTISGARH_DISTRICTS_GEOJSON } from '../../data/mockGeoJSON';
 import MapLegend from './MapLegend';
+import maplibreWorkerUrl from 'maplibre-gl/dist/maplibre-gl-csp-worker?url';
 
 // ---------------------------------------------------------------------------
 // FIX FOR PRODUCTION (RENDER/VERCEL) VITE WORKER BUG
 // ---------------------------------------------------------------------------
 if (typeof maplibregl !== 'undefined') {
-  maplibregl.workerUrl = 'https://unpkg.com/maplibre-gl/dist/maplibre-gl-csp-worker.js';
+  maplibregl.workerUrl = maplibreWorkerUrl;
 }
 
 
