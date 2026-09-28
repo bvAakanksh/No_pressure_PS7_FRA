@@ -557,6 +557,7 @@ export default function FRAMap({
       }}
       onMouseEnter={handleMouseEnter}
       onMouseLeave={handleMouseLeave}
+      onError={(e) => console.error('MapLibre error:', e.error)}
     >
       <NavigationControl position="bottom-right" showCompass={false} />
 
