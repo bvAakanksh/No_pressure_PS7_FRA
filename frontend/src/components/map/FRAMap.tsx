@@ -7,7 +7,7 @@ import Map, {
   NavigationControl,
   MapRef,
 } from 'react-map-gl/maplibre';
-import maplibregl from 'maplibre-gl';
+import * as maplibregl from 'maplibre-gl';
 import type { FeatureCollection, Feature, Point } from 'geojson';
 import 'maplibre-gl/dist/maplibre-gl.css';
 import { Sparkles, X, Maximize2, Minimize2, MapPin, AlertTriangle, CheckCircle, Clock, Search, Loader2, BarChart3, Users } from 'lucide-react';
@@ -21,8 +21,8 @@ import MapLegend from './MapLegend';
 // Setting workerCount = 0 forces MapLibre to use the main thread instead of
 // failing to load an external Web Worker file from the deployed CDN.
 // ---------------------------------------------------------------------------
-if (typeof maplibregl !== 'undefined') {
-  maplibregl.workerCount = 0;
+if (typeof maplibregl !== 'undefined' && maplibregl.setWorkerCount) {
+  maplibregl.setWorkerCount(0);
 }
 
 
