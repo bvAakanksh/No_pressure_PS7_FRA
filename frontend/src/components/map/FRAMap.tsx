@@ -16,6 +16,13 @@ import { StateData, DistrictData, Claim, AnomalyCluster, NaturalLanguageQueryRes
 import { INDIA_STATES_GEOJSON, CHHATTISGARH_DISTRICTS_GEOJSON } from '../../data/mockGeoJSON';
 import MapLegend from './MapLegend';
 
+// ---------------------------------------------------------------------------
+// FIX FOR PRODUCTION (RENDER/VERCEL) VITE WORKER BUG
+// ---------------------------------------------------------------------------
+if (typeof maplibregl !== 'undefined') {
+  maplibregl.workerUrl = 'https://unpkg.com/maplibre-gl/dist/maplibre-gl-csp-worker.js';
+}
+
 
 // ---------------------------------------------------------------------------
 // MapTiler style URL — uses env var with OpenFreeMap public fallback
