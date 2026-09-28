@@ -27,12 +27,9 @@ if (typeof maplibregl !== 'undefined') {
 
 
 // ---------------------------------------------------------------------------
-// MapTiler style URL — uses env var with OpenFreeMap public fallback
+// Fallback to CartoDB Dark Matter to guarantee no API key restrictions
 // ---------------------------------------------------------------------------
-const MAPTILER_KEY = import.meta.env.VITE_MAPTILER_KEY || '';
-const MAP_STYLE = MAPTILER_KEY
-  ? `https://api.maptiler.com/maps/dataviz-dark/style.json?key=${MAPTILER_KEY}`
-  : 'https://basemaps.cartocdn.com/gl/dark-matter-gl-style/style.json';
+const MAP_STYLE = 'https://basemaps.cartocdn.com/gl/dark-matter-gl-style/style.json';
 
 // [west, south, east, north] — kept as reference but not applied as maxBounds
 // (maxBounds prevents zoom-out needed to see all of India in small containers)
