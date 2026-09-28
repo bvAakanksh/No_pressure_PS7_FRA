@@ -337,7 +337,7 @@ export default function OverviewPage() {
           <div className="absolute inset-0 bg-slate-900/60 backdrop-blur-sm" onClick={() => setIsPaletteOpen(false)} />
           <div className="relative w-full max-w-4xl shadow-2xl rounded-2xl overflow-hidden ring-1 ring-slate-700/50">
             <ChatbotAssistant
-              onExecuteQuery={(q) => { handleNlpSearch(q); setIsPaletteOpen(false); }}
+              onExecuteQuery={async (q) => { await handleNlpSearch(q); setIsPaletteOpen(false); }}
               onClearQuery={handleClearNlp}
               isLoading={isAnswering}
               activeQuery={searchQuestion}
