@@ -1,15 +1,17 @@
-import React, { useEffect, useState, useMemo, useCallback } from 'react';
+import React, { useEffect, useState, useMemo, Suspense } from 'react';
 import TemporalPlayback from '../components/dashboard/TemporalPlayback';
-import FRAMap from '../components/map/FRAMap';
 import KpiCard from '../components/common/KpiCard';
 import ChatbotAssistant from '../components/common/ChatbotAssistant';
-import DistrictSummary from '../components/dashboard/DistrictSummary';
 import ClaimDetailPanel from '../components/dashboard/ClaimDetailPanel';
 import LoadingState from '../components/common/LoadingState';
 import ErrorState from '../components/common/ErrorState';
 import { StateData, DistrictData, Claim, NaturalLanguageQueryResult } from '../types/schemas';
 import { getStates, getDistricts, getDistrictSummary, getClaims, getClaim, naturalLanguageQuery, pingBackend } from '../services/api';
-import { FileText, Clock, CheckCircle2, XCircle, AlertTriangle, MapPin, RefreshCw, X } from 'lucide-react';
+import { FileText, Clock, CheckCircle2, XCircle, AlertTriangle, MapPin, RefreshCw, X, Loader2 } from 'lucide-react';
+
+// Lazy load heavy components
+const FRAMap = React.lazy(() => import('../components/map/FRAMap'));
+const DistrictSummary = React.lazy(() => import('../components/dashboard/DistrictSummary'));
 
 const MAP_CLAIM_LIMIT = 200;
 const REGION_VIEWPORTS: Record<string, { center: [number, number]; zoom: number; label: string }> = {
@@ -437,21 +439,23 @@ export default function OverviewPage() {
       <div className="grid grid-cols-1 lg:grid-cols-12 gap-6 items-start">
         {/* Main Map Component */}
         <div className={selectedDistrict || selectedClaimDetail ? "lg:col-span-7 transition-all space-y-4" : "lg:col-span-12 transition-all space-y-4"}>
-          <FRAMap
-            selectedState={selectedState}
-            selectedDistrict={selectedDistrict}
-            viewCenter={selectedRegion ? REGION_VIEWPORTS[selectedRegion]?.center : undefined}
-            viewZoom={selectedRegion ? REGION_VIEWPORTS[selectedRegion]?.zoom : undefined}
-            claims={filteredMapClaims}
-            selectedClaimId={selectedClaimDetail?.id}
-            onSelectState={(stId) => handleSelectState(stId)}
-            onSelectDistrict={(dtId) => handleSelectDistrict(dtId)}
-            onSelectClaim={handleSelectClaim}
-            filterBadge={searchQuestion ? `AI Query: "${searchQuestion}" (${claims.length} claims)` : null}
-            onResetFilter={handleClearNlp}
-            onExecuteQuery={handleNlpSearch}
-            filterSummaryMessage={searchSummary}
-          />
+          <Suspense fallback={<div className="h-[600px] w-full flex items-center justify-center bg-slate-900 rounded-xl border border-slate-700 shadow-xl"><Loader2 className="animate-spin text-slate-500 size-8" /></div>}>
+            <FRAMap
+              selectedState={selectedState}
+              selectedDistrict={selectedDistrict}
+              viewCenter={selectedRegion ? REGION_VIEWPORTS[selectedRegion]?.center : undefined}
+              viewZoom={selectedRegion ? REGION_VIEWPORTS[selectedRegion]?.zoom : undefined}
+              claims={filteredMapClaims}
+              selectedClaimId={selectedClaimDetail?.id}
+              onSelectState={(stId) => handleSelectState(stId)}
+              onSelectDistrict={(dtId) => handleSelectDistrict(dtId)}
+              onSelectClaim={handleSelectClaim}
+              filterBadge={searchQuestion ? `AI Query: "${searchQuestion}" (${claims.length} claims)` : null}
+              onResetFilter={handleClearNlp}
+              onExecuteQuery={handleNlpSearch}
+              filterSummaryMessage={searchSummary}
+            />
+          </Suspense>
           <TemporalPlayback 
             startDate="2022-01-01" 
             endDate="2025-01-01" 
@@ -472,12 +476,14 @@ export default function OverviewPage() {
           </div>
         ) : selectedDistrict ? (
           <div className="lg:col-span-5 space-y-4">
-            <DistrictSummary
-              district={selectedDistrict}
-              onClose={() => { setSelectedDistrict(null); setActiveKpiFilter(null); }}
-              onFilterStatus={setActiveKpiFilter}
-              activeFilter={activeKpiFilter}
-            />
+            <Suspense fallback={<div className="h-96 w-full flex items-center justify-center bg-white rounded-xl border border-slate-200 shadow-sm"><Loader2 className="animate-spin text-slate-400 size-6" /></div>}>
+              <DistrictSummary
+                district={selectedDistrict}
+                onClose={() => { setSelectedDistrict(null); setActiveKpiFilter(null); }}
+                onFilterStatus={setActiveKpiFilter}
+                activeFilter={activeKpiFilter}
+              />
+            </Suspense>
           </div>
         ) : null}
       </div>

@@ -16,24 +16,23 @@ import { StateData, DistrictData, Claim, AnomalyCluster, NaturalLanguageQueryRes
 import { INDIA_STATES_GEOJSON, CHHATTISGARH_DISTRICTS_GEOJSON } from '../../data/mockGeoJSON';
 import MapLegend from './MapLegend';
 
+import workerUrl from 'maplibre-gl/dist/maplibre-gl-worker.mjs?worker&url';
+
 // ---------------------------------------------------------------------------
-// FIX FOR PRODUCTION (RENDER/VERCEL) VITE WORKER BUG
-// Setting workerCount = 0 forces MapLibre to use the main thread instead of
-// failing to load an external Web Worker file from the deployed CDN.
+// Proper MapLibre web worker resolution for Vite (both dev and production)
 // ---------------------------------------------------------------------------
-if (typeof maplibregl !== 'undefined' && maplibregl.setWorkerCount) {
-  maplibregl.setWorkerCount(0);
+if (typeof maplibregl !== 'undefined' && maplibregl.setWorkerUrl) {
+  maplibregl.setWorkerUrl(workerUrl);
 }
 
-
 // ---------------------------------------------------------------------------
-// Fallback to CartoDB Dark Matter to guarantee no API key restrictions
+// Fast, reliable dark basemap styles (MapTiler with OpenFreeMap fallback)
 // ---------------------------------------------------------------------------
-const MAP_STYLE = 'https://basemaps.cartocdn.com/gl/dark-matter-gl-style/style.json';
-
-// [west, south, east, north] — kept as reference but not applied as maxBounds
-// (maxBounds prevents zoom-out needed to see all of India in small containers)
-const INDIA_SOFT_BOUNDS: [number, number, number, number] = [60, 4, 100, 40];
+const MAPTILER_KEY = import.meta.env.VITE_MAPTILER_KEY || '';
+const PRIMARY_MAP_STYLE = MAPTILER_KEY
+  ? `https://api.maptiler.com/maps/dataviz-dark/style.json?key=${MAPTILER_KEY}`
+  : 'https://tiles.openfreemap.org/styles/dark';
+const FALLBACK_MAP_STYLE = 'https://tiles.openfreemap.org/styles/dark';
 
 // ---------------------------------------------------------------------------
 // Types
@@ -119,6 +118,7 @@ export default function FRAMap({
   const [mapLoaded, setMapLoaded] = useState(false);
   const [isFullscreen, setIsFullscreen] = useState(false);
   const [isChoropleth, setIsChoropleth] = useState(false);
+  const [activeMapStyle, setActiveMapStyle] = useState<string>(PRIMARY_MAP_STYLE);
 
   // Fix blank map on Vercel: MapLibre needs resize() when container paints
   useEffect(() => {
@@ -514,14 +514,13 @@ export default function FRAMap({
     <Map
       ref={ref}
       mapLib={maplibregl}
-      mapStyle={MAP_STYLE}
+      mapStyle={activeMapStyle}
       initialViewState={{
         longitude: defaultCenter[0],
         latitude: defaultCenter[1],
         zoom: fsMode ? 4.2 : defaultZoom,
       }}
-      maxBounds={INDIA_SOFT_BOUNDS}
-      minZoom={3}
+      minZoom={2.5}
       scrollZoom={{ around: 'center' }}
       cooperativeGestures={!fsMode}          // In fullscreen scroll always zooms
       style={{ width: '100%', height: '100%' }}
@@ -557,7 +556,13 @@ export default function FRAMap({
       }}
       onMouseEnter={handleMouseEnter}
       onMouseLeave={handleMouseLeave}
-      onError={(e) => console.error('MapLibre error:', e.error)}
+      onError={(e) => {
+        console.error('MapLibre error:', e.error);
+        if (activeMapStyle !== FALLBACK_MAP_STYLE) {
+          console.warn('MapLibre primary style failed, falling back to OpenFreeMap dark style');
+          setActiveMapStyle(FALLBACK_MAP_STYLE);
+        }
+      }}
     >
       <NavigationControl position="bottom-right" showCompass={false} />
 
