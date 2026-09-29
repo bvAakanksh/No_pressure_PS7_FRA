@@ -188,9 +188,7 @@ export default function FRAMap({
     const maps = [mapRef.current?.getMap(), fsMapRef.current?.getMap()].filter(Boolean);
     if (!maps.length || !mapLoaded) return;
 
-    const shouldFit =
-      claims.length > 0 &&
-      (selectedState || selectedDistrict || viewCenter || filterBadge);
+    const shouldFit = claims.length > 0 && filterBadge;
 
     maps.forEach(map => {
       if (!map) return;
