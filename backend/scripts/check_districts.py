@@ -1,7 +1,7 @@
 import sqlite3
 import os
 
-db_path = os.path.join(os.path.dirname(__file__), '..', 'fra.db')
+db_path = os.path.join(os.path.dirname(__file__), '..', '..', 'datasets', 'fra.db')
 conn = sqlite3.connect(db_path)
 c = conn.cursor()
 

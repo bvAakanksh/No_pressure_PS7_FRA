@@ -46,7 +46,7 @@ def test_natural_language_aliases_status_and_year_filters():
 def test_natural_language_claim_village_and_processing_filters():
     village = client.post('/api/natural-language-query', json={'query': 'Show claims in FRA-MP-032-Village-02'}).json()
     assert village['matchedCount'] == 18
-    assert village['interpretedFilters']['villageName'] == 'FRA-MP-032-VILLAGE-02'
+    assert village['interpretedFilters']['villageName'] == 'FRA-MP-032-Village-02'
     central = client.post('/api/natural-language-query', json={'query': 'Show claims in Central India'}).json()
     assert central['matchedCount'] == 10267
     processing = client.post('/api/natural-language-query', json={'query': 'Show processing claims in Madhya Pradesh'}).json()

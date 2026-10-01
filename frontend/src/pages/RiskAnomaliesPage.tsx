@@ -115,7 +115,7 @@ export default function RiskAnomaliesPage() {
           <h3 className="text-xs font-bold text-slate-800 uppercase tracking-wider">
             Active Anomaly Hotspots ({clusters.length})
           </h3>
-          <div className="space-y-3">
+          <div className="space-y-3 overflow-y-auto max-h-[580px] pr-2 scrollbar-thin scrollbar-thumb-slate-300">
             {clusters.map((cluster) => (
               <AnomalyCard key={cluster.id} cluster={cluster} onZoomCluster={handleZoomCluster} />
             ))}

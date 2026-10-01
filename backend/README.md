@@ -13,7 +13,7 @@ pip install -r requirements.txt
 uvicorn app.main:app --reload --port 8000
 ```
 
-On Linux/macOS use `python3 -m venv .venv`, `source .venv/bin/activate`, then the same install/run commands. The first startup creates `fra.db` and idempotently imports the three files in `data/`. Browse `http://localhost:8000/docs`.
+On Linux/macOS use `python3 -m venv .venv`, `source .venv/bin/activate`, then the same install/run commands. The first startup creates `fra.db` and idempotently imports the three files in `../datasets/`. Browse `http://localhost:8000/docs`.
 
 Run tests with `pytest` from `backend`.
 

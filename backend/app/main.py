@@ -52,8 +52,8 @@ def _gemini_generate(prompt: str) -> str | None:
     except Exception as exc:
         logging.warning("Gemini call failed: %s", exc)
         return None
-DATA_DIR = ROOT / "data"
-DB_URL = os.getenv("DATABASE_URL", f"sqlite:///{ROOT / 'fra.db'}")
+DATA_DIR = ROOT.parent / "datasets"
+DB_URL = os.getenv("DATABASE_URL", f"sqlite:///{ROOT.parent / 'datasets' / 'fra.db'}")
 AS_OF = date.fromisoformat(os.getenv("DATA_AS_OF_DATE", "2026-09-04"))
 DEFAULT_WEIGHTS = {"processingDelay": 20, "rejectionPattern": 10, "landAreaMismatch": 25, "duplicateProbability": 15, "boundaryOverlap": 20, "satelliteDiscrepancy": 10}
 REGION_STATE_IDS = {
